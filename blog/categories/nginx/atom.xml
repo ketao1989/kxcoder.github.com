@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nginx | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-08-30T19:27:18+08:00</updated>
+  <updated>2015-08-30T19:42:51+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -37,6 +37,8 @@
 <p>在最近的一些项目中，涉及到nginx的反向代理配置，然后花了一些时间了解下关于Nginx的整体请求处理流程和返现代理的实现机制。</p>
 
 <p>Nginx虽然代码整洁，模块清晰，但是代码量毕竟还是很多，而且注释实在是太少，所以把一些学习的资料和心得整理一下，以便以后查看。</p>
+
+<!--more-->
 
 <h2 id="a-idproxynginx-a"><a id="Proxy">Nginx 反向代理配置说明</a></h2>
 
