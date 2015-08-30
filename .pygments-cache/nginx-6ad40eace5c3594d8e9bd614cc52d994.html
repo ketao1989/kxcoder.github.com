@@ -1,0 +1,38 @@
+<div class="highlight"><pre><span class="k">&lt;/p&gt;</span>
+
+<span class="s">&lt;pre&gt;&lt;code&gt;upstream</span> <span class="s">cc_001</span> <span class="p">{</span>
+    <span class="kn">server</span> <span class="n">192.168.1.101</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server</span> <span class="n">192.168.1.102</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+
+    <span class="kn">healthcheck_enabled</span><span class="p">;</span>
+    <span class="kn">healthcheck_delay</span> <span class="mi">3000</span><span class="p">;</span>
+    <span class="kn">healthcheck_timeout</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="kn">healthcheck_failcount</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="kn">healthcheck_send</span> <span class="s">&#39;GET</span> <span class="s">/healthcheck.html</span> <span class="s">HTTP/1.0&#39;</span> <span class="s">&#39;Host:</span> <span class="s">local.com&#39;</span> <span class="s">&#39;Connection:</span> <span class="s">close&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+
+    <span class="kn">listen</span>       <span class="n">192.168.1.100</span><span class="p">:</span><span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server_name</span>  <span class="s">cc.local.com</span><span class="p">;</span>
+
+    <span class="kn">proxy_buffers</span> <span class="mi">64</span> <span class="mi">4k</span><span class="p">;</span>
+
+    <span class="kn">location</span> <span class="p">=</span> <span class="s">/</span> <span class="p">{</span>
+        <span class="kn">proxy_pass</span> <span class="s">http://cc_001/bm/index.htm</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">Host</span>             <span class="nv">$host</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-Real-IP</span>        <span class="nv">$remote_addr</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-Forwarded-For</span>  <span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+        <span class="kn">proxy_pass</span> <span class="s">http://cc_001</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">Host</span>             <span class="nv">$host</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-Real-IP</span>        <span class="nv">$remote_addr</span><span class="p">;</span>
+        <span class="kn">proxy_set_header</span>   <span class="s">X-Forwarded-For</span>  <span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">&lt;/code&gt;&lt;/pre&gt;</span>
+
+<span class="s">&lt;p&gt;</span>
+</pre></div>

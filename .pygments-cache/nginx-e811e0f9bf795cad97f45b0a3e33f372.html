@@ -1,0 +1,32 @@
+<div class="highlight"><pre><span class="k">&lt;/p&gt;</span>
+
+<span class="s">&lt;p&gt;location</span>  <span class="p">=</span> <span class="s">/</span> <span class="p">{</span>
+  <span class="c1"># matches the query / only.</span>
+  <span class="kn">[</span> <span class="s">configuration</span> <span class="s">A</span> <span class="s">]</span> 
+<span class="err">}</span>
+<span class="s">location</span>  <span class="s">/</span> <span class="p">{</span>
+  <span class="c1"># matches any query, since all queries begin with /, but regular</span>
+  <span class="c1"># expressions and any longer conventional blocks will be</span>
+  <span class="c1"># matched first.</span>
+  <span class="kn">[</span> <span class="s">configuration</span> <span class="s">B</span> <span class="s">]</span> 
+<span class="err">}</span>
+<span class="s">location</span> <span class="s">/documents/</span> <span class="p">{</span>
+  <span class="c1"># matches any query beginning with /documents/ and continues searching,</span>
+  <span class="c1"># so regular expressions will be checked. This will be matched only if</span>
+  <span class="c1"># regular expressions don’t find a match.</span>
+  <span class="kn">[</span> <span class="s">configuration</span> <span class="s">C</span> <span class="s">]</span> 
+<span class="err">}</span>
+<span class="s">location</span> <span class="s">^~</span> <span class="s">/images/</span> <span class="p">{</span>
+  <span class="c1"># matches any query beginning with /images/ and halts searching,</span>
+  <span class="c1"># so regular expressions will not be checked.</span>
+  <span class="kn">[</span> <span class="s">configuration</span> <span class="s">D</span> <span class="s">]</span> 
+<span class="err">}</span>
+<span class="s">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">.(gif|jpg|jpeg)</span>$ <span class="p">{</span>
+  <span class="c1"># matches any request ending in gif, jpg, or jpeg. However, all</span>
+  <span class="c1"># requests to the /images/ directory will be handled by</span>
+  <span class="c1"># Configuration D. &lt;br /&gt;</span>
+  <span class="kn">[</span> <span class="s">configuration</span> <span class="s">E</span> <span class="s">]</span> 
+<span class="err">}</span><span class="s">&lt;/p&gt;</span>
+
+<span class="s">&lt;p&gt;</span>
+</pre></div>
