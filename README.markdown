@@ -1,45 +1,27 @@
-## Octopress 3.0
+## 博客
 
-Note: Octopress 3.0 is in development at https://github.com/octopress/octopress
+本博客使用 `Octopress` + Github 完成搭建。基于对外开放的 `Octopress` 进行二次修改，在Github 的 Pages 功能上实现博客的对外展示。
+由于`Octopress`是基于ruby语言开发，并且需要在本地搭建运行和发布环境。由于国内网络原因，请使用<a href="http://ruby.taobao.org/">`taobao Ruby`</a>国内源。具体设置细节，
+也请参考该网站。 
 
-## What is Octopress?
+### 评论
 
-Octopress is [Jekyll](https://github.com/mojombo/jekyll) blogging at its finest.
+显然由于国内网络某些原因，博客使用了国内的评论系统 <a href="http://www.uyan.cc/"> `Uyan`</a>。该评论系统做的各项功能很符合国内需求。
+并且，使用简单快捷。感谢友言团队的各位同学。
 
-1. **Octopress sports a clean responsive theme** written in semantic HTML5, focused on readability and friendliness toward mobile devices.
-2. **Code blogging is easy and beautiful.** Embed code (with [Solarized](http://ethanschoonover.com/solarized) styling) in your posts from gists, jsFiddle or from your filesystem.
-3. **Third party integration is simple** with built-in support for Pinboard, Delicious, GitHub Repositories, Disqus Comments and Google Analytics.
-4. **It's easy to use.** A collection of rake tasks simplifies development and makes deploying a cinch.
-5. **Ships with great plug-ins** some original and others from the Jekyll community &mdash; tested and improved.
+### 分享
 
-**Note**: Octopress requires a minimum Ruby version of `1.9.3-p0`.
+同样，很多国外的社交网站无法访问，所以在原生的`Octopress`代码上继续的清除和替换操作。本博客使用国内的<a href="http://www.jiathis.com/">`JiaThis`</a>分享功能。
+该插件支持分享到各种社交平台上，包括国外（虽然用不上）。同样，感谢JiaThis团队的各位同学。
 
-## Documentation
+### 字体
 
-Check out [Octopress.org](http://octopress.org/docs) for guides and documentation.
-It should all apply to our current stable version (found in the `master`
-branch). If this is not the case, [please submit a
-fix to our docs repo](https://github.com/octopress/docs).
+字体使用Google开源的包，但是，由于网络问题，我们使用的是360安全提供的免费CDN访问地址。<a href="http://libs.useso.com/">useso.com/</a>
 
-## Contributing
+### 代码
 
-[![Build Status](https://travis-ci.org/imathis/octopress.svg?branch=master)](https://travis-ci.org/imathis/octopress)
+代码高亮插件：Octopress code block . 支持语言对应的英文标识请参考<a href="http://pygments.org/docs/lexers/">pygments.org/docs/lexers/</a>
 
-We love to see people contributing to Octopress, whether it's a bug report, feature suggestion or a pull request. At the moment, we try to keep the core slick and lean, focusing on basic blogging needs, so some of your suggestions might not find their way into Octopress. For those ideas, we started a [list of 3rd party plug-ins](https://github.com/imathis/octopress/wiki/3rd-party-plugins), where you can link your own Octopress plug-in repositories. For the future, we're thinking about ways to easier add them into our main releases.
+### 其他项目地址
 
-
-## License
-(The MIT License)
-
-Copyright © 2009-2013 Brandon Mathis
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ‘Software’), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED ‘AS IS’, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-#### If you want to be awesome.
-- Proudly display the 'Powered by Octopress' credit in the footer.
-- [Add your site to the Wiki](https://github.com/imathis/octopress/wiki/Octopress-Sites/_edit) so we can watch the community grow.
+这个博客地址是新开的。对于代码项目等，是存放在 <a href="https://github.com/ketao1989">ketao1989</a>上。欢迎大家访问。
