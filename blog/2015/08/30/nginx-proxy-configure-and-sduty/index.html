@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>柯小小西の小水滴</title>
+  <title>Nginx 反向代理配置和工作原理 - 柯小小西の小水滴</title>
   <meta name="author" content="柯小小西">
 
   
-  <meta name="description" content="柯小小西の小水滴">
+  <meta name="description" content="目录 前言 Nginx 反向代理配置说明 Nginx 架构和请求处理流程 Nginx Upstream模块和Location配置 后记 前言 Nginx是一款面向性能设计的HTTP服务器，其性能相对于其他服务器表现优异。内部使用异步的事件处理模型，比如linux平台的epoll事件模型， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://kxcoder.github.io/">
+  <link rel="canonical" href="http://kxcoder.github.io/blog/2015/08/30/nginx-proxy-configure-and-sduty/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="柯小小西の小水滴" type="application/atom+xml">
@@ -100,15 +100,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">Nginx 反向代理配置和工作原理</a></h1>
+      <h1 class="entry-title">Nginx 反向代理配置和工作原理</h1>
     
     
       <p class="meta">
@@ -124,7 +121,7 @@
   </header>
 
 
-  <div class="entry-content"><h2 id="section">目录</h2>
+<div class="entry-content"><h2 id="section">目录</h2>
 
 <ol>
   <li><a href="#Intro">前言</a></li>
@@ -503,18 +500,76 @@
   <li><a href="http://kxcoder.github.io/images/2015/08/nginx_stream.png">http://kxcoder.github.io/images/2015/08/nginx_stream.png</a></li>
 </ul>
 </div>
-  
-  
 
 
-    </article>
+  <footer>
+    <p class="meta">
+      
   
-  <div class="pagination">
+
+<span class="byline author vcard">Posted by <span class="fn">柯小小西</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-08-30T18:52:03+08:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:52 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/nginx/'>nginx</a>, <a class='category' href='/blog/categories/script/'>script</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a class="jiathis_button_digg">Digg</a>
+	<a class="jiathis_button_fav">收藏夹</a>
+	<a href="http://www.jiathis.com/share?uid=1933358" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
 </div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1395248101949397" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+ 
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>评论</h1>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END --> 
+ </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -550,6 +605,7 @@
 </section>
   
 </aside>
+
 
     </div>
   </div>
