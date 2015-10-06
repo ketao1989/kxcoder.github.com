@@ -409,7 +409,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>示例：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>非空块：K &amp; R 风格 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -442,7 +443,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>示例：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>空块：可以用简洁版本 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kt">void</span> <span class="nf">doNothing</span><span class="o">()</span> <span class="o">{}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -557,7 +559,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>以下示例先展示未对齐的代码，然后是对齐的代码：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>水平对齐：不做要求 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -590,7 +593,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>没有方法和文档的枚举类可写成数组初始化的格式：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>枚举类 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">private</span> <span class="kd">enum</span> <span class="n">Suit</span> <span class="o">{</span> <span class="n">CLUBS</span><span class="o">,</span> <span class="n">HEARTS</span><span class="o">,</span> <span class="n">SPADES</span><span class="o">,</span> <span class="n">DIAMONDS</span> <span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -613,7 +617,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>数组初始化可以写成块状结构，比如，下面的写法都是OK的：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>数组初始化：可写成块状结构</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -670,7 +675,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 <p>在一个switch块内，每个语句组要么通过<code>break, continue, return</code>或抛出异常来终止，要么通过一条注释来说明程序将继续执行到下一个语句组，
 任何能表达这个意思的注释都是OK的(典型的是用<code>// fall through</code>)。这个特殊的注释并不需要在最后一个语句组(一般是<code>default</code>)中出现。示例：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Fall-through：注释</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -702,7 +708,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>注解紧跟在文档块后面，应用于类、方法和构造函数，一个注解独占一行。这些换行不属于自动换行(第4.5节，自动换行)，因此缩进级别不变。例如：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>注解 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="nd">@Override</span>
@@ -712,13 +719,15 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p><strong>例外</strong>：单个的注解可以和签名的第一行出现在同一行。例如：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>注解 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>应用于字段的注解紧随文档块出现，应用于字段的多个注解允许与字段出现在同一行。例如：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>注解 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="nd">@Partial</span> <span class="nd">@Mock</span> <span class="n">DataLoader</span> <span class="n">loader</span><span class="o">;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -731,7 +740,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 <p>块注释与其周围的代码在同一缩进级别。它们可以是<code>/* ... */</code>风格，也可以是<code>// ...</code>风格。对于多行的<code>/* ... */</code>注释，后续行必须从<code>*</code>开始，
 并且与前一行的<code>*</code>对齐。以下示例注释都是OK的。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>注释 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -753,7 +763,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>类和成员的modifiers如果存在，则按Java语言规范中推荐的顺序出现。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Modifiers </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">protected</span> <span class="kd">private</span> <span class="kd">abstract</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kd">transient</span> <span class="kd">volatile</span> <span class="kd">synchronized</span> <span class="kd">native</span> <span class="kd">strictfp</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -796,7 +807,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 考虑它是否真的感觉像是一个常量。例如，如果任何一个该实例的观测状态是可变的，则它几乎肯定不会是一个常量。
 只是永远不<code>打算</code>改变对象一般是不够的，它要真的一直不变才能将它示为常量。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>常量名 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -913,7 +925,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>如果它确实是不需要在catch块中做任何响应，需要做注释加以说明(如下面的例子)。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>捕获的异常 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -932,7 +945,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 <p><strong>例外</strong>：在测试中，如果一个捕获的异常被命名为<code>expected</code>，则它可以被不加注释地忽略。下面是一种非常常见的情形，用以确保所测试的方法会抛出一个期望中的异常，
 因此在这里就没有必要加注释。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>捕获的异常 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -948,7 +962,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>使用类名调用静态的类成员，而不是具体某个对象或表达式。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>静态成员 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -977,7 +992,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>Javadoc块的基本格式如下所示：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Javadoc </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -991,7 +1007,8 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 
 <p>或者是以下单行形式：</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Javadoc </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="java"><span class="line"><span class="cm">/** An especially short bit of Javadoc. */</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
