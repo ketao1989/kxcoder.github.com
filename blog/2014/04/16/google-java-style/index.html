@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>柯小小西の小水滴</title>
+  <title>Google Java编程风格指南 - 柯小小西の小水滴</title>
   <meta name="author" content="柯小小西">
 
   
-  <meta name="description" content="柯小小西の小水滴">
+  <meta name="description" content="说明：来自互联网，如有版权问题，请告知本人将其撤下。 目录 前言 源文件基础 源文件结构 格式 命名约定 编程实践 Javadoc 后记 前言 这份文档是Google Java编程风格规范的完整定义。当且仅当一个Java源文件符合此文档中的规则，
+我们才认为它符合Google的Java编程风格。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://kxcoder.github.io/">
+  <link rel="canonical" href="http://kxcoder.github.io/blog/2014/04/16/google-java-style/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="柯小小西の小水滴" type="application/atom+xml">
@@ -100,122 +101,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/09/05/zookeeper-programmer-guide/">Zookeeper 编程指南</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-09-05T20:52:39+08:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:52 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2 id="section">目录</h2>
-
-<ol>
-  <li><a href="#Introduction">前言</a></li>
-  <li><a href="#The_ZooKeeper_Data_Model">Zookeeper 数据模型</a></li>
-  <li><a href="#ZooKeeper_Sessions">Zookeeper 会话</a></li>
-  <li><a href="#ZooKeeper_Watches">Zookeeper 监听</a></li>
-  <li><a href="#ZooKeeper_ACL">ZooKeeper 使用 ACL 访问控制</a></li>
-</ol>
-
-<h2 id="a-idintroduction1-a"><a id="Introduction">1 前言</a></h2>
-
-<p>该文档是提供给期望使用 <code>Zookeeper</code>协作服务功能的开发者创建分布式应用的。文档内部包含了一些概念上和实践应用上的资料信息。</p>
-
-<p>在指南的前四节主要讨论了 <code>Zookeeper</code> 各方面的概念。这些东西对于理解 <code>Zookeeper</code>如何工作以及如何去使用 <code>Zookeeper</code> 是非常必要的。它虽然没有包含源代码，但是它是假设读者对于分布式计算相关的问题是很熟悉的。它们主要如下介绍：</p>
-
-<ul>
-  <li><a href="#The_ZooKeeper_Data_Model">Zookeeper 数据模型</a></li>
-  <li><a href="#ZooKeeper_Sessions">Zookeeper 会话</a></li>
-  <li><a href="#ZooKeeper_Watches">Zookeeper 监听</a></li>
-  <li><a href="#Consistency_Guarantees">Zookeeper 一致性保证</a></li>
-</ul>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/09/05/zookeeper-programmer-guide/">阅读全文 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">Nginx 反向代理配置和工作原理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-08-30T18:52:03+08:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:52 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2 id="section">目录</h2>
-
-<ol>
-  <li><a href="#Intro">前言</a></li>
-  <li><a href="#Proxy">Nginx 反向代理配置说明</a></li>
-  <li><a href="#ProcessRequest">Nginx 架构和请求处理流程</a></li>
-  <li><a href="#ImplementationStudy">Nginx Upstream模块和Location配置</a></li>
-  <li><a href="#End">后记</a></li>
-</ol>
-
-<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
-
-<p><code>Nginx</code>是一款面向性能设计的HTTP服务器，其性能相对于其他服务器表现优异。内部使用异步的事件处理模型，比如linux平台的<code>epoll</code>事件模型，unix平台的<code>kqueue</code>事件模型等。在Nginx源码的<code>src/event/modules</code>目录下，其对各个平台不同的异步模型进行了二次封装。此外，Nginx在代码实现的时候，会考虑到众多细节优化。比如：根据CPU亲缘性来分配进程和事件，避免CPU级的缓存失效；比如字符串比较时，四字节转换为整数来进行快速指令级比较，等等。</p>
-
-<p>本博文主要目的不是Nginx源码分析，所以，对源码及其独特优秀的代码设计不会去详细介绍。</p>
-
-<p>在最近的一些项目中，涉及到nginx的反向代理配置，然后花了一些时间了解下关于Nginx的整体请求处理流程和返现代理的实现机制。</p>
-
-<p>Nginx虽然代码整洁，模块清晰，但是代码量毕竟还是很多，而且注释实在是太少，所以把一些学习的资料和心得整理一下，以便以后查看。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">阅读全文 &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/16/google-java-style/">Google Java编程风格指南</a></h1>
+      <h1 class="entry-title">Google Java编程风格指南</h1>
     
     
       <p class="meta">
@@ -231,7 +122,7 @@
   </header>
 
 
-  <div class="entry-content"><p>说明：来自互联网，如有版权问题，请告知本人将其撤下。</p>
+<div class="entry-content"><p>说明：来自互联网，如有版权问题，请告知本人将其撤下。</p>
 
 <h2 id="section">目录</h2>
 
@@ -1051,18 +942,78 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 <p>本文档翻译自<a href="http://google-styleguide.googlecode.com/svn/trunk/javaguide.html">Google Java Style</a>，
 译者<a href="http://weibo.com/hawstein">@Hawstein</a>。</p>
 </div>
-  
-  
 
 
-    </article>
+  <footer>
+    <p class="meta">
+      
   
-  <div class="pagination">
+
+<span class="byline author vcard">Posted by <span class="fn">柯小小西</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-04-16T22:21:35+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>java</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a class="jiathis_button_digg">Digg</a>
+	<a class="jiathis_button_fav">收藏夹</a>
+	<a href="http://www.jiathis.com/share?uid=1933358" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
 </div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1395248101949397" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script> -->
+<!-- UY END -->
+ 
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/" title="Next Post: Nginx 反向代理配置和工作原理">Nginx 反向代理配置和工作原理 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>评论</h1>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END --> 
+ </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -1109,6 +1060,7 @@ return '\ufeff' + content; // byte order mark             | Good，对于非打�
 </section>
   
 </aside>
+
 
     </div>
   </div>
