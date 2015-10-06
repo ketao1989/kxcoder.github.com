@@ -1,0 +1,1039 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Java日志框架slf4j API介绍及异常接口实现分析 - 柯小小西の小水滴</title>
+  <meta name="author" content="柯小小西">
+
+  
+  <meta name="description" content="目录 前言 Facade设计模式简介 slf4j绑定日志 slf4j API使用 后记 前言 slf4j: 简洁的java日志统一接口（Simple Logging Facade for Java），顾名思义，就是一个使用Facade设计模式实现的面向java Logging框架的接口开源包。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://kxcoder.github.io/blog/2014/05/02/Java-slf4j-Introduce/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="柯小小西の小水滴" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+   <script src="http://ajax.useso.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- 使用360 CDN 代理 解决google字体 GFW问题 -->
+<link href="//fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.useso.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <div style="float:left; width: 500px">
+    <h1><a href="/">柯小小西の小水滴</a></h1>
+    
+      <h2>聚合各路水滴，方可成为大海.</h2>
+    
+  </div>
+  
+    <div style="float:right">
+      <p style="font-family:cursive;font-size:80%;color:yellow;font-style:oblique">
+         始终坚信，好记忆不如烂笔头。 
+      </p>
+<ul id="social-links">
+  <!-- Sina Weibo -->
+  <li>
+    <a href="http://weibo.com/2265041632" target="_blank">
+      <svg width="40" height="40" class="sina-weibo" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M9.641,17.231c-3.799,0.374-7.079-1.343-7.326-3.838c-0.246-2.494,2.634-4.82,6.434-5.196 c3.798-0.377,7.079,1.34,7.326,3.835C16.32,14.529,13.44,16.855,9.641,17.231 M17.24,8.952c-0.322-0.098-0.544-0.163-0.375-0.587 c0.365-0.921,0.403-1.718,0.007-2.286c-0.745-1.063-2.783-1.005-5.12-0.027c0-0.002-0.734,0.321-0.546-0.261 c0.359-1.156,0.305-2.123-0.254-2.682c-1.267-1.271-4.639,0.047-7.53,2.936C1.257,8.209,0,10.504,0,12.488 c0,3.796,4.866,6.104,9.628,6.104c6.241,0,10.393-3.627,10.393-6.506C20.021,10.347,18.557,9.358,17.24,8.952" />
+        <path fill="#000000" d="M21.384,2.005c-1.507-1.671-3.73-2.308-5.782-1.872l0,0c-0.475,0.102-0.778,0.569-0.676,1.043 c0.101,0.473,0.567,0.777,1.043,0.674c1.459-0.31,3.039,0.145,4.111,1.332c1.069,1.188,1.362,2.806,0.902,4.225v0.001 c-0.149,0.462,0.104,0.957,0.566,1.106c0.461,0.149,0.956-0.104,1.105-0.565c0,0,0-0.002,0-0.004 C23.299,5.95,22.894,3.674,21.384,2.005" />
+        <path fill="#000000" d="M19.07,4.094c-0.734-0.814-1.817-1.123-2.817-0.912c-0.409,0.088-0.671,0.49-0.581,0.899 c0.088,0.407,0.489,0.67,0.896,0.58v0.001c0.488-0.104,1.019,0.047,1.379,0.445c0.359,0.398,0.455,0.941,0.301,1.416l0,0 c-0.127,0.398,0.09,0.825,0.488,0.954c0.396,0.127,0.824-0.091,0.952-0.488C20,6.017,19.805,4.908,19.07,4.094" />
+        <path fill="#000000" d="M9.85,12.713c-0.132,0.229-0.426,0.338-0.656,0.242c-0.227-0.094-0.297-0.348-0.169-0.572 c0.132-0.221,0.416-0.328,0.64-0.239C9.895,12.227,9.978,12.483,9.85,12.713 M8.64,14.268c-0.367,0.586-1.154,0.843-1.747,0.57 c-0.584-0.265-0.756-0.945-0.389-1.518c0.362-0.568,1.124-0.824,1.712-0.574C8.811,12.998,9.001,13.675,8.64,14.268 M10.021,10.118 c-1.808-0.47-3.852,0.431-4.637,2.023c-0.8,1.624-0.026,3.428,1.801,4.017c1.892,0.612,4.122-0.324,4.898-2.078 C12.848,12.367,11.891,10.602,10.021,10.118" />
+      </svg>
+    </a>
+  </li>
+
+  <!-- GitHub -->
+  <li>
+    <a href="https://github.com/ketao1989" target="_blank">
+      <svg width="40" height="40" class="github" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M28.436,15.099C27.235,14.897,25.985,14.764,24.97,14.728L24.791,14.722C24.832,14.632,24.863,14.571,24.873,14.562C24.895,14.543999999999999,24.913,14.468,24.915000000000003,14.394C24.915000000000003,14.353,24.933000000000003,14.22,24.961000000000002,14.044C25.236,14.054,25.601000000000003,14.062000000000001,25.999000000000002,14.065000000000001C27.536,14.077000000000002,29.144000000000002,14.201,30.247000000000003,14.396C30.904000000000003,14.512,31.121000000000002,14.508000000000001,30.636000000000003,14.39C30.145000000000003,14.271,28.689000000000004,14.096,27.529000000000003,14.020000000000001C26.750000000000004,13.967,25.633000000000003,13.947000000000001,24.975000000000005,13.958000000000002C24.994000000000003,13.844000000000001,25.016000000000005,13.717000000000002,25.039000000000005,13.587000000000002C25.132000000000005,13.084000000000001,25.163000000000004,12.578000000000001,25.165000000000006,11.571000000000002C25.167000000000005,10.009000000000002,25.083000000000006,9.579,24.574000000000005,8.546000000000001C24.367000000000004,8.124,24.133000000000006,7.766000000000001,23.850000000000005,7.442000000000001C24.097000000000005,6.713000000000001,24.091000000000005,5.584000000000001,23.835000000000004,4.594000000000001C23.624000000000006,3.782000000000001,23.550000000000004,3.7300000000000013,22.814000000000004,3.886000000000001C22.19,4.019,21.69,4.2,21.049,4.523C20.746,4.675999999999999,20.328,4.914,20.025,5.101C19.235,4.823,18.418,4.639,17.546,4.54C16.662,4.44,14.495,4.496,13.725999999999999,4.638C12.973999999999998,4.777,12.296999999999999,4.947,11.684,5.149C11.378,4.96,10.934,4.705,10.616999999999999,4.545C9.973,4.221,9.473,4.041,8.847,3.908C8.113,3.751,8.036999999999999,3.804,7.827,4.616C7.567,5.619,7.5649999999999995,6.7669999999999995,7.822,7.494C7.852,7.577,7.87,7.636,7.877,7.682C6.835,8.994,6.495,10.462,6.721,12.511C6.78,13.045,6.871,13.535,6.998,13.984C6.333,13.98,5.3870000000000005,14.004,4.704000000000001,14.048C3.5420000000000007,14.125,2.0860000000000007,14.298,1.5950000000000006,14.417C1.1110000000000007,14.535,1.3260000000000005,14.539,1.9840000000000007,14.424C3.0870000000000006,14.229999999999999,4.696000000000001,14.104,6.232000000000001,14.093C6.522000000000001,14.092,6.793000000000001,14.086,7.026000000000002,14.08C7.096000000000002,14.317,7.176000000000002,14.543,7.267000000000001,14.758000000000001L7.26,14.759C6.245,14.794,4.996,14.927,3.795,15.129C2.894,15.28,1.564,15.581999999999999,1.4089999999999998,15.669C1.2459999999999998,15.76,1.3789999999999998,15.74,2.077,15.563C3.3499999999999996,15.241000000000001,5.005,14.994,7.055,14.822000000000001L7.284,14.802000000000001C7.724,15.824000000000002,8.402,16.604000000000003,9.36,17.212000000000003C9.946,17.585000000000004,10.885,17.968000000000004,11.357999999999999,18.028000000000002C11.488,18.044,11.866,18.122000000000003,12.197999999999999,18.200000000000003C12.530999999999999,18.278000000000002,13.181999999999999,18.395000000000003,13.643999999999998,18.462000000000003H13.654999999999998C13.645999999999997,18.468000000000004,13.637999999999998,18.472000000000005,13.629999999999997,18.478C13.069999999999997,18.769000000000002,12.705999999999998,19.222,12.460999999999997,19.935000000000002C12.350999999999997,19.968000000000004,12.213999999999997,20.013,12.065999999999997,20.064000000000004C11.536999999999997,20.244000000000003,11.330999999999998,20.281000000000002,10.794999999999998,20.285000000000004C10.238999999999997,20.289000000000005,10.106999999999998,20.265000000000004,9.774999999999999,20.109000000000005C9.291999999999998,19.884000000000004,8.841999999999999,19.470000000000006,8.541999999999998,18.976000000000006C8.040999999999999,18.150000000000006,7.174999999999998,17.566000000000006,6.452999999999998,17.566000000000006C5.835999999999998,17.566000000000006,5.718999999999998,17.816000000000006,6.164999999999997,18.181000000000004C6.836999999999997,18.730000000000004,7.338999999999997,19.290000000000006,7.544999999999997,19.718000000000004C7.660999999999997,19.958000000000002,7.838999999999997,20.329000000000004,7.9419999999999975,20.542000000000005C8.050999999999998,20.769000000000005,8.283999999999997,21.077000000000005,8.505999999999997,21.290000000000006C9.027999999999997,21.788000000000007,9.531999999999996,22.026000000000007,10.283999999999997,22.138000000000005C10.787999999999997,22.212000000000007,10.911999999999997,22.212000000000007,11.506999999999998,22.136000000000006C11.793999999999999,22.101000000000006,12.035999999999998,22.060000000000006,12.252999999999998,22.009000000000007C12.252999999999998,22.253000000000007,12.252999999999998,22.534000000000006,12.252999999999998,22.864000000000008C12.252999999999998,24.63000000000001,12.231999999999998,25.198000000000008,12.161999999999999,25.364000000000008C12.03,25.680000000000007,11.733999999999998,26.00500000000001,11.446,26.151000000000007C11.158999999999999,26.297000000000008,11.07,26.458000000000006,11.190999999999999,26.606000000000005C11.258,26.686000000000003,11.386999999999999,26.700000000000006,11.819999999999999,26.672000000000004C12.641999999999998,26.621000000000006,13.222999999999999,26.317000000000004,13.518999999999998,25.781000000000006C13.613999999999999,25.609000000000005,13.636,25.263000000000005,13.665999999999999,23.463000000000005C13.697999999999999,21.510000000000005,13.711999999999998,21.322000000000003,13.838999999999999,21.043000000000006C13.915999999999999,20.877000000000006,14.027,20.697000000000006,14.088999999999999,20.648000000000007C14.192999999999998,20.56200000000001,14.2,20.732000000000006,14.2,23.068000000000005C14.199,25.646000000000004,14.173,25.957000000000004,13.915,26.453000000000003C13.857,26.566000000000003,13.747,26.713000000000005,13.67,26.783C13.535,26.906000000000002,13.478,27.221,13.572,27.316000000000003C13.726999999999999,27.470000000000002,14.504,27.228,14.927999999999999,26.894000000000002C15.649999999999999,26.322000000000003,15.735999999999999,25.849000000000004,15.741999999999999,22.433L15.745,20.429L15.963999999999999,20.45L16.183,20.47L16.219,23.090999999999998C16.26,26.041999999999998,16.266000000000002,26.084999999999997,16.768,26.654999999999998C17.053,26.976999999999997,17.34,27.154999999999998,17.807000000000002,27.293999999999997C18.432000000000002,27.481999999999996,18.62,27.191999999999997,18.200000000000003,26.688999999999997C17.743000000000002,26.141999999999996,17.721000000000004,25.932999999999996,17.746000000000002,22.694999999999997C17.763,20.618999999999996,17.763,20.618999999999996,17.897000000000002,20.739999999999995C18.179000000000002,20.995999999999995,18.233,21.415999999999993,18.233,23.362999999999996C18.233,25.780999999999995,18.302,26.010999999999996,19.156,26.432999999999996C19.555,26.627999999999997,19.666999999999998,26.651999999999997,20.177999999999997,26.653999999999996C20.721999999999998,26.655999999999995,20.754999999999995,26.647999999999996,20.775,26.505999999999997C20.791999999999998,26.391,20.724999999999998,26.312999999999995,20.471,26.157999999999998C20.138,25.953,19.907,25.691,19.762,25.360999999999997C19.707,25.233999999999998,19.67,24.401999999999997,19.645,22.688999999999997C19.608999999999998,20.295999999999996,19.601,20.186999999999998,19.451999999999998,19.811999999999998C19.250999999999998,19.307999999999996,18.944,18.909999999999997,18.555,18.645999999999997C18.454,18.58,18.352999999999998,18.525,18.222,18.483999999999998C18.383000000000003,18.468,18.539,18.450999999999997,18.69,18.429C20.262,18.22,21.093,18.046,21.76,17.787999999999997C23.171000000000003,17.244999999999997,24.125,16.342999999999996,24.642000000000003,15.063999999999997C24.688000000000002,14.949999999999996,24.734,14.841999999999997,24.773000000000003,14.754999999999997L25.171000000000003,14.787999999999997C27.222,14.960999999999997,28.877000000000002,15.207999999999997,30.150000000000002,15.530999999999997C30.848000000000003,15.707999999999997,30.981,15.728999999999997,30.818,15.635999999999997C30.666,15.551,29.336,15.25,28.436,15.099ZM22.422,15.068C22.189,15.58,21.539,16.238,21.014,16.496C20.496,16.752,19.683999999999997,16.947,18.764,17.04C18.134999999999998,17.104,14.626999999999999,17.122999999999998,14.047999999999998,17.066C12.130999999999998,16.878,11.056999999999999,16.509,10.264999999999999,15.77C9.514999999999999,15.068,9.165,14.115,9.225999999999999,12.942C9.264999999999999,12.208,9.441999999999998,11.747,9.905,11.187000000000001C10.325999999999999,10.677000000000001,10.769,10.362000000000002,11.290999999999999,10.202000000000002C11.727999999999998,10.068000000000001,13.068999999999999,10.056000000000001,14.871999999999998,10.172000000000002C15.668999999999999,10.223000000000003,16.328,10.223000000000003,17.124,10.172000000000002C19.009999999999998,10.053000000000003,20.269,10.066000000000003,20.733999999999998,10.210000000000003C21.465,10.436000000000003,22.130999999999997,11.044000000000002,22.531,11.854000000000003C22.711,12.216000000000003,22.746,12.370000000000003,22.772,12.929000000000002C22.808,13.699,22.675,14.517,22.422,15.068ZM12.912,11.762C11.839,11.574,11.226,13.411000000000001,12.049000000000001,14.349C12.440000000000001,14.794,12.787,14.867,13.221000000000002,14.597C13.623000000000001,14.346,13.841000000000001,13.876999999999999,13.841000000000001,13.269C13.841,12.458,13.472,11.862,12.912,11.762ZM19.425,11.872C18.352,11.684,17.738,13.519,18.561,14.458C18.953,14.903,19.299,14.977,19.734,14.705C20.135,14.455,20.354000000000003,13.985,20.354000000000003,13.377C20.354,12.569,19.985,11.971,19.425,11.872ZM16.539,15.484C16.516000000000002,15.558,16.404,15.668,16.291,15.727C16.005,15.874,15.799,15.823,15.497,15.548C15.31,15.379,15.225,15.29,15.168,15.467C15.114999999999998,15.631,15.447999999999999,15.96,15.705,16.061C15.941,16.155,16.11,16.158,16.366,16.051C16.62,15.944999999999999,16.842,15.659999999999998,16.842,15.474999999999998C16.842,15.303,16.595,15.311,16.539,15.484ZM16.222,14.909C16.385,14.765,16.422,14.469000000000001,16.266000000000002,14.312000000000001S15.793000000000001,14.179000000000002,15.669000000000002,14.355C15.525000000000002,14.561,15.602000000000002,14.718,15.705000000000002,14.885C15.865,15.009,16.08,15.034,16.222,14.909Z" />
+      </svg>
+    </a>
+  </li>
+  
+</ul>
+    </div>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="kxcoder.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">归档</a></li>
+  <li><a href="/about">关于我</a></li>
+  <li><a href="/todo">TODO</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Java日志框架slf4j API介绍及异常接口实现分析</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-02T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Facade">Facade设计模式简介</a></li>
+  <li><a href="#Bind">slf4j绑定日志</a></li>
+  <li><a href="#API">slf4j API使用</a></li>
+  <li><a href="#End">后记</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>slf4j: 简洁的java日志统一接口（Simple Logging Facade for Java），顾名思义，就是一个使用Facade设计模式实现的面向java Logging框架的接口开源包。
+其和java数据库连接工具包JDBC很像，在JDBC框架中，各个不同数据库连接器分别针对不同数据库系统来实现对应的连接操作，而普通程序员只需要使用统一的JDBC接口而不需要关注具体底层使用的数据库类型，或者针对不同的数据库系统写各种兼容代码。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Note: slf4j其实类似于适配器，但是这里不称呼适配器，是因为当底层log日志系统不支持slf4j扩展时，比如log4j，就需要在两者中间增加一个适配器层来完成slf4j调用相关日志系统的操作接口动作。例如，slf4j为log4j提高的slf4j-log412.jar类库，但是logback支持slf4J扩展，所以其不需适配层转换。</p>
+  </blockquote>
+</blockquote>
+
+<!--more-->
+
+<p>同样，slf4j 不参与具体的日志代码实现，它只是在代码编译的时候根据程序的配置来绑定具体的日志系统。这样，使用slf4j类库就可以让你的代码独立于任意一个特定的日志API。因此，如果编写一个对外开发的API活着一个同样的类库，那么为了不限制使用你类库的代码必须使用指定的日志系统，你应该使用slf4j。</p>
+
+<p>相对于其他日志框架，slf4j日志类库的优点和推荐使用的缘由，可以参见 ImportNew 的译文【 <a href="#http://www.importnew.com/7450.html">为什么要使用SLF4J而不是Log4J</a> 】</p>
+
+<h2 id="a-idfacadefacadea"><a id="Facade">Facade设计模式简介</a></h2>
+
+<p>Facade模式，或者叫做外观模式，顾名思义就是封装各个底层子系统的提供的同一类功能接口，统一成一个更易操作使用的上层接口进而对外提供交互。有了这个上层封装的接口，接口调用方只需要调用这个接口，而不需要关于各个子系统的具体逻辑实现。</p>
+
+<p>Facade设计模式的官方定义是：Facade模式定义了一个更高层的接口，使子系统更加容易使用。</p>
+
+<p>关于Facade模式的实例，日常生活中很多这样子的例子。比如，5、1回家，可以有好几种方式：飞机、火车、长途汽车。在实际生活中，你回家的路线应该是：</p>
+
+<pre><code>	1. 坐车去机场（火车站/长途汽车站）；
+	2. 坐飞机（火车/长途汽车）到家乡；
+	3. 从家乡飞机场（火车站/长途汽车站）到家里。 
+</code></pre>
+
+<p>一般来说，上面的流程是毫无问题的。但是，如果做成一个系统，你需要对外暴露3个步骤中得3个不同的接口，外界需要根据不同的交通方式选择不同的调用接口，这无疑加大了接口调研的复杂度，以及系统的复杂度。如下图所示：</p>
+
+<p><img src="/images/2014/05/facade.png" /></p>
+
+<p>使用Facade模式，封装各个子系统的实现，对外提供3个接口：</p>
+
+<pre><code>	1. 坐车其站点；
+	2. 做主交通工具到家乡；
+	3. 从家乡的站点回家里。
+</code></pre>
+
+<p>因此，接口使用方不需要知道子系统具体是什么样的业务逻辑，其主要要在配置中，或者一开始指定交通工具，就可以让facade系统来完成下面的一系列操作。这样，除了让我们的系统对外暴露接口少了，最重要的是可以让第三方以最低的成本使用我们的接口。</p>
+
+<h2 id="a-idbindslf4ja"><a id="Bind">slf4j绑定日志</a></h2>
+
+<h3 id="slf4j-">3.1 slf4j 设计模式说明</h3>
+
+<p>为了说明slf4j采用的Facade模式，也就是如果只引入slf4j-api包，日志系统将无法正常使用。例如在pom.xml文件这只有：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>pom.xml依赖 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line">        <span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span><span class="line">            <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">slf4j</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+</span><span class="line">            <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">slf4j</span><span class="o">-</span><span class="n">api</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+</span><span class="line">            <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">1.7</span><span class="o">.</span><span class="mi">5</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+</span><span class="line">        <span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>而<a id="BindCode">测试代码</a>为：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>测试示例 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line"><span class="cm">/**</span>
+</span><span class="line"><span class="cm"> * @author: ketao Date: 14-5-3 Time: 上午1:03</span>
+</span><span class="line"><span class="cm"> * @version: \$Id$</span>
+</span><span class="line"><span class="cm"> */</span>
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LogTest</span> <span class="o">{</span>
+</span><span class="line">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">LogTest</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">){</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Hello world&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;ERROR&quot;</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>执行上面的代码会出现提示：</p>
+
+<pre><code>SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+</code></pre>
+
+<p>而如果我们引入logback日志系统，并且配置logback.xml日志配置文件：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>pom.xml依赖 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line">        <span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span><span class="line">            <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">ch</span><span class="o">.</span><span class="na">qos</span><span class="o">.</span><span class="na">logback</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+</span><span class="line">            <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">logback</span><span class="o">-</span><span class="n">classic</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+</span><span class="line">            <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">13</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+</span><span class="line">        <span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>接下来执行上面的测试代码，则会打印日志信息：</p>
+
+<pre><code>[2014-05-03 01:27:11 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:17)] Hello world
+[2014-05-03 01:27:11 [1;31mERROR[0;39m com.qunar.dubbo.LogTest.main(LogTest.java:18)] ERROR
+</code></pre>
+
+<h3 id="slf4j--1">3.2 slf4j 日志绑定流程</h3>
+
+<p>如<a href="#BindCode">3.1</a>中的代码所示，首先调用<code>LoggerFactory.getLogger</code>的方法，这个方法会在编译的时候，绑定系统设置的真正的日志框架，如下代码所示：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>日志绑定流程 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * Return a logger named according to the name parameter using the statically</span>
+</span><span class="line"><span class="cm">   * bound {@link ILoggerFactory} instance.</span>
+</span><span class="line"><span class="cm">   *</span>
+</span><span class="line"><span class="cm">   * @param name The name of the logger.</span>
+</span><span class="line"><span class="cm">   * @return logger</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Logger</span> <span class="nf">getLogger</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">ILoggerFactory</span> <span class="n">iLoggerFactory</span> <span class="o">=</span> <span class="n">getILoggerFactory</span><span class="o">();</span> <span class="c1">// 这里先获取ILoggerFactory对象</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">iLoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">name</span><span class="o">);</span> <span class="c1">// 根据获取的ILoggerFactory对象，调用其对应的日志对象</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">   <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * Return the {@link ILoggerFactory} instance in use.</span>
+</span><span class="line"><span class="cm">   * &lt;p/&gt;</span>
+</span><span class="line"><span class="cm">   * &lt;p/&gt;</span>
+</span><span class="line"><span class="cm">   * ILoggerFactory instance is bound with this class at compile time.</span>
+</span><span class="line"><span class="cm">   *</span>
+</span><span class="line"><span class="cm">   * @return the ILoggerFactory instance in use</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kd">static</span> <span class="n">ILoggerFactory</span> <span class="nf">getILoggerFactory</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">INITIALIZATION_STATE</span> <span class="o">==</span> <span class="n">UNINITIALIZED</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">INITIALIZATION_STATE</span> <span class="o">=</span> <span class="n">ONGOING_INITIALIZATION</span><span class="o">;</span>
+</span><span class="line">      <span class="n">performInitialization</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">    <span class="k">switch</span> <span class="o">(</span><span class="n">INITIALIZATION_STATE</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">case</span> <span class="nl">SUCCESSFUL_INITIALIZATION:</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">StaticLoggerBinder</span><span class="o">.</span><span class="na">getSingleton</span><span class="o">().</span><span class="na">getLoggerFactory</span><span class="o">();</span><span class="c1">// 这里就可以获取底层日志系统的单例对象了</span>
+</span><span class="line">      <span class="k">case</span> <span class="nl">NOP_FALLBACK_INITIALIZATION:</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">NOP_FALLBACK_FACTORY</span><span class="o">;</span>
+</span><span class="line">      <span class="k">case</span> <span class="nl">FAILED_INITIALIZATION:</span>
+</span><span class="line">        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="n">UNSUCCESSFUL_INIT_MSG</span><span class="o">);</span>
+</span><span class="line">      <span class="k">case</span> <span class="nl">ONGOING_INITIALIZATION:</span>
+</span><span class="line">        <span class="c1">// support re-entrant behavior.</span>
+</span><span class="line">        <span class="c1">// See also http://bugzilla.slf4j.org/show_bug.cgi?id=106</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">TEMP_FACTORY</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">&quot;Unreachable code&quot;</span><span class="o">);</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>而绑定是在<code>getILoggerFactory()</code>中调用的，在该方法的实现里，会调用<code>performInitialization()</code>，该方法调用<code>bind()</code>方法（部分代码）：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>日志绑定流程 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">bind</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">Set</span> <span class="n">staticLoggerBinderPathSet</span> <span class="o">=</span> <span class="n">findPossibleStaticLoggerBinderPathSet</span><span class="o">();</span><span class="c1">// 寻找程序配置的日志系统集，具体见下面代码</span>
+</span><span class="line">      <span class="n">reportMultipleBindingAmbiguity</span><span class="o">(</span><span class="n">staticLoggerBinderPathSet</span><span class="o">);</span><span class="c1">// 验证多于1个日志系统时，输出警告信息</span>
+</span><span class="line">      <span class="c1">// the next line does the binding</span>
+</span><span class="line">      <span class="n">StaticLoggerBinder</span><span class="o">.</span><span class="na">getSingleton</span><span class="o">();</span><span class="c1">// 测试是否可以获取该静态绑定类单例，可以，则置为成功状态，如下行；否则，会打出3.1中的NOP异常信息。</span>
+</span><span class="line">      <span class="n">INITIALIZATION_STATE</span> <span class="o">=</span> <span class="n">SUCCESSFUL_INITIALIZATION</span><span class="o">;</span>
+</span><span class="line">      <span class="n">reportActualBinding</span><span class="o">(</span><span class="n">staticLoggerBinderPathSet</span><span class="o">);</span><span class="c1">// 绑定，打印绑定具体日志系统的日志</span>
+</span><span class="line">      <span class="n">emitSubstituteLoggerWarning</span><span class="o">();</span><span class="c1">// 提交给临时日志factory 打印的日志，不是重点</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">NoClassDefFoundError</span> <span class="n">ncde</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">ncde</span><span class="o">.</span><span class="na">getMessage</span><span class="o">();</span>
+</span><span class="line">      <span class="k">if</span> <span class="o">(</span><span class="n">messageContainsOrgSlf4jImplStaticLoggerBinder</span><span class="o">(</span><span class="n">msg</span><span class="o">))</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">INITIALIZATION_STATE</span> <span class="o">=</span> <span class="n">NOP_FALLBACK_INITIALIZATION</span><span class="o">;</span>
+</span><span class="line">        <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;Failed to load class \&quot;org.slf4j.impl.StaticLoggerBinder\&quot;.&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;Defaulting to no-operation (NOP) logger implementation&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;See &quot;</span> <span class="o">+</span> <span class="n">NO_STATICLOGGERBINDER_URL</span>
+</span><span class="line">                <span class="o">+</span> <span class="s">&quot; for further details.&quot;</span><span class="o">);</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下面看看，slf4j是如何获取系统中指定的真正底层日志系统：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>日志绑定流程 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="c1">// We need to use the name of the StaticLoggerBinder class, but we can&#39;t reference</span>
+</span><span class="line">  <span class="c1">// the class itself.</span>
+</span><span class="line">  <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">STATIC_LOGGER_BINDER_PATH</span> <span class="o">=</span> <span class="s">&quot;org/slf4j/impl/StaticLoggerBinder.class&quot;</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="kd">private</span> <span class="kd">static</span> <span class="n">Set</span> <span class="nf">findPossibleStaticLoggerBinderPathSet</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// use Set instead of list in order to deal with  bug #138</span>
+</span><span class="line">    <span class="c1">// LinkedHashSet appropriate here because it preserves insertion order during iteration</span>
+</span><span class="line">    <span class="n">Set</span> <span class="n">staticLoggerBinderPathSet</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">LinkedHashSet</span><span class="o">();</span>
+</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">ClassLoader</span> <span class="n">loggerFactoryClassLoader</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">class</span>
+</span><span class="line">              <span class="o">.</span><span class="na">getClassLoader</span><span class="o">();</span>
+</span><span class="line">      <span class="n">Enumeration</span> <span class="n">paths</span><span class="o">;</span>
+</span><span class="line">      <span class="k">if</span> <span class="o">(</span><span class="n">loggerFactoryClassLoader</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">paths</span> <span class="o">=</span> <span class="n">ClassLoader</span><span class="o">.</span><span class="na">getSystemResources</span><span class="o">(</span><span class="n">STATIC_LOGGER_BINDER_PATH</span><span class="o">);</span>
+</span><span class="line">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">paths</span> <span class="o">=</span> <span class="n">loggerFactoryClassLoader</span>
+</span><span class="line">                <span class="o">.</span><span class="na">getResources</span><span class="o">(</span><span class="n">STATIC_LOGGER_BINDER_PATH</span><span class="o">);</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">      <span class="k">while</span> <span class="o">(</span><span class="n">paths</span><span class="o">.</span><span class="na">hasMoreElements</span><span class="o">())</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">URL</span> <span class="n">path</span> <span class="o">=</span> <span class="o">(</span><span class="n">URL</span><span class="o">)</span> <span class="n">paths</span><span class="o">.</span><span class="na">nextElement</span><span class="o">();</span>
+</span><span class="line">        <span class="n">staticLoggerBinderPathSet</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">ioe</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;Error getting resources from path&quot;</span><span class="o">,</span> <span class="n">ioe</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">staticLoggerBinderPathSet</span><span class="o">;</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>slf4j在适配器层或者在兼容slf4j扩展的log-api 中会有一个<code>org/slf4j/impl/StaticLoggerBinder.class</code>类，这样就获取了系统中真正的日志系统。然后获取该日志的单例，打印相关的日志信息就可以了。比如，打印slf4j的<code>log.info</code>则调用logback中<code>Logger.info()</code>方法来打印日志信息。</p>
+
+<h2 id="a-idapislf4j-apia"><a id="API">slf4j API使用</a></h2>
+
+<p>slf4j的打印日志基本一致，主要分为：<code>trace</code>,<code>debug</code>,<code>info</code>,<code>warn</code>,<code>error</code>,比log4j少了<code>fatal</code>级别日志。由于每个级别对于的API方法级别一致，因此，这里选用info来介绍不同输入参数的API使用。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Tip: SLF4J 认为 ERROR 与 FATAL 并没有实质上的差别，所以拿掉了 FATAL 等级，只剩下其他五种。</p>
+  </blockquote>
+</blockquote>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>API使用 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"> <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 纯字符串形式的日志</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">msg</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 指定一个参数和位置格式的info级别的日志输出形式。这个形式避免了多个object对象的创建。</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">format</span><span class="o">,</span> <span class="n">Object</span> <span class="n">arg</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 指定2个参数和对于位置格式的info级别的日志输出。</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">format</span><span class="o">,</span> <span class="n">Object</span> <span class="n">arg1</span><span class="o">,</span> <span class="n">Object</span> <span class="n">arg2</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 根据指定的参数和日志格式来输出info级别的日志信息。</span>
+</span><span class="line"><span class="cm">   * 但是，需要指出这种形式虽然避免的字符串拼接的成本，但是它会私底下创建一个`Object[]`对象在调用info方法之前，即使info级别的日志不打印。</span>
+</span><span class="line"><span class="cm">   * 因此，如果不是必须3个及以上参数的话，推荐使用两个参数和一个参数的info日志。</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">format</span><span class="o">,</span> <span class="n">Object</span><span class="o">...</span> <span class="n">arguments</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 打印抛出异常信息的info 级别日志</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">msg</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">t</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>此外，需要介绍的是在slf4j中还提供了含有Marker对象的日记输出API接口。Marker是常常被用来丰富log状态的对象。遵守slf4j的日志系统实现，决定了信息怎样在使用的Marker之间传达。实际上，很多遵守规范的日志系统会忽视掉marker数据,所以，我们不介绍Marker相关API接口。</p>
+
+<p>下面给出各个接口的使用示例代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>API使用 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line"><span class="cm">/**</span>
+</span><span class="line"><span class="cm"> * @author: ketao Date: 14-5-3 Time: 上午1:03</span>
+</span><span class="line"><span class="cm"> * @version: \$Id$</span>
+</span><span class="line"><span class="cm"> */</span>
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LogTest</span> <span class="o">{</span>
+</span><span class="line">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">LogTest</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;纯字符串信息的info级别日志&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;一个参数:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;agr1&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;二个参数:agrs1:{};agrs2:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="c1">// 下面两种方式都可以，一般使用上面一种就可以了</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;args3&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;args3&quot;</span> <span class="o">});</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;======================异常相关====================================&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="c1">// 测试异常相关日志</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;抛出异常,e:&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;二个参数:agrs1:{};agrs2:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;二个参数:agrs1:{};agrs2:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+</span><span class="line">
+</span><span class="line">        <span class="c1">// 下面两种方式都可以，一般使用上面一种就可以了</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;agrs3&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span>
+</span><span class="line">                <span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;args3&quot;</span><span class="o">,</span>
+</span><span class="line">                <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">)</span> <span class="o">});</span>
+</span><span class="line">        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span>
+</span><span class="line">                <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">)</span> <span class="o">});</span>
+</span><span class="line">
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>对应输出日志信息：</p>
+
+<pre><code>[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:20)] 纯字符串信息的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:21)] 一个参数:agr1的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:22)] 二个参数:agrs1:args1;agrs2:args2的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:24)] 三个参数:agrs1:args1;agrs2:args2;args3:args3 的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:25)] 三个参数:agrs1:args1;agrs2:args2;args3:args3 的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:27)] ======================异常相关====================================
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:29)] 抛出异常,e:
+java.io.IOException: 测试抛出IO异常信息
+	at com.qunar.dubbo.LogTest.main(LogTest.java:29) [classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.7.0_45]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57) ~[na:1.7.0_45]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.7.0_45]
+	at java.lang.reflect.Method.invoke(Method.java:606) ~[na:1.7.0_45]
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:120) [idea_rt.jar:na]
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:31)] 二个参数:agrs1:args1;agrs2:java.io.IOException: 测试抛出IO异常信息的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:32)] 二个参数:agrs1:args1;agrs2:args2的info级别日志
+java.io.IOException: 测试抛出IO异常信息
+	at com.qunar.dubbo.LogTest.main(LogTest.java:32) [classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.7.0_45]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57) ~[na:1.7.0_45]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.7.0_45]
+	at java.lang.reflect.Method.invoke(Method.java:606) ~[na:1.7.0_45]
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:120) [idea_rt.jar:na]
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:35)] 三个参数:agrs1:args1;agrs2:args2;args3:java.io.IOException: 测试抛出IO异常信息 的info级别日志
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:36)] 三个参数:agrs1:args1;agrs2:args2;args3:agrs3 的info级别日志
+java.io.IOException: 测试抛出IO异常信息
+	at com.qunar.dubbo.LogTest.main(LogTest.java:36) [classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.7.0_45]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57) ~[na:1.7.0_45]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.7.0_45]
+	at java.lang.reflect.Method.invoke(Method.java:606) ~[na:1.7.0_45]
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:120) [idea_rt.jar:na]
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:38)] 三个参数:agrs1:args1;agrs2:args2;args3:args3 的info级别日志
+java.io.IOException: 测试抛出IO异常信息
+	at com.qunar.dubbo.LogTest.main(LogTest.java:38) [classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.7.0_45]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57) ~[na:1.7.0_45]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.7.0_45]
+	at java.lang.reflect.Method.invoke(Method.java:606) ~[na:1.7.0_45]
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:120) [idea_rt.jar:na]
+[2014-05-03 03:47:14 [34mINFO [0;39m com.qunar.dubbo.LogTest.main(LogTest.java:39)] 三个参数:agrs1:args1;agrs2:args2;args3:java.io.IOException: 测试抛出IO异常信息 的info级别日志
+</code></pre>
+
+<blockquote>
+  <blockquote>
+    <p>Note: 从代码调用可以看到，throwable 异常信息单独作为一个参数输入，因此，如果把异常信息作为<code>{}</code>占位符中的字符串，则会调用其对应toString方法，而无法打印异常堆栈信息。可以看看下面的截取源码：</p>
+  </blockquote>
+</blockquote>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>API使用 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">msg</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">filterAndLog_0_Or3Plus</span><span class="o">(</span><span class="n">FQCN</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="n">msg</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// 当日志的参数string 大于1，并且包含 Throwable类型参数，则调用下面的方法</span>
+</span><span class="line">  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">info</span><span class="o">(</span><span class="n">String</span> <span class="n">format</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">argArray</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">filterAndLog_0_Or3Plus</span><span class="o">(</span><span class="n">FQCN</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="n">format</span><span class="o">,</span> <span class="n">argArray</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">   <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 在logback代码中，作者表明如果不使用Object[]创建参数数组对象，则会减少20 纳秒的时间开销。</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">filterAndLog_0_Or3Plus</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">localFQCN</span><span class="o">,</span>
+</span><span class="line">      <span class="kd">final</span> <span class="n">Marker</span> <span class="n">marker</span><span class="o">,</span> <span class="kd">final</span> <span class="n">Level</span> <span class="n">level</span><span class="o">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">msg</span><span class="o">,</span>
+</span><span class="line">      <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">,</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">final</span> <span class="n">FilterReply</span> <span class="n">decision</span> <span class="o">=</span> <span class="n">loggerContext</span>
+</span><span class="line">        <span class="o">.</span><span class="na">getTurboFilterChainDecision_0_3OrMore</span><span class="o">(</span><span class="n">marker</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">level</span><span class="o">,</span> <span class="n">msg</span><span class="o">,</span>
+</span><span class="line">            <span class="n">params</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">decision</span> <span class="o">==</span> <span class="n">FilterReply</span><span class="o">.</span><span class="na">NEUTRAL</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">if</span> <span class="o">(</span><span class="n">effectiveLevelInt</span> <span class="o">&gt;</span> <span class="n">level</span><span class="o">.</span><span class="na">levelInt</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span><span class="o">;</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">decision</span> <span class="o">==</span> <span class="n">FilterReply</span><span class="o">.</span><span class="na">DENY</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">return</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">buildLoggingEventAndAppend</span><span class="o">(</span><span class="n">localFQCN</span><span class="o">,</span> <span class="n">marker</span><span class="o">,</span> <span class="n">level</span><span class="o">,</span> <span class="n">msg</span><span class="o">,</span> <span class="n">params</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span><span class="c1">// 在这个方法里面，会LoggingEvent方法构架日志信息，而对于Throwable非空时，则会创建一个ThrowableProxy对象，具体代码见下面。</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">  <span class="c1">// 下面的代码，是对日志中的异常打印信息。显然，在messageFormat里面，使用String来处理，是无法获得这么丰富的异常堆栈信息的。</span>
+</span><span class="line">  <span class="kd">public</span> <span class="nf">ThrowableProxy</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">throwable</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">this</span><span class="o">.</span><span class="na">throwable</span> <span class="o">=</span> <span class="n">throwable</span><span class="o">;</span>
+</span><span class="line">    <span class="k">this</span><span class="o">.</span><span class="na">className</span> <span class="o">=</span> <span class="n">throwable</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">();</span>
+</span><span class="line">    <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">throwable</span><span class="o">.</span><span class="na">getMessage</span><span class="o">();</span>
+</span><span class="line">    <span class="k">this</span><span class="o">.</span><span class="na">stackTraceElementProxyArray</span> <span class="o">=</span> <span class="n">ThrowableProxyUtil</span><span class="o">.</span><span class="na">steArrayToStepArray</span><span class="o">(</span><span class="n">throwable</span>
+</span><span class="line">        <span class="o">.</span><span class="na">getStackTrace</span><span class="o">());</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">//下面构建详细异常的堆栈信息，这也就是我们在代码输出时，看到的一大坨at... 输出错误代码位置等。</span>
+</span><span class="line">    <span class="n">Throwable</span> <span class="n">nested</span> <span class="o">=</span> <span class="n">throwable</span><span class="o">.</span><span class="na">getCause</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">nested</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">this</span><span class="o">.</span><span class="na">cause</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ThrowableProxy</span><span class="o">(</span><span class="n">nested</span><span class="o">);</span>
+</span><span class="line">      <span class="k">this</span><span class="o">.</span><span class="na">cause</span><span class="o">.</span><span class="na">commonFrames</span> <span class="o">=</span> <span class="n">ThrowableProxyUtil</span>
+</span><span class="line">          <span class="o">.</span><span class="na">findNumberOfCommonFrames</span><span class="o">(</span><span class="n">nested</span><span class="o">.</span><span class="na">getStackTrace</span><span class="o">(),</span>
+</span><span class="line">              <span class="n">stackTraceElementProxyArray</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">    <span class="k">if</span><span class="o">(</span><span class="n">GET_SUPPRESSED_METHOD</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="c1">// this will only execute on Java 7</span>
+</span><span class="line">      <span class="k">try</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">Object</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">GET_SUPPRESSED_METHOD</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">throwable</span><span class="o">);</span>
+</span><span class="line">        <span class="k">if</span><span class="o">(</span><span class="n">obj</span> <span class="k">instanceof</span> <span class="n">Throwable</span><span class="o">[])</span> <span class="o">{</span>
+</span><span class="line">          <span class="n">Throwable</span><span class="o">[]</span> <span class="n">throwableSuppressed</span> <span class="o">=</span> <span class="o">(</span><span class="n">Throwable</span><span class="o">[])</span> <span class="n">obj</span><span class="o">;</span>
+</span><span class="line">          <span class="k">if</span><span class="o">(</span><span class="n">throwableSuppressed</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">suppressed</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ThrowableProxy</span><span class="o">[</span><span class="n">throwableSuppressed</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+</span><span class="line">            <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">throwableSuppressed</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class="line">              <span class="k">this</span><span class="o">.</span><span class="na">suppressed</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ThrowableProxy</span><span class="o">(</span><span class="n">throwableSuppressed</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+</span><span class="line">              <span class="k">this</span><span class="o">.</span><span class="na">suppressed</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">commonFrames</span> <span class="o">=</span> <span class="n">ThrowableProxyUtil</span>
+</span><span class="line">                  <span class="o">.</span><span class="na">findNumberOfCommonFrames</span><span class="o">(</span><span class="n">throwableSuppressed</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getStackTrace</span><span class="o">(),</span>
+</span><span class="line">                      <span class="n">stackTraceElementProxyArray</span><span class="o">);</span>
+</span><span class="line">            <span class="o">}</span>
+</span><span class="line">          <span class="o">}</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IllegalAccessException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="c1">// ignore</span>
+</span><span class="line">      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InvocationTargetException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="c1">// ignore</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <blockquote>
+    <p>Note: 上面代码只是一般的步骤，对于调用<code>Object[]</code>形式的方法，则<code>ThrowableProxy</code>之前，还会对<code>Object[]</code>中的元素进行过滤处理，提取出最后一个元素判断是不是 <code>Throwable</code>类型的对象。代码参考如下：</p>
+  </blockquote>
+</blockquote>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>API使用 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"> <span class="kd">final</span> <span class="kd">public</span> <span class="kd">static</span> <span class="n">FormattingTuple</span> <span class="nf">format</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">messagePattern</span><span class="o">,</span>
+</span><span class="line">      <span class="n">Object</span> <span class="n">arg1</span><span class="o">,</span> <span class="n">Object</span> <span class="n">arg2</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="nf">arrayFormat</span><span class="o">(</span><span class="n">messagePattern</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="n">arg1</span><span class="o">,</span> <span class="n">arg2</span> <span class="o">});</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">	<span class="c1">//这方法会对输入参数进行特殊处理和过滤</span>
+</span><span class="line"> <span class="kd">final</span> <span class="kd">public</span> <span class="kd">static</span> <span class="n">FormattingTuple</span> <span class="nf">arrayFormat</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">messagePattern</span><span class="o">,</span>
+</span><span class="line">      <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">argArray</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">Throwable</span> <span class="n">throwableCandidate</span> <span class="o">=</span> <span class="n">getThrowableCandidate</span><span class="o">(</span><span class="n">argArray</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">	<span class="o">......</span>
+</span><span class="line">
+</span><span class="line">	<span class="k">if</span> <span class="o">(</span><span class="n">L</span> <span class="o">&lt;</span> <span class="n">argArray</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="k">new</span> <span class="nf">FormattingTuple</span><span class="o">(</span><span class="n">sbuf</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">argArray</span><span class="o">,</span> <span class="n">throwableCandidate</span><span class="o">);</span><span class="c1">// 如果元素中有Throwable类型，则size会减少，因此，对应的Throwale参数位置为 置提取出来的异常对象</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="k">new</span> <span class="nf">FormattingTuple</span><span class="o">(</span><span class="n">sbuf</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">argArray</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">  <span class="kd">static</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="nf">getThrowableCandidate</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">argArray</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">argArray</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">argArray</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">final</span> <span class="n">Object</span> <span class="n">lastEntry</span> <span class="o">=</span> <span class="n">argArray</span><span class="o">[</span><span class="n">argArray</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">];</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">lastEntry</span> <span class="k">instanceof</span> <span class="n">Throwable</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="o">(</span><span class="n">Throwable</span><span class="o">)</span> <span class="n">lastEntry</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="a-idenda">&lt;a id=End”&gt;后记&lt;/a&gt;</h2>
+<p>slf4j的日志，打印抛出异常的信息时，如果只需要message，则需要在log api接口中的String 里面对应位置添加<code>{}</code>符号；否则，如果想要打印全量<font color="red">异常栈信息，则**不能也不可以**</font>在string字符串中添加<code>{}</code>，不然会大失所望。</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">柯小小西</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-05-02T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>java</a>, <a class='category' href='/blog/categories/log/'>log</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a class="jiathis_button_digg">Digg</a>
+	<a class="jiathis_button_fav">收藏夹</a>
+	<a href="http://www.jiathis.com/share?uid=1933358" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1395248101949397" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script> -->
+<!-- UY END -->
+ 
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/04/29/Intelij-IDEA-Remote-Debug-Tomcat-App/" title="Previous Post: Intelij IDEA 远程调试Tomcat服务">&laquo; Intelij IDEA 远程调试Tomcat服务</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/05/03/Java-MultiThread-ThreadPool-Introduce/" title="Next Post: Java 多线程线程池分析">Java 多线程线程池分析 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>评论</h1>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END --> 
+ </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>本人</h1>
+  <p>技术还处于半吊子的开发攻城狮。爱好各种技术，崇拜各种技术大牛达人。始终觉得，好记忆不如烂笔头。<a href="/about/">更多介绍...</a></p>
+  <p>声明：本站使用的图片等，甚至部分文章都来自网络，原作者享有对著作的一切权利。</p>
+  <p>欢迎在新浪微博上关注我：<wb:follow-button uid="2265041632" type="gray_3" width="100%" height="24" ></wb:follow-button></p>
+</section><section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/09/05/zookeeper-programmer-guide/">Zookeeper 编程指南</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">Nginx 反向代理配置和工作原理</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/30/Linux-Awk-Study-Note/">Linux Awk 使用学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/28/Online-Mysql-Deadlock-Analyse/">线上Mysql死锁问题分析</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/27/Jstat-GC-Guide-Introduce/">Java 查看系统GC命令介绍</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section> 
+  <h1>文章分类</h1> 
+  <ul id="categories"> 
+    <li class='category'><a href='/blog/categories/gc/'>gc (1)</a></li>
+<li class='category'><a href='/blog/categories/ide/'>ide (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>java (6)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>linux (2)</a></li>
+<li class='category'><a href='/blog/categories/log/'>log (1)</a></li>
+<li class='category'><a href='/blog/categories/mysql/'>mysql (2)</a></li>
+<li class='category'><a href='/blog/categories/nginx/'>nginx (1)</a></li>
+<li class='category'><a href='/blog/categories/script/'>script (2)</a></li>
+<li class='category'><a href='/blog/categories/spring/'>spring (1)</a></li>
+<li class='category'><a href='/blog/categories/thread/'>thread (2)</a></li>
+<li class='category'><a href='/blog/categories/translation/'>translation (1)</a></li>
+<li class='category'><a href='/blog/categories/zookeeper/'>zookeeper (1)</a></li>
+ 
+  </ul> 
+</section><section id="tag-clouds" style="text-decoration:none">
+<h1>最新评论</h1>
+  <!-- UYAN NEW COMMENT BEGIN -->
+<div id="uyan_newcmt_unit"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=1933358"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+<!-- UYAN NEW COMMENT END -->
+</section>
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 柯小小西 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>-感谢<a href="https://github.com"> Github </a> 提供Page功能</span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+</body>
+</html>
