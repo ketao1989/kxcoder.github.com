@@ -1,0 +1,12 @@
+<div class="highlight"><pre><span class="k">return</span> <span class="k">new</span> <span class="nf">MyClass</span><span class="o">()</span> <span class="o">{</span>
+  <span class="nd">@Override</span> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">method</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">condition</span><span class="o">())</span> <span class="o">{</span>
+      <span class="k">try</span> <span class="o">{</span>
+        <span class="n">something</span><span class="o">();</span>
+      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ProblemException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">recover</span><span class="o">();</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">};</span>
+</pre></div>
