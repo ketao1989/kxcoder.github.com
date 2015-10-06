@@ -1,0 +1,23 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Pushes a task. Call only from this thread.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param t the task. Caller must ensure non-null.</span>
+<span class="cm"> */</span>
+<span class="kd">final</span> <span class="kt">void</span> <span class="nf">pushTask</span><span class="o">(</span><span class="n">ForkJoinTask</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ForkJoinTask</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;[]</span> <span class="n">q</span><span class="o">;</span> <span class="kt">int</span> <span class="n">s</span><span class="o">,</span> <span class="n">m</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">((</span><span class="n">q</span> <span class="o">=</span> <span class="n">queue</span><span class="o">)</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>    <span class="c1">// ignore if queue removed</span>
+        <span class="kt">long</span> <span class="n">u</span> <span class="o">=</span> <span class="o">(((</span><span class="n">s</span> <span class="o">=</span> <span class="n">queueTop</span><span class="o">)</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(</span><span class="n">m</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">))</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">ASHIFT</span><span class="o">)</span> <span class="o">+</span> <span class="n">ABASE</span><span class="o">;</span>
+        <span class="n">UNSAFE</span><span class="o">.</span><span class="na">putOrderedObject</span><span class="o">(</span><span class="n">q</span><span class="o">,</span> <span class="n">u</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span> <span class="c1">// 把q数组偏移量为u的对应的值，置为t。不保证及时内存可见，如果field不为volatile</span>
+        <span class="n">queueTop</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>         <span class="c1">// or use putOrderedInt</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">s</span> <span class="o">-=</span> <span class="n">queueBase</span><span class="o">)</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="mi">2</span><span class="o">)</span>
+            <span class="n">pool</span><span class="o">.</span><span class="na">signalWork</span><span class="o">();</span> <span class="c1">//唤醒或者新建worker线程</span>
+        <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">s</span> <span class="o">==</span> <span class="n">m</span><span class="o">)</span>
+            <span class="n">growQueue</span><span class="o">();</span> <span class="c1">//当s的值和队列值长度length-1一样时，即队列已满，则增加队列大小。</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

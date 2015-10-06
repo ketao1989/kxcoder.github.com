@@ -1,0 +1,13 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">     *当任务执行完成后，返回执行的结果，该方法和&lt;code&gt;Feture.get()&lt;/code&gt;不同的地方时，其抛出的异常是&lt;code&gt;RuntimeException&lt;/code&gt;和&lt;code&gt;Error&lt;/code&gt;。</span>
+<span class="cm">     *此外，也不会抛出&lt;code&gt;InterruptedException&lt;/code&gt;。</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="n">V</span> <span class="nf">join</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">doJoin</span><span class="o">()</span> <span class="o">!=</span> <span class="n">NORMAL</span><span class="o">)</span> <span class="c1">// 任务没有正常完成</span>
+            <span class="k">return</span> <span class="nf">reportResult</span><span class="o">();</span> <span class="c1">//处理非正常情况</span>
+        <span class="k">else</span>
+            <span class="k">return</span> <span class="nf">getRawResult</span><span class="o">();</span> <span class="c1">// 返回结果</span>
+    <span class="o">}</span>
+</pre></div>

@@ -1,0 +1,35 @@
+<div class="highlight"><pre> <span class="kd">final</span> <span class="kd">public</span> <span class="kd">static</span> <span class="n">FormattingTuple</span> <span class="nf">format</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">messagePattern</span><span class="o">,</span>
+      <span class="n">Object</span> <span class="n">arg1</span><span class="o">,</span> <span class="n">Object</span> <span class="n">arg2</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">arrayFormat</span><span class="o">(</span><span class="n">messagePattern</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="n">arg1</span><span class="o">,</span> <span class="n">arg2</span> <span class="o">});</span>
+  <span class="o">}</span>
+
+	<span class="c1">//这方法会对输入参数进行特殊处理和过滤</span>
+ <span class="kd">final</span> <span class="kd">public</span> <span class="kd">static</span> <span class="n">FormattingTuple</span> <span class="nf">arrayFormat</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">messagePattern</span><span class="o">,</span>
+      <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">argArray</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="n">Throwable</span> <span class="n">throwableCandidate</span> <span class="o">=</span> <span class="n">getThrowableCandidate</span><span class="o">(</span><span class="n">argArray</span><span class="o">);</span>
+
+	<span class="o">......</span>
+
+	<span class="k">if</span> <span class="o">(</span><span class="n">L</span> <span class="o">&lt;</span> <span class="n">argArray</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nf">FormattingTuple</span><span class="o">(</span><span class="n">sbuf</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">argArray</span><span class="o">,</span> <span class="n">throwableCandidate</span><span class="o">);</span><span class="c1">// 如果元素中有Throwable类型，则size会减少，因此，对应的Throwale参数位置为 置提取出来的异常对象</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nf">FormattingTuple</span><span class="o">(</span><span class="n">sbuf</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">argArray</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+
+
+
+  <span class="kd">static</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="nf">getThrowableCandidate</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">argArray</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">argArray</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">argArray</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">final</span> <span class="n">Object</span> <span class="n">lastEntry</span> <span class="o">=</span> <span class="n">argArray</span><span class="o">[</span><span class="n">argArray</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">];</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">lastEntry</span> <span class="k">instanceof</span> <span class="n">Throwable</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="o">(</span><span class="n">Throwable</span><span class="o">)</span> <span class="n">lastEntry</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+  <span class="o">}</span>
+</pre></div>

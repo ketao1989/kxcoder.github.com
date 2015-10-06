@@ -1,0 +1,17 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Throwable</span> <span class="n">exception</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">onStart</span><span class="o">();</span> <span class="c1">// 该方法主要负责初始化Task 队列，和seed值</span>
+        <span class="n">pool</span><span class="o">.</span><span class="na">work</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">// 调用pool的work方法，在pool中说明</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">exception</span> <span class="o">=</span> <span class="n">ex</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+        <span class="n">onTermination</span><span class="o">(</span><span class="n">exception</span><span class="o">);</span><span class="c1">// 清除该worker线程关于结束的一些操作，比如取消任务，解除在pool上的注册，状态为结束terminate</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

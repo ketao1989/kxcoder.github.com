@@ -1,0 +1,83 @@
+<div class="highlight"><pre><span class="kn">package</span> <span class="n">io</span><span class="o">.</span><span class="na">github</span><span class="o">.</span><span class="na">ketao1989</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.RecursiveTask</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.google.common.collect.Lists</span><span class="o">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * 很简单的一个操作，就是把字符串加一个后缀，然后放进队列里</span>
+<span class="cm"> * </span>
+<span class="cm"> * @author: ketao Date: 14-5-24 Time: 下午10:16</span>
+<span class="cm"> * @version: \$Id$</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ListTask</span> <span class="kd">extends</span> <span class="n">RecursiveTask</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">THRESHOLD</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">processStr</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">start</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">end</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">ListTask</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">processStr</span><span class="o">,</span> <span class="kt">int</span> <span class="n">start</span><span class="o">,</span> <span class="kt">int</span> <span class="n">end</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">processStr</span> <span class="o">=</span> <span class="n">processStr</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">start</span> <span class="o">=</span> <span class="n">start</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">end</span> <span class="o">=</span> <span class="n">end</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">compute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Lists</span><span class="o">.</span><span class="na">newArrayListWithCapacity</span><span class="o">(</span><span class="n">processStr</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+        <span class="kt">boolean</span> <span class="n">isProcess</span> <span class="o">=</span> <span class="o">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="o">)</span> <span class="o">==</span> <span class="n">THRESHOLD</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">isProcess</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+            <span class="n">String</span> <span class="n">newStr</span> <span class="o">=</span> <span class="n">processStr</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">start</span><span class="o">)</span> <span class="o">+</span> <span class="s">&quot;-test&quot;</span><span class="o">;</span>
+            <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">newStr</span><span class="o">);</span>
+
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">()+</span><span class="s">&quot;---&quot;</span><span class="o">);</span>
+            <span class="kt">int</span> <span class="n">partPos</span> <span class="o">=</span> <span class="o">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">end</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+            <span class="n">ListTask</span> <span class="n">taskl</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ListTask</span><span class="o">(</span><span class="n">processStr</span><span class="o">,</span> <span class="n">start</span><span class="o">,</span> <span class="n">partPos</span><span class="o">);</span>
+            <span class="n">ListTask</span> <span class="n">taskr</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ListTask</span><span class="o">(</span><span class="n">processStr</span><span class="o">,</span> <span class="n">partPos</span><span class="o">,</span> <span class="n">end</span><span class="o">);</span>
+
+            <span class="n">taskl</span><span class="o">.</span><span class="na">fork</span><span class="o">();</span> <span class="c1">//按序异步执行这个任务，会放到一个队列里</span>
+            <span class="n">taskr</span><span class="o">.</span><span class="na">fork</span><span class="o">();</span>
+
+            <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">resultl</span> <span class="o">=</span> <span class="n">taskl</span><span class="o">.</span><span class="na">join</span><span class="o">();</span> <span class="c1">//等待执行完成后返回，调用isDone 会返回true</span>
+            <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">resultr</span> <span class="o">=</span> <span class="n">taskr</span><span class="o">.</span><span class="na">join</span><span class="o">();</span>
+            
+            <span class="n">result</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">resultl</span><span class="o">);</span>
+            <span class="n">result</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">resultr</span><span class="o">);</span>
+        <span class="o">}</span>
+
+
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * 测试主函数</span>
+<span class="cm"> * </span>
+<span class="cm"> * @author: ketao Date: 14-5-24 Time: 下午10:12</span>
+<span class="cm"> * @version: \$Id: ForkJoinTest.java 6 2014-05-24 14:13:48Z ketao1989 $</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ForkJoinTest</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">ForkJoinPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ForkJoinPool</span><span class="o">();</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ExecutionException</span><span class="o">,</span> <span class="n">InterruptedException</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">(</span><span class="s">&quot;thread-11&quot;</span><span class="o">,</span> <span class="s">&quot;thread-21&quot;</span><span class="o">,</span> <span class="s">&quot;thread-31&quot;</span><span class="o">,</span> <span class="s">&quot;thread-41&quot;</span><span class="o">,</span> <span class="s">&quot;thread-51&quot;</span><span class="o">,</span>
+                <span class="s">&quot;thread-61&quot;</span><span class="o">,</span> <span class="s">&quot;thread-71&quot;</span><span class="o">,</span> <span class="s">&quot;thread-81&quot;</span><span class="o">);</span>
+        <span class="n">ListTask</span> <span class="n">listTask</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ListTask</span><span class="o">(</span><span class="n">list</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+        <span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="n">listTask</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">JSON</span><span class="o">.</span><span class="na">toJSONString</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">get</span><span class="o">()));</span>
+        <span class="n">pool</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">listTask</span><span class="o">.</span><span class="na">isCompletedNormally</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Task 任务顺利完成！&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T00:51:06+08:00</updated>
+  <updated>2015-10-07T02:02:19+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -415,6 +415,145 @@
   <li><a href="http://www.pagefault.info/?cat=7">http://www.pagefault.info/?cat=7</a></li>
   <li><a href="http://nginx.org/en/docs/">http://nginx.org/en/docs/</a></li>
   <li><a href="http://kxcoder.github.io/images/2015/08/nginx_stream.png">http://kxcoder.github.io/images/2015/08/nginx_stream.png</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux Awk 使用学习笔记]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/05/30/Linux-Awk-Study-Note/"/>
+    <updated>2014-05-30T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/05/30/Linux-Awk-Study-Note</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Console">Awk命令行</a></li>
+  <li><a href="#Script">Awk脚本程序</a></li>
+  <li><a href="#Recommend">推荐教程</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p><code>linux Awk</code> 脚本语言，算来也有很长的一段历史了。在如今各种更全更简单的脚本语言遍地生成的年代，关注<code>Awk</code>的新人越来越少了。最近，在项目组同事的影响下，去学习了下<code>Awk</code>的基本使用方法。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Note：本文只是学习笔记，很多示例和描述都来自最后推荐的文章里面。</p>
+  </blockquote>
+</blockquote>
+
+<p>起意写关于<code>Awk</code>学习笔记的主要原因是，学习皓哥的<a href="http://coolshell.cn/articles/9070.html">AWK 简明教程</a> 完了之后，完全还是云里雾里的，不知所以然。所以，找了个<a href="http://www.aslibra.com/doc/awk.htm">AWK 手册</a>好好学习。但是，对于前者介绍太多浅，初学者对于<code>Awk</code>使用没有任何概念；后者又过于长，不方便我去查资料，所以合计起来，就写一个学习总结罢了。</p>
+
+<!--more-->
+
+<h2 id="a-idconsoleawka"><a id="Console">Awk命令行</a></h2>
+
+<p>关于<code>Awk</code>的历史，语言优势什么的，就不浪费时间介绍了。</p>
+
+<h3 id="awk-">2.1 Awk 程序结构</h3>
+
+<p>首先，我们在服务器上查看日志信息，大部分时候都希望使用一行命令搞定问题，因此，显然命令行方式使用<code>Awk</code>是很频繁的事情。</p>
+
+<p><figure class='code'><figcaption><span>awk语法</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="err">‘</span><span class="nx">awk</span><span class="err">程序主体’</span> <span class="p">[</span><span class="err">操作的文本</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>在写一个<code>awk</code>脚本之前，首先需要的是了解 <code>awk</code>程序组成结构，如果你不了解它的程序一般的结构，那么你去看皓哥或者其他人写的入门级<code>Awk</code>小程序，你也无法真正去了解或者深入。</p>
+
+<pre><code>Pattern1 {Actions1}
+Pattern2 { Actions2 }
+......
+Pattern3 { Actions3 }
+</code></pre>
+
+<blockquote>
+  <blockquote>
+    <p>Note：<code>Pattern （模式）</code>，如同正则一样，就是判断<code>Pattern</code>是否满足，如果满足，则执行就下来的<code>Actions</code>动作行为。<code>awk</code>提供的比较运算符和<code>C</code>语言一样，不过新加了 ` ~ <code>(匹配) 及 </code> !~ `(不匹配) 二个关系运算符.</p>
+  </blockquote>
+</blockquote>
+
+<pre><code>其用法与涵义如下:
+若 A 为一字符串, B 为一正则表达式(Regular Expression)
+A ~ B 判断 字符串A 中是否 包含 能匹配(match)B表达式的子字符串.
+A !~ B 判断 字符串A 中是否 不包含 能匹配(match)B表达式的子字符串.
+</code></pre>
+
+<blockquote>
+  <blockquote>
+    <p>Note：<code>Action</code>，就是动作，但是需要指出的是，一个<code>Pattern</code>所对应的<code>Action</code>应该要放进<code>{ }</code>内。当然，存在一种情况，就是没有<code>Pattern</code>,直接就是<code>{Action}</code>，这表示，“无条件执行指定的Action动作”。</p>
+  </blockquote>
+</blockquote>
+
+<p>了解了<code>awk</code>程序的基本结构，下面给一个简单示例：</p>
+
+<p><figure class='code'><figcaption><span>awk语法</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="err">‘</span> <span class="o">$</span><span class="mi">0</span><span class="err">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="mi">1</span> <span class="p">{</span><span class="kr">print</span> <span class="err">“</span><span class="nx">hello</span> <span class="nx">world</span><span class="err">”</span><span class="p">}</span><span class="err">’</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>这个程序意思就是：<code>$0&gt;1</code>模式成立，则打印后面的<code>hello world</code>，在console上输入3，回车，则会打印<code>hello world</code>；如果输入0，则不会打印该消息。</p>
+  </blockquote>
+</blockquote>
+
+<h3 id="awk--1">2.2 Awk 程序说明</h3>
+
+<p>首先，需要了解<code>$0</code>这种格式： <code>$0</code>表示<code>awk</code>所读入的一行字符串；<code>$1</code>则表示所读入的字符串的第一个数据，默认安装<code>空格/tab</code>来分隔；<code>$2</code>则表示所读入的字符串的第二个数据；以此类推…..</p>
+
+<p>其次，这个程序是从控制台，或者文本中读取变量值（需要在后面写操作的文本名）。如果你测试了这个小脚本，你会发现，它会一直读，知道遇到<code>ctrl+d</code>或者<code>EOF</code>才会结束。但是，如果你初始化一些变量或者其他只需要执行一次的逻辑，怎么办呢？你需要<code>BEGIN</code>和<code>END</code>。</p>
+
+<pre><code>1. BEGIN ：程序一开始执行时执行的，仅被执行一次。
+2. END	 ：程序处理完所有数据即将返回的时候，执行一次。
+</code></pre>
+
+<p>比如上面的程序，可以写成：</p>
+
+<p><figure class='code'><figcaption><span>awk示例</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="err">‘</span> <span class="nx">BEGIN</span><span class="p">{</span><span class="nx">n</span><span class="o">=</span><span class="mi">3</span><span class="p">}</span> <span class="o">$</span><span class="mi">0</span><span class="err">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="mi">1</span> <span class="err">&amp;</span><span class="nx">amp</span><span class="p">;</span><span class="err">&amp;</span><span class="nx">amp</span><span class="p">;</span> <span class="err">–</span><span class="nx">n</span><span class="err">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="mi">0</span> <span class="p">{</span><span class="kr">print</span> <span class="err">“</span><span class="nx">hello</span> <span class="nx">world</span><span class="err">”</span><span class="p">}</span> <span class="nx">END</span><span class="p">{</span><span class="kr">print</span> <span class="err">“</span><span class="nx">EXIT</span> <span class="nx">AWK</span> <span class="nx">TEST</span><span class="err">”</span><span class="p">}</span><span class="err">’</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>执行完了结果如下：</p>
+
+<pre><code>[tao.ke@l-rtools1.ops.cn6 ~]$ awk ' BEGIN{n=3} $0&gt;1 &amp;&amp; --n&gt;0 {print "hello world"} END{print "EXIT AWK TEST"}'         
+3
+hello world
+2
+hello world
+1
+0 #（在这里的时候输入 ctrl+d）
+EXIT AWK TEST
+</code></pre>
+
+<p>最后，说说<code>Awk</code>中使用<code>linux shell</code>命令。和<code>linux</code>一样，使用<code>|</code>来操作管道流，使用<code>""</code>标识<code>linux</code>命令。</p>
+
+<p><figure class='code'><figcaption><span>awk示例</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="err">‘</span> <span class="nx">BEGIN</span><span class="p">{</span><span class="k">while</span><span class="p">(</span><span class="err">“</span><span class="nx">who</span><span class="err">”|</span><span class="kr">getline</span><span class="p">){</span><span class="kr">print</span> <span class="o">$</span><span class="mi">0</span><span class="p">}}</span> <span class="err">‘</span><span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>这里可以打印出，所有的登陆在系统上的用户。	关于<code>while</code>的使用，和<code>c</code>语言一样；此外，其他控制语言<code>if</code>、<code>do-while</code>、<code>for</code>，也和<code>c</code>一样。需要说明的是，<code>for</code>可以使用类似<code>foreach</code>的形式，具体见下一节。</p>
+  </blockquote>
+</blockquote>
+
+<h2 id="a-idscriptawka"><a id="Script">Awk脚本程序</a></h2>
+
+<p>–待续</p>
+
+<h2 id="a-idrecommenda"><a id="Recommend">推荐教程</a></h2>
+
+<ul>
+  <li>
+    <p>awk手册，<a href="http://www.aslibra.com/doc/awk.htm">http://www.aslibra.com/doc/awk.htm</a></p>
+  </li>
+  <li>
+    <p>AWK 简明教程，<a href="http://coolshell.cn/articles/9070.html">http://coolshell.cn/articles/9070.html</a></p>
+  </li>
 </ul>
 ]]></content>
   </entry>

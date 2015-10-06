@@ -1,0 +1,8 @@
+<div class="highlight"><pre><span class="nb">export </span><span class="nv">TOMCAT_USER</span><span class="o">=</span><span class="s2">&quot;tomcat&quot;</span>
+<span class="nb">export </span><span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">&quot;-Xms512m -Xmx1024m -XX:NewSize=256m -XX:PermSize=256m -server -XX:+DisableExplicitGC -Dqunar.logs=$CATALINA_BASE/logs -Dqunar.cache=$CATALINA_BASE/cache -verbose:gc -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:$CATALINA_BASE/logs/gc.log&quot;</span>
+chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/logs
+chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/cache
+chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/conf
+chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/work
+chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/temp
+</pre></div>

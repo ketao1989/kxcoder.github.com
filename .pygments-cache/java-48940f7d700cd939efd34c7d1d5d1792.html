@@ -1,0 +1,41 @@
+<div class="highlight"><pre>  <span class="cm">/**</span>
+<span class="cm">   * Return a logger named according to the name parameter using the statically</span>
+<span class="cm">   * bound {@link ILoggerFactory} instance.</span>
+<span class="cm">   *</span>
+<span class="cm">   * @param name The name of the logger.</span>
+<span class="cm">   * @return logger</span>
+<span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Logger</span> <span class="nf">getLogger</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ILoggerFactory</span> <span class="n">iLoggerFactory</span> <span class="o">=</span> <span class="n">getILoggerFactory</span><span class="o">();</span> <span class="c1">// 这里先获取ILoggerFactory对象</span>
+    <span class="k">return</span> <span class="n">iLoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">name</span><span class="o">);</span> <span class="c1">// 根据获取的ILoggerFactory对象，调用其对应的日志对象</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * Return the {@link ILoggerFactory} instance in use.</span>
+<span class="cm">   * &amp;lt;p/&amp;gt;</span>
+<span class="cm">   * &amp;lt;p/&amp;gt;</span>
+<span class="cm">   * ILoggerFactory instance is bound with this class at compile time.</span>
+<span class="cm">   *</span>
+<span class="cm">   * @return the ILoggerFactory instance in use</span>
+<span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">ILoggerFactory</span> <span class="nf">getILoggerFactory</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">INITIALIZATION_STATE</span> <span class="o">==</span> <span class="n">UNINITIALIZED</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">INITIALIZATION_STATE</span> <span class="o">=</span> <span class="n">ONGOING_INITIALIZATION</span><span class="o">;</span>
+      <span class="n">performInitialization</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">switch</span> <span class="o">(</span><span class="n">INITIALIZATION_STATE</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nl">SUCCESSFUL_INITIALIZATION:</span>
+        <span class="k">return</span> <span class="n">StaticLoggerBinder</span><span class="o">.</span><span class="na">getSingleton</span><span class="o">().</span><span class="na">getLoggerFactory</span><span class="o">();</span><span class="c1">// 这里就可以获取底层日志系统的单例对象了</span>
+      <span class="k">case</span> <span class="nl">NOP_FALLBACK_INITIALIZATION:</span>
+        <span class="k">return</span> <span class="n">NOP_FALLBACK_FACTORY</span><span class="o">;</span>
+      <span class="k">case</span> <span class="nl">FAILED_INITIALIZATION:</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="n">UNSUCCESSFUL_INIT_MSG</span><span class="o">);</span>
+      <span class="k">case</span> <span class="nl">ONGOING_INITIALIZATION:</span>
+        <span class="c1">// support re-entrant behavior.</span>
+        <span class="c1">// See also http://bugzilla.slf4j.org/show_bug.cgi?id=106</span>
+        <span class="k">return</span> <span class="n">TEMP_FACTORY</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="err">“</span><span class="n">Unreachable</span> <span class="n">code</span><span class="err">”</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>

@@ -1,0 +1,91 @@
+<div class="highlight"><pre>	<span class="c1">// helpJoinTask允许的最大stolen-&gt;joining 链深度，同时也是重试的最大次数</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">MAX_HELP</span> <span class="o">=</span> <span class="mi">16</span><span class="o">;</span>
+
+    <span class="kd">final</span> <span class="kt">int</span> <span class="nf">joinTask</span><span class="o">(</span><span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">joinMe</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">prevJoin</span> <span class="o">=</span> <span class="n">currentJoin</span><span class="o">;</span> <span class="c1">//保存当前在执行的任务</span>
+        <span class="n">currentJoin</span> <span class="o">=</span> <span class="n">joinMe</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">s</span><span class="o">,</span> <span class="n">retries</span> <span class="o">=</span> <span class="n">MAX_HELP</span><span class="o">;;)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">((</span><span class="n">s</span> <span class="o">=</span> <span class="n">joinMe</span><span class="o">.</span><span class="na">status</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span> <span class="c1">//当joinMe任务正常完成，则执行原来正在执行的任务，返回执行状态</span>
+                <span class="n">currentJoin</span> <span class="o">=</span> <span class="n">prevJoin</span><span class="o">;</span> 
+                <span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">retries</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">queueTop</span> <span class="o">!=</span> <span class="n">queueBase</span><span class="o">)</span> <span class="o">{</span> <span class="c1">//当前队列中有任务未被执行</span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="n">localHelpJoinTask</span><span class="o">(</span><span class="n">joinMe</span><span class="o">))</span> <span class="c1">//并且队列中还存在其他未取消的任务，则不重试，扔到pool.tryAwaitJoin中</span>
+                        <span class="n">retries</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>           <span class="c1">// cannot help</span>
+                <span class="o">}</span>
+                <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">retries</span> <span class="o">==</span> <span class="n">MAX_HELP</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span> <span class="c1">//这个值为什么这么判断呢？？为什么retries == 8 执行下面逻辑？？</span>
+                    <span class="o">--</span><span class="n">retries</span><span class="o">;</span>                 <span class="c1">// check uncommon case</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">tryDeqAndExec</span><span class="o">(</span><span class="n">joinMe</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="c1">// 当joinMe是一些worker 队列的base上面，则steal，并且执行，执行的状态为不正常完成时</span>
+                        <span class="n">Thread</span><span class="o">.</span><span class="na">yield</span><span class="o">();</span>        <span class="c1">// 则礼貌性的暂停任务</span>
+                       <span class="o">}</span>
+                <span class="k">else</span>
+                	<span class="c1">// 尝试定位和执行给定任务的stealer的任务集，或者轮流执行他的所有stealers的一个。如果运行一个任务，则返回true</span>
+                    <span class="n">retries</span> <span class="o">=</span> <span class="n">helpJoinTask</span><span class="o">(</span><span class="n">joinMe</span><span class="o">)</span> <span class="o">?</span> <span class="n">MAX_HELP</span> <span class="o">:</span> <span class="n">retries</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> 
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="n">retries</span> <span class="o">=</span> <span class="n">MAX_HELP</span><span class="o">;</span>           <span class="c1">// restart if not done</span>
+                <span class="n">pool</span><span class="o">.</span><span class="na">tryAwaitJoin</span><span class="o">(</span><span class="n">joinMe</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    
+
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">helpJoinTask</span><span class="o">(</span><span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">joinMe</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">boolean</span> <span class="n">helped</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">scanGuard</span> <span class="o">&amp;</span> <span class="n">SMASK</span><span class="o">;</span>
+        <span class="n">ForkJoinWorkerThread</span><span class="o">[]</span> <span class="n">ws</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">workers</span><span class="o">;</span> <span class="c1">//获取pool所有的worker线程数组</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ws</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">ws</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">m</span> <span class="o">&amp;&amp;</span> <span class="n">joinMe</span><span class="o">.</span><span class="na">status</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span> 
+            <span class="kt">int</span> <span class="n">levels</span> <span class="o">=</span> <span class="n">MAX_HELP</span><span class="o">;</span>              <span class="c1">// remaining chain length</span>
+            <span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">task</span> <span class="o">=</span> <span class="n">joinMe</span><span class="o">;</span>      <span class="c1">// base of chain</span>
+            <span class="nl">outer:</span><span class="k">for</span> <span class="o">(</span><span class="n">ForkJoinWorkerThread</span> <span class="n">thread</span> <span class="o">=</span> <span class="k">this</span><span class="o">;;)</span> <span class="o">{</span>
+                <span class="c1">// Try to find v, the stealer of task, by first using hint</span>
+                <span class="n">ForkJoinWorkerThread</span> <span class="n">v</span> <span class="o">=</span> <span class="n">ws</span><span class="o">[</span><span class="n">thread</span><span class="o">.</span><span class="na">stealHint</span> <span class="o">&amp;</span> <span class="n">m</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">v</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">v</span><span class="o">.</span><span class="na">currentSteal</span> <span class="o">!=</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="o">;)</span> <span class="o">{</span>        <span class="c1">// search array</span>
+                        <span class="k">if</span> <span class="o">((</span><span class="n">v</span> <span class="o">=</span> <span class="n">ws</span><span class="o">[</span><span class="n">j</span><span class="o">])</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">v</span><span class="o">.</span><span class="na">currentSteal</span> <span class="o">==</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="n">thread</span><span class="o">.</span><span class="na">stealHint</span> <span class="o">=</span> <span class="n">j</span><span class="o">;</span>
+                            <span class="k">break</span><span class="o">;</span>              <span class="c1">// save hint for next time</span>
+                        <span class="o">}</span>
+                        <span class="k">if</span> <span class="o">(++</span><span class="n">j</span> <span class="o">&gt;</span> <span class="n">m</span><span class="o">)</span>
+                            <span class="k">break</span> <span class="n">outer</span><span class="o">;</span>        <span class="c1">// can&#39;t find stealer</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="c1">// Try to help v, using specialized form of deqTask</span>
+                <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
+                    <span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;[]</span> <span class="n">q</span><span class="o">;</span> <span class="kt">int</span> <span class="n">b</span><span class="o">,</span> <span class="n">i</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">joinMe</span><span class="o">.</span><span class="na">status</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span>
+                        <span class="k">break</span> <span class="n">outer</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">((</span><span class="n">b</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="na">queueBase</span><span class="o">)</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="na">queueTop</span> <span class="o">||</span>
+                        <span class="o">(</span><span class="n">q</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="na">queue</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span>
+                        <span class="o">(</span><span class="n">i</span> <span class="o">=</span> <span class="o">(</span><span class="n">q</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">&amp;</span> <span class="n">b</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span>
+                        <span class="k">break</span><span class="o">;</span>                  <span class="c1">// empty</span>
+                    <span class="kt">long</span> <span class="n">u</span> <span class="o">=</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">ASHIFT</span><span class="o">)</span> <span class="o">+</span> <span class="n">ABASE</span><span class="o">;</span>
+                    <span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">q</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">task</span><span class="o">.</span><span class="na">status</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span>
+                        <span class="k">break</span> <span class="n">outer</span><span class="o">;</span>            <span class="c1">// stale</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">v</span><span class="o">.</span><span class="na">queueBase</span> <span class="o">==</span> <span class="n">b</span> <span class="o">&amp;&amp;</span>
+                        <span class="n">UNSAFE</span><span class="o">.</span><span class="na">compareAndSwapObject</span><span class="o">(</span><span class="n">q</span><span class="o">,</span> <span class="n">u</span><span class="o">,</span> <span class="n">t</span><span class="o">,</span> <span class="kc">null</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="n">v</span><span class="o">.</span><span class="na">queueBase</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+                        <span class="n">v</span><span class="o">.</span><span class="na">stealHint</span> <span class="o">=</span> <span class="n">poolIndex</span><span class="o">;</span>
+                        <span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">ps</span> <span class="o">=</span> <span class="n">currentSteal</span><span class="o">;</span>
+                        <span class="n">currentSteal</span> <span class="o">=</span> <span class="n">t</span><span class="o">;</span>
+                        <span class="n">t</span><span class="o">.</span><span class="na">doExec</span><span class="o">();</span> <span class="c1">// 好了，这里获取到了steal到的task，可以执行了</span>
+                        <span class="n">currentSteal</span> <span class="o">=</span> <span class="n">ps</span><span class="o">;</span>
+                        <span class="n">helped</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c1">//执行了任务，这里设为true</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="c1">// Try to descend to find v&#39;s stealer</span>
+                <span class="n">ForkJoinTask</span><span class="o">&lt;?&gt;</span> <span class="n">next</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="na">currentJoin</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(--</span><span class="n">levels</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">task</span><span class="o">.</span><span class="na">status</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+                    <span class="n">next</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">next</span> <span class="o">!=</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">task</span> <span class="o">=</span> <span class="n">next</span><span class="o">;</span>
+                    <span class="n">thread</span> <span class="o">=</span> <span class="n">v</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="k">else</span>
+                    <span class="k">break</span><span class="o">;</span>  <span class="c1">// max levels, stale, dead-end, or cyclic</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">helped</span><span class="o">;</span>
+    <span class="o">}</span>
+</pre></div>

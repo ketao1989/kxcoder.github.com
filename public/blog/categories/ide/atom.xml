@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ide | 柯小小西の小水滴]]></title>
+  <link href="http://kxcoder.github.io/blog/categories/ide/atom.xml" rel="self"/>
+  <link href="http://kxcoder.github.io/"/>
+  <updated>2015-10-07T02:02:19+08:00</updated>
+  <id>http://kxcoder.github.io/</id>
+  <author>
+    <name><![CDATA[柯小小西]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Intelij IDEA 远程调试Tomcat服务]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/04/29/Intelij-IDEA-Remote-Debug-Tomcat-App/"/>
+    <updated>2014-04-29T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/04/29/Intelij-IDEA-Remote-Debug-Tomcat-App</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Server">线上服务配置</a></li>
+  <li><a href="#Client">IDE本地配置</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>在很多情况下，我们在本地启动调试一些服务；或者说外部调用开发测试环境某些服务时，需要直接调试定位问题代码点；
+这些问题都会让我们需要可以在本地IDE上面调试本地代码来查看线上情况。最近和其他业务部门联调的时候，
+了解到原来真的可以debug本地代码同步控制线上运行流程。下面，记录一下具体的操作配置步骤。</p>
+
+<!--more-->
+
+<h2 id="a-idservera"><a id="Server">线上服务配置</a></h2>
+
+<p>目前线上的整个tomcat的服务脚本配置：</p>
+
+<ol>
+  <li>一台机器上放一个全局脚本，比如放置在<code>/home/tomcat/bin</code>目录下；</li>
+  <li>机器上的每一个tomcat实例目录里面都会有一些基本的设置，比如tomcat的<code>conf</code>目录，以及<code>startenv.sh</code>文件，</li>
+  <li><code>startenv.sh</code>文件目前的配置为：</li>
+</ol>
+
+<p><figure class='code'><figcaption><span>线上服务配置 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">TOMCAT_USER</span><span class="o">=</span>”tomcat”
+</span><span class='line'><span class="nb">export </span><span class="nv">JAVA_OPTS</span><span class="o">=</span>”-Xms512m -Xmx1024m -XX:NewSize<span class="o">=</span>256m -XX:PermSize<span class="o">=</span>256m -server -XX:+DisableExplicitGC -Dqunar.logs<span class="o">=</span><span class="nv">$CATALINA_BASE</span>/logs -Dqunar.cache<span class="o">=</span><span class="nv">$CATALINA_BASE</span>/cache -verbose:gc -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:<span class="nv">$CATALINA_BASE</span>/logs/gc.log”
+</span><span class='line'>chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/logs
+</span><span class='line'>chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/cache
+</span><span class='line'>chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/conf
+</span><span class='line'>chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/work
+</span><span class='line'>chown -R tomcat:tomcat <span class="nv">$CATALINA_BASE</span>/temp
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>因此，为了方便，我们只需要增加debug相关配置在JAVA_OPTS就可以了：
+<figure class='code'><figcaption><span>线上JAVA_OPTS服务配置 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>-server -Xdebug -Xnoagent -Djava.compiler<span class="o">=</span>NONE -Xrunjdwp:transport<span class="o">=</span>dt_socket,address<span class="o">=</span>9999,server<span class="o">=</span>y,suspend<span class="o">=</span>n
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Note: 这里的端口指定为9999，你也可以自己指定。主要是JVM绑定端口使用。</p>
+  </blockquote>
+</blockquote>
+
+<pre><code>-Xdebug					|启用调试特性
+-Xrunjdwp				|启用JDWP实现，它包含若干子选项：
+transport=dt_socket		|JPDA front-end和back-end之间的传输方法。dt_socket表示使用套接字传输。
+address=9999			|JVM在9999端口上监听请求。
+server=y				|y表示启动的JVM是被调试者。如果为n，则表示启动的JVM是调试器。
+suspend=y				|y表示启动的JVM会暂停等待，直到调试器连接上。
+suspend=y这个选项很重要。如果你想从Tomcat启动的一开始就进行调试，那么就必须设置suspend=y。
+</code></pre>
+
+<p>接下来，重新启动线上服务，就可以在本地调试相关app了。</p>
+
+<h2 id="a-idclientidea"><a id="Client">IDE本地配置</a></h2>
+
+<p>本地使用的IDE是Intelij IDEA 开发工具，具体操作步骤为：</p>
+
+<p>1、 在IDEA上面新建一个 tomcat remote server服务：
+<img src="http://kxcoder.github.io/images/2014/04/newremote.png" />
+» Note:图片中的端口是web服务的端口号，而不是JVM监听绑定的端口号。</p>
+
+<p><img src="http://kxcoder.github.io/images/2014/04/debugaddress.png" />
+» Note:图片中的端口是JVM监听绑定的端口号，即我们在服务端设置绑定的address值。</p>
+
+<p>2、 接下来就可以通过debug来启动本地服务，当出现下面字样时，表示连接成功，可以debug了。</p>
+
+<pre><code>client：  
+	Connected to server
+	Connected to the target VM, address: 'l-hds2.h.dev.cn6.qunar.com:9999', transport: 'socket'  
+server：  
+	Listening for transport dt_socket at address: 9999  
+	Listening for transport dt_socket at address: 9999  
+	Listening for transport dt_socket at address: 9999
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

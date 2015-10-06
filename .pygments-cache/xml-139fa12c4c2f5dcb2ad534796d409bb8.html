@@ -1,0 +1,40 @@
+<div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span>
+<span class="cp">&lt;!DOCTYPE mapper PUBLIC &quot;-//ibatis.apache.org//DTD Mapper 3.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;</span>
+<span class="nt">&lt;mapper</span> <span class="na">namespace=</span><span class="s">&quot;io.github.ketao1989.dao.VersionDao&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;resultMap</span> <span class="na">id=</span><span class="s">&quot;VersionMap&quot;</span> <span class="na">type=</span><span class="s">&quot;io.github.ketao1989.model.Version&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;id</span> <span class="na">column=</span><span class="s">&quot;id&quot;</span> <span class="na">property=</span><span class="s">&quot;id&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">column=</span><span class="s">&quot;id&quot;</span> <span class="na">property=</span><span class="s">&quot;id&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">column=</span><span class="s">&quot;version_num&quot;</span> <span class="na">property=</span><span class="s">&quot;versionNum&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">column=</span><span class="s">&quot;description&quot;</span> <span class="na">property=</span><span class="s">&quot;description&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">column=</span><span class="s">&quot;update_time&quot;</span> <span class="na">property=</span><span class="s">&quot;updateTime&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/resultMap&gt;</span>
+
+    <span class="nt">&lt;sql</span> <span class="na">id=</span><span class="s">&quot;versionColumn&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;trim</span> <span class="na">suffix=</span><span class="s">&quot;&quot;</span> <span class="na">suffixOverrides=</span><span class="s">&quot;,&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&quot;versionNum != null&quot;</span><span class="nt">&gt;</span>version_num,<span class="nt">&lt;/if&gt;</span>
+            <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&quot;description != null&quot;</span><span class="nt">&gt;</span>description,<span class="nt">&lt;/if&gt;</span>
+            <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&quot;updateTime != null&quot;</span><span class="nt">&gt;</span>update_time<span class="nt">&lt;/if&gt;</span>
+        <span class="nt">&lt;/trim&gt;</span>
+    <span class="nt">&lt;/sql&gt;</span>
+    <span class="nt">&lt;sql</span> <span class="na">id=</span><span class="s">&quot;versionValue&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;trim</span> <span class="na">suffix=</span><span class="s">&quot;&quot;</span> <span class="na">suffixOverrides=</span><span class="s">&quot;,&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&quot;versionNum != null&quot;</span><span class="nt">&gt;</span>#{versionNum},<span class="nt">&lt;/if&gt;</span>
+            <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&quot;description != null&quot;</span><span class="nt">&gt;</span>#{description},<span class="nt">&lt;/if&gt;</span>
+            <span class="nt">&lt;if</span> <span class="na">test=</span><span class="s">&quot;updateTime != null&quot;</span><span class="nt">&gt;</span>#{updateTime}<span class="nt">&lt;/if&gt;</span>
+        <span class="nt">&lt;/trim&gt;</span>
+    <span class="nt">&lt;/sql&gt;</span>
+
+    <span class="c">&lt;!-- 根据id查询Version记录 --&gt;</span>
+    <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;queryVersionById&quot;</span> <span class="na">parameterType=</span><span class="s">&quot;map&quot;</span> <span class="na">resultMap=</span><span class="s">&quot;VersionMap&quot;</span><span class="nt">&gt;</span>
+          select id,version_num,description,update_time
+          from version
+          where id = #{id}
+    <span class="nt">&lt;/select&gt;</span>
+
+    <span class="c">&lt;!-- 查询所有Version记录 --&gt;</span>
+    <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;queryAllVersions&quot;</span>  <span class="na">resultMap=</span><span class="s">&quot;VersionMap&quot;</span><span class="nt">&gt;</span>
+          select id,version_num,description,update_time
+          from version
+    <span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;/mapper&gt;</span>
+</pre></div>

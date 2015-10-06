@@ -1,0 +1,28 @@
+<div class="highlight"><pre>	<span class="cm">/**</span>
+<span class="cm">     * A handler for rejected tasks that discards the oldest unhandled</span>
+<span class="cm">     * request and then retries {@code execute}, unless the executor</span>
+<span class="cm">     * is shut down, in which case the task is discarded.</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">DiscardOldestPolicy</span> <span class="kd">implements</span> <span class="n">RejectedExecutionHandler</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Creates a {@code DiscardOldestPolicy} for the given executor.</span>
+<span class="cm">         */</span>
+        <span class="kd">public</span> <span class="nf">DiscardOldestPolicy</span><span class="o">()</span> <span class="o">{</span> <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="cm">/**</span>
+<span class="cm">     * Obtains and ignores the next task that the executor</span>
+<span class="cm">     * would otherwise execute, if one is immediately available,</span>
+<span class="cm">     * and then retries execution of task r, unless the executor</span>
+<span class="cm">     * is shut down, in which case task r is instead discarded.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param r the runnable task requested to be executed</span>
+<span class="cm">     * @param e the executor attempting to execute this task</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">rejectedExecution</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">r</span><span class="o">,</span> <span class="n">ThreadPoolExecutor</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">e</span><span class="o">.</span><span class="na">isShutdown</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">getQueue</span><span class="o">().</span><span class="na">poll</span><span class="o">();</span> <span class="c1">// 丢弃最老的元素</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="n">r</span><span class="o">);</span> <span class="c1">//重试执行该拒绝任务</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span> 
+</pre></div>

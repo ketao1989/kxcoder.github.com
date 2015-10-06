@@ -9,6 +9,42 @@
     <lastmod>2015-08-30T18:52:03+08:00</lastmod>
   </url>
   <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/30/Linux-Awk-Study-Note/</loc>
+    <lastmod>2014-05-30T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/28/Online-Mysql-Deadlock-Analyse/</loc>
+    <lastmod>2014-05-28T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/27/Jstat-GC-Guide-Introduce/</loc>
+    <lastmod>2014-05-27T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/26/Spring-MVC-Project-Introduction/</loc>
+    <lastmod>2014-05-26T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/24/Java-Fork-Join-Task-Framework-API-Introduce/</loc>
+    <lastmod>2014-05-24T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/03/Java-MultiThread-ThreadPool-Introduce/</loc>
+    <lastmod>2014-05-03T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/05/02/Java-slf4j-Introduce/</loc>
+    <lastmod>2014-05-02T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/04/29/Intelij-IDEA-Remote-Debug-Tomcat-App/</loc>
+    <lastmod>2014-04-29T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/04/19/Mysql-Master-Slave-Copy/</loc>
+    <lastmod>2014-04-19T22:21:35+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://kxcoder.github.io/blog/2014/04/16/google-java-style/</loc>
     <lastmod>2014-04-16T22:21:35+08:00</lastmod>
   </url>
@@ -28,13 +64,31 @@
     <loc>http://kxcoder.github.io/blog/categories/java/</loc>
   </url>
   <url>
-    <loc>http://kxcoder.github.io/blog/categories/nginx/</loc>
+    <loc>http://kxcoder.github.io/blog/categories/mysql/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/ide/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/log/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/thread/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/spring/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/gc/</loc>
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/categories/script/</loc>
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/categories/linux/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/nginx/</loc>
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/categories/zookeeper/</loc>

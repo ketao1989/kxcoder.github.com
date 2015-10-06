@@ -1,0 +1,29 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Primary mechanics for join, get, quietlyJoin.</span>
+<span class="cm"> * @return status upon completion</span>
+<span class="cm"> */</span>
+<span class="kd">private</span> <span class="kt">int</span> <span class="nf">doJoin</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Thread</span> <span class="n">t</span><span class="o">;</span> <span class="n">ForkJoinWorkerThread</span> <span class="n">w</span><span class="o">;</span> <span class="kt">int</span> <span class="n">s</span><span class="o">;</span> <span class="kt">boolean</span> <span class="n">completed</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">((</span><span class="n">t</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">())</span> <span class="k">instanceof</span> <span class="n">ForkJoinWorkerThread</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">s</span> <span class="o">=</span> <span class="n">status</span><span class="o">)</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="mi">0</span><span class="o">)</span> <span class="c1">// 如果任务已经完成，则直接返回</span>
+            <span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">((</span><span class="n">w</span> <span class="o">=</span> <span class="o">(</span><span class="n">ForkJoinWorkerThread</span><span class="o">)</span><span class="n">t</span><span class="o">).</span><span class="na">unpushTask</span><span class="o">(</span><span class="k">this</span><span class="o">))</span> <span class="o">{</span> <span class="c1">//从当前线程的任务数组中 pop 该任务，准备执行</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">completed</span> <span class="o">=</span> <span class="n">exec</span><span class="o">();</span> <span class="c1">// 调用自定义任务的compute方法执行</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">rex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nf">setExceptionalCompletion</span><span class="o">(</span><span class="n">rex</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">completed</span><span class="o">)</span>
+                <span class="k">return</span> <span class="nf">setCompletion</span><span class="o">(</span><span class="n">NORMAL</span><span class="o">);</span> <span class="c1">//如果顺利正常完成，则设置为正常完成状态</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">w</span><span class="o">.</span><span class="na">joinTask</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">//当任务没有正常完成，可能阻塞什么的，则会给helpJoinTask stolen-&amp;gt;joining 方式执行</span>
+    <span class="o">}</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="nf">externalAwaitDone</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

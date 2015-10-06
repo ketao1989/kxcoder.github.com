@@ -1,0 +1,21 @@
+<div class="highlight"><pre><span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">bind</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+      <span class="n">Set</span> <span class="n">staticLoggerBinderPathSet</span> <span class="o">=</span> <span class="n">findPossibleStaticLoggerBinderPathSet</span><span class="o">();</span><span class="c1">// 寻找程序配置的日志系统集，具体见下面代码</span>
+      <span class="n">reportMultipleBindingAmbiguity</span><span class="o">(</span><span class="n">staticLoggerBinderPathSet</span><span class="o">);</span><span class="c1">// 验证多于1个日志系统时，输出警告信息</span>
+      <span class="c1">// the next line does the binding</span>
+      <span class="n">StaticLoggerBinder</span><span class="o">.</span><span class="na">getSingleton</span><span class="o">();</span><span class="c1">// 测试是否可以获取该静态绑定类单例，可以，则置为成功状态，如下行；否则，会打出3.1中的NOP异常信息。</span>
+      <span class="n">INITIALIZATION_STATE</span> <span class="o">=</span> <span class="n">SUCCESSFUL_INITIALIZATION</span><span class="o">;</span>
+      <span class="n">reportActualBinding</span><span class="o">(</span><span class="n">staticLoggerBinderPathSet</span><span class="o">);</span><span class="c1">// 绑定，打印绑定具体日志系统的日志</span>
+      <span class="n">emitSubstituteLoggerWarning</span><span class="o">();</span><span class="c1">// 提交给临时日志factory 打印的日志，不是重点</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">NoClassDefFoundError</span> <span class="n">ncde</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">ncde</span><span class="o">.</span><span class="na">getMessage</span><span class="o">();</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">messageContainsOrgSlf4jImplStaticLoggerBinder</span><span class="o">(</span><span class="n">msg</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">INITIALIZATION_STATE</span> <span class="o">=</span> <span class="n">NOP_FALLBACK_INITIALIZATION</span><span class="o">;</span>
+        <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;Failed to load class \&quot;org.slf4j.impl.StaticLoggerBinder\&quot;.&quot;</span><span class="o">);</span>
+        <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;Defaulting to no-operation (NOP) logger implementation&quot;</span><span class="o">);</span>
+        <span class="n">Util</span><span class="o">.</span><span class="na">report</span><span class="o">(</span><span class="s">&quot;See &quot;</span> <span class="o">+</span> <span class="n">NO_STATICLOGGERBINDER_URL</span>
+                <span class="o">+</span> <span class="s">&quot; for further details.&quot;</span><span class="o">);</span>
+      <span class="o">}</span> 
+    <span class="o">}</span>
+  <span class="o">}</span>        
+</pre></div>

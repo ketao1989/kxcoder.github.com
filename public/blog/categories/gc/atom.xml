@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Gc | 柯小小西の小水滴]]></title>
+  <link href="http://kxcoder.github.io/blog/categories/gc/atom.xml" rel="self"/>
+  <link href="http://kxcoder.github.io/"/>
+  <updated>2015-10-07T02:02:19+08:00</updated>
+  <id>http://kxcoder.github.io/</id>
+  <author>
+    <name><![CDATA[柯小小西]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Java 查看系统GC命令介绍]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/05/27/Jstat-GC-Guide-Introduce/"/>
+    <updated>2014-05-27T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/05/27/Jstat-GC-Guide-Introduce</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Jstat">Jstat 查看系统 GC 命令介绍</a></li>
+  <li><a href="#Jmap">Jmap 查看系统 GC 命令介绍</a></li>
+  <li><a href="#Finally">小结</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>使用	<code>JVM</code>的人都或多或少的了解<code>垃圾回收</code>机制，当系统的服务出现性能问题时，都会去服务器上查看下系统<code>GC</code>的情况。此外，如果有新的服务上线，也需要去服务器上查看下新服务的整体<code>GC</code>水平，这就可以使用<code>jstat</code>命令来查看了，当然你也可以使用其他方式。</p>
+
+<!--more-->
+
+<h2 id="a-idjstatjstat--gc-a"><a id="Jstat">Jstat 查看系统 GC 命令介绍</a></h2>
+
+<p><code>jstat</code>的命令查看系统<code>GC</code>情况，很简单，只需要先通过<code>jps</code>或者<code>ps -aux |grep tomcat</code>来查看对应服务所在的进程数，然后使用下面命令查看。</p>
+
+<blockquote>
+  <blockquote>
+    <p>jstat 查看 gc 使用方法如下：</p>
+  </blockquote>
+</blockquote>
+
+<p><figure class='code'><figcaption><span>Jstat 查看系统GC </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">jstat -gcutil &lt;code&gt;线程值&lt;/code&gt; &lt;code&gt;间隔时间数(ms)&lt;/code&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>执行命令<code>sudo jstat -gcutil 11694 3600</code>，结果会显示内存各个区域大小的情况，如图：</p>
+  </blockquote>
+</blockquote>
+
+<p><img src="http://kxcoder.github.io/images/2014/05/jstat-gc.jpg" /></p>
+
+<blockquote>
+  <blockquote>
+    <p>Note: 结果里面列出每个区间的内存大小，新生代gc的次数和时间，老年代gc的次数和时间。</p>
+  </blockquote>
+</blockquote>
+
+<pre><code>1. S0  — Heap上的 Survivor space 0 区已使用空间的百分比;
+2. S1  — Heap上的 Survivor space 1 区已使用空间的百分比;
+3. E   — Heap上的 Eden space 区已使用空间的百分比;
+4. O   — Heap上的 Old space 区已使用空间的百分比;
+5. P   — Perm space 区已使用空间的百分比;
+6. YGC — 从应用程序启动到采样时发生 Young GC 的次数;
+7. YGCT– 从应用程序启动到采样时 Young GC 所用的时间(单位秒);
+8. FGC — 从应用程序启动到采样时发生 Full GC 的次数;
+9. FGCT– 从应用程序启动到采样时 Full GC 所用的时间(单位秒);
+10. GCT — 从应用程序启动到采样时用于垃圾回收的总时间(单位秒).
+</code></pre>
+
+<h2 id="a-idjmapjmap--gc-a"><a id="Jmap">Jmap 查看系统 GC 命令介绍</a></h2>
+
+<p>当我们使用<code>jstat</code>命令查看<code>GC</code>时，发现<code>YoungGC</code>或者<code>FullGC</code>频率过高时，就需要分析服务的具体情况了。这个时候，可以使用<code>Jmap</code>来查看当前系统的实例使用内存大小，一般地，需要<code>dump</code>到本地进行分析，使用可视化工具可以使分析效率得到很大的提高。</p>
+
+<blockquote>
+  <blockquote>
+    <p><code>Jmap</code>的使用方法如下所示：</p>
+  </blockquote>
+</blockquote>
+
+<p><figure class='code'><figcaption><span>Jmap 查看系统GC </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">jmap -dump:format=b,file=log.bin &lt;code&gt;进程id&lt;/code&gt;  &lt;br /&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>使用<code>sudo jmap -dump:format=b,file=log.bin  -F 11694</code>命令，写入文件内容如下:</p>
+  </blockquote>
+</blockquote>
+
+<pre><code>JAVA PROFILE 1.0.1
+JAVA PROFILE 1.0.1
+Lcom/alibaba/dubbo/remoting/exchange/support/DefaultFuture$RemotingInvocationTimeoutScan;
+DefaultStatistics.java
+T8procedureNameRs
+StringUtils.10
+isCons
+(Ljava/lang/Integer;)Ljava/math/BigDecimal;
+HtheCloseBracketFor
+h([Ljava/lang/String;Lorg/codehaus/jackson/JsonGenerator;Lorg/codehaus/jackson/map/SerializerProvider;Lorg/codehaus/jackson/map/JsonSerializer;)V
+zC@roureq
+lastActiveFilter
+Ampersand
+......
+</code></pre>
+
+<blockquote>
+  <blockquote>
+    <p>Note：有很多可视化的工具来分析<code>dump</code>文件，为了简单，这里使用java自带的工具<code>jvisualvm</code>工具，在<code>文件</code>选项中<code>装入</code> dump 下来的 文件<code>log.bin</code>，就可以看到各个对象实例所占用的内存大小和实例数量了。如下图：</p>
+  </blockquote>
+</blockquote>
+
+<p><img src="http://kxcoder.github.io/images/2014/05/jmap-gc.jpg" /></p>
+
+<h2 id="a-idfinallya"><a id="Finally">小结</a></h2>
+
+<p>java 中 还有一个命令比较有用，就是<code>jstack</code>，该命令可以查看服务器上的某个服务的堆栈信息。从而分析线程是否处于死锁状态，从而导致服务不可用或者服务性能受到影响。使用命令<code>jstack 线程id</code>就可以获取所有堆栈信息了，非常简单便捷。</p>
+]]></content>
+  </entry>
+  
+</feed>

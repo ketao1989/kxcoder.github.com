@@ -1,0 +1,42 @@
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * @author: ketao Date: 14-5-3 Time: 上午1:03</span>
+<span class="cm"> * @version: $Id$</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LogTest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">LogTest</span><span class="o">.</span><span class="na">class</span><span class="o">);&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;纯字符串信息的info级别日志&quot;</span><span class="o">);</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;一个参数:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;agr1&quot;</span><span class="o">);</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;二个参数:agrs1:{};agrs2:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">);</span>
+    <span class="c1">// 下面两种方式都可以，一般使用上面一种就可以了</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;args3&quot;</span><span class="o">);</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;args3&quot;</span> <span class="o">});</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;======================异常相关====================================&quot;</span><span class="o">);</span>
+    <span class="c1">// 测试异常相关日志</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;抛出异常,e:&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;二个参数:agrs1:{};agrs2:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;二个参数:agrs1:{};agrs2:{}的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+
+    <span class="c1">// 下面两种方式都可以，一般使用上面一种就可以了</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;agrs3&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span>
+            <span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">));</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span> <span class="s">&quot;args3&quot;</span><span class="o">,</span>
+            <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">)</span> <span class="o">});</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;三个参数:agrs1:{};agrs2:{};args3:{} 的info级别日志&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;args1&quot;</span><span class="o">,</span> <span class="s">&quot;args2&quot;</span><span class="o">,</span>
+            <span class="k">new</span> <span class="nf">IOException</span><span class="o">(</span><span class="s">&quot;测试抛出IO异常信息&quot;</span><span class="o">)</span> <span class="o">});</span>
+
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</pre></div>

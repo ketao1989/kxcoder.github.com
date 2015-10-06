@@ -1,0 +1,12 @@
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ThreadFactory</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Constructs a new {@code Thread}.  Implementations may also initialize</span>
+<span class="cm"> * priority, name, daemon status, {@code ThreadGroup}, etc.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param r a runnable to be executed by new thread instance</span>
+<span class="cm"> * @return constructed thread, or {@code null} if the request to</span>
+<span class="cm"> *         create a thread is rejected</span>
+<span class="cm"> */</span>
+<span class="n">Thread</span> <span class="nf">newThread</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">r</span><span class="o">);</span> <span class="o">}</span> 
+</pre></div>

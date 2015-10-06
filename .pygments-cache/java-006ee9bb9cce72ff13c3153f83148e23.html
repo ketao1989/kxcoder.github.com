@@ -1,0 +1,16 @@
+<div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * 在给定的pool里面创建一个 ForkJoinWorkerThread 实例.</span>
+<span class="cm">     */</span>
+    <span class="kd">protected</span> <span class="nf">ForkJoinWorkerThread</span><span class="o">(</span><span class="n">ForkJoinPool</span> <span class="n">pool</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">pool</span><span class="o">.</span><span class="na">nextWorkerName</span><span class="o">());</span> <span class="c1">// 使用Thread调用pool中指定的线程名前缀</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">pool</span> <span class="o">=</span> <span class="n">pool</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">registerWorker</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">//注册线程到pool得worker数组中，获取在pool数组里对应的index索引</span>
+        <span class="n">poolIndex</span> <span class="o">=</span> <span class="n">k</span><span class="o">;</span>
+        <span class="n">eventCount</span> <span class="o">=</span> <span class="o">~</span><span class="n">k</span> <span class="o">&amp;</span> <span class="n">SMASK</span><span class="o">;</span> <span class="c1">// clear wait count</span>
+        <span class="n">locallyFifo</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">locallyFifo</span><span class="o">;</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="na">UncaughtExceptionHandler</span> <span class="n">ueh</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="na">ueh</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ueh</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+            <span class="n">setUncaughtExceptionHandler</span><span class="o">(</span><span class="n">ueh</span><span class="o">);</span>
+        <span class="n">setDaemon</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span> <span class="c1">//守护线程</span>
+    <span class="o">}</span>
+</pre></div>

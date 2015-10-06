@@ -1,0 +1,17 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+ 	<span class="kd">private</span> <span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">forkOrSubmit</span><span class="o">(</span><span class="n">ForkJoinTask</span><span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+<span class="o">&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="n">ForkJoinWorkerThread</span> <span class="n">w</span><span class="o">;</span>
+    <span class="n">Thread</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">shutdown</span><span class="o">)</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">RejectedExecutionException</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">((</span><span class="n">t</span> <span class="k">instanceof</span> <span class="n">ForkJoinWorkerThread</span><span class="o">)</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span>
+        <span class="o">(</span><span class="n">w</span> <span class="o">=</span> <span class="o">(</span><span class="n">ForkJoinWorkerThread</span><span class="o">)</span><span class="n">t</span><span class="o">).</span><span class="na">pool</span> <span class="o">==</span> <span class="k">this</span><span class="o">)</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">pushTask</span><span class="o">(</span><span class="n">task</span><span class="o">);</span><span class="c1">//push 该任务到该线程对应的队列中</span>
+    <span class="k">else</span>
+        <span class="nf">addSubmission</span><span class="o">(</span><span class="n">task</span><span class="o">);</span> <span class="c1">//把任务task 插入到submissionQueue队列中</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>
