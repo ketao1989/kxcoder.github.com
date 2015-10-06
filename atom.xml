@@ -4,7 +4,7 @@
   <title><![CDATA[柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T00:50:30+08:00</updated>
+  <updated>2015-10-07T00:51:06+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -680,6 +680,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <p>与其它的编程风格指南一样，这里所讨论的不仅仅是编码格式美不美观的问题，
 同时也讨论一些约定及编码标准。然而，这份文档主要侧重于我们所普遍遵循的规则，
 对于那些不是明确强制要求的，我们尽量避免提供意见。</p>
+
+<!--more-->
 
 <h3 id="section-1">1.1 术语说明</h3>
 
