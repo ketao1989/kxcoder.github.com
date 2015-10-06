@@ -4,7 +4,7 @@
   <title><![CDATA[柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T02:02:19+08:00</updated>
+  <updated>2015-10-07T02:06:36+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -3236,44 +3236,59 @@ pool-1-thread-1
 
 <p>在jdk 6中对<code>BlockingQueue</code>接口进行了详细的说明，主要几点如下：</p>
 
-<pre><code>1. BlockingQueue 实现主要用于生产者-使用者队列，但它另外还支持 Collection 接口。因此，举例来说，使用 remove(x) 从队列中移除任意一个元素是有可能的。然而，这种操作通常不会有效执行，只能有计划地偶尔使用，比如在取消排队信息时。
-
-2. BlockingQueue 实现是线程安全的。所有排队方法都可以使用内部锁或其他形式的并发控制来自动达到它们的目的。然而，大量的 Collection 操作（addAll、containsAll、retainAll 和 removeAll）没有 必要自动执行，除非在实现中特别说明。因此，举例来说，在只添加了 c 中的一些元素后，addAll(c) 有可能失败（抛出一个异常）。
-
-3. BlockingQueue 实质上不 支持使用任何一种“close”或“shutdown”操作来指示不再添加任何项。这种功能的需求和使用有依赖于实现的倾向。例如，一种常用的策略是：对于生产者，插入特殊的 end-of-stream 或 poison 对象，并根据使用者获取这些对象的时间来对它们进行解释。
-4. 此外，BlockingQueue 可以安全地与多个生产者和多个使用者一起使用。
-</code></pre>
+<ol>
+  <li>
+    <p>BlockingQueue 实现主要用于生产者-使用者队列，但它另外还支持 Collection 接口。因此，举例来说，使用 remove(x) 从队列中移除任意一个元素是有可能的。然而，这种操作通常不会有效执行，只能有计划地偶尔使用，比如在取消排队信息时。</p>
+  </li>
+  <li>
+    <p>BlockingQueue 实现是线程安全的。所有排队方法都可以使用内部锁或其他形式的并发控制来自动达到它们的目的。然而，大量的 Collection 操作（addAll、containsAll、retainAll 和 removeAll）没有 必要自动执行，除非在实现中特别说明。因此，举例来说，在只添加了 c 中的一些元素后，addAll(c) 有可能失败（抛出一个异常）。</p>
+  </li>
+  <li>
+    <p>BlockingQueue 实质上不 支持使用任何一种“close”或“shutdown”操作来指示不再添加任何项。这种功能的需求和使用有依赖于实现的倾向。例如，一种常用的策略是：对于生产者，插入特殊的 end-of-stream 或 poison 对象，并根据使用者获取这些对象的时间来对它们进行解释。</p>
+  </li>
+  <li>
+    <p>此外，BlockingQueue 可以安全地与多个生产者和多个使用者一起使用。</p>
+  </li>
+</ol>
 
 <p>在java 中默认实现了4种阻塞队列，提供四种不同的阻塞队列模型：</p>
 
-<pre><code>1. ArrayBlockingQueue, 底层由数组构成的有界阻塞队列。按照FIFO(先进先出)策略对元素进行排序。因此，队列的头部是当前队列中，最早进入队列的元素，而队尾则是最后进入队列的元素。并且，新来的任务元素，都插入到队列的尾部，执行任务的时候，从队列的头部取出任务元素。
+<ol>
+  <li>
+    <p>ArrayBlockingQueue, 底层由数组构成的有界阻塞队列。按照FIFO(先进先出)策略对元素进行排序。因此，队列的头部是当前队列中，最早进入队列的元素，而队尾则是最后进入队列的元素。并且，新来的任务元素，都插入到队列的尾部，执行任务的时候，从队列的头部取出任务元素。</p>
+  </li>
+  <li>
+    <p>LinkedBlockingQueue, 底层由链表组成的阻塞队列。同样是按照FIFO策略对元素进行排序。和ArrayBlockingQueue不同的是，基于链表的阻塞队列可以不设置队列的大小，从而构造一个无界队列；此外，LinkedBlockingQueue的吞吐量也要高于数组的阻塞队列，不过，它会造成部分元素插入顺序的不确定性。</p>
+  </li>
+  <li>
+    <p>SynchronousQueue，同步的阻塞队列，不存储元素，没有任何内部容量。因此，这决定了该队列模型是一个同步操作，即每一个生产者的任务消息都会直接给消费者处理，而不会先保存起来，让消费者从队列中FIFO来获取最老的消息元素。其特点就是：每个插入操作必须等待另一个线程的对应移除操作 ，反之亦然。适合传递性设计，设计中，在一个线程中运行的对象要将某些信息、事件或任务传递给在另一个线程中运行的对象，它就必须与该对象同步。</p>
+  </li>
+  <li>
+    <p>DelayQueue<e extends="" delayed="">，延迟的无界阻塞队列。队列中的元素只有在只有在延迟期满时才能从中提取元素。该队列的头部是延迟期满后保存时间最长的 Delayed 元素。如果延迟都还没有期满，则队列没有头部，并且 poll 将返回 null。</e></p>
+  </li>
+  <li>
+    <p>LinkedBlockingDeque，底层有双向链表构成的阻塞队列。和LinkedBlockingQueue一样，可以做无界队列，只是因为可以从两端插入和获取元素，所以时间消耗是单向链表的一半；当然这是一种空间换时的策略。该队列需要设置队列大小来防止过度膨胀。</p>
+  </li>
+  <li>
+    <p>PriorityBlockingQueue，一个无界的阻塞队列，它的使用和类 PriorityQueue 相同的顺序规则，并且提供了阻塞获取操作。虽然此队列逻辑上是无界的，但是资源被耗尽时试图执行 add 操作也将失败（导致 OutOfMemoryError）。iterator() 方法中提供的迭代器并不 保证以特定的顺序遍历 PriorityBlockingQueue 的元素。如果需要有序地进行遍历，则应考虑使用 Arrays.sort(pq.toArray())。此外，可以使用方法 drainTo 按优先级顺序移除 全部或部分元素，并将它们放在另一个 collection 中。</p>
+  </li>
+</ol>
 
-2. LinkedBlockingQueue, 底层由链表组成的阻塞队列。同样是按照FIFO策略对元素进行排序。和ArrayBlockingQueue不同的是，基于链表的阻塞队列可以不设置队列的大小，从而构造一个无界队列；此外，LinkedBlockingQueue的吞吐量也要高于数组的阻塞队列，不过，它会造成部分元素插入顺序的不确定性。
-
-3. SynchronousQueue，同步的阻塞队列，不存储元素，没有任何内部容量。因此，这决定了该队列模型是一个同步操作，即每一个生产者的任务消息都会直接给消费者处理，而不会先保存起来，让消费者从队列中FIFO来获取最老的消息元素。其特点就是：每个插入操作必须等待另一个线程的对应移除操作 ，反之亦然。适合传递性设计，设计中，在一个线程中运行的对象要将某些信息、事件或任务传递给在另一个线程中运行的对象，它就必须与该对象同步。
-
-4. DelayQueue&lt;E extends Delayed&gt;，延迟的无界阻塞队列。队列中的元素只有在只有在延迟期满时才能从中提取元素。该队列的头部是延迟期满后保存时间最长的 Delayed 元素。如果延迟都还没有期满，则队列没有头部，并且 poll 将返回 null。
-
-5. LinkedBlockingDeque，底层有双向链表构成的阻塞队列。和LinkedBlockingQueue一样，可以做无界队列，只是因为可以从两端插入和获取元素，所以时间消耗是单向链表的一半；当然这是一种空间换时的策略。该队列需要设置队列大小来防止过度膨胀。
-
-6. PriorityBlockingQueue，一个无界的阻塞队列，它的使用和类 PriorityQueue 相同的顺序规则，并且提供了阻塞获取操作。虽然此队列逻辑上是无界的，但是资源被耗尽时试图执行 add 操作也将失败（导致 OutOfMemoryError）。iterator() 方法中提供的迭代器并不 保证以特定的顺序遍历 PriorityBlockingQueue 的元素。如果需要有序地进行遍历，则应考虑使用 Arrays.sort(pq.toArray())。此外，可以使用方法 drainTo 按优先级顺序移除 全部或部分元素，并将它们放在另一个 collection 中。
-</code></pre>
-
-<p><strong>ArrayBlockingQueue：</strong>	
+<p><strong>ArrayBlockingQueue：</strong>	<br />
 » Note: <code>ArrayBlockingQueue</code>队列是有界的队列，所以当队列满的时候，如果还向该队列插入元素，则会导致操作被阻塞住，当然，如果从空的队列中获取元素，该操作也会被阻塞。此外，构造<code>ArrayBlockingQueue</code>队列时，有一个参数为：<code> boolean fair</code> ：如果为 true，则按照 FIFO 顺序访问插入或移除时受阻塞线程的队列；如果为 false，则访问顺序是不确定的.</p>
 
-<p><strong>LinkedBlockingQueue：</strong>	
+<p><strong>LinkedBlockingQueue：</strong>  	
 » Note: <code>LinkedBlockingQueue</code> 队列的吞吐量也要高于数组的阻塞队列，这主要是因为数组的特性和链表的特性决定的，链表在处理元素的offer队头元素和add队尾元素的速度要快于相应地数组操作。不过，显然这样会造成部分元素插入顺序的不确定性。</p>
 
-<p>**DelayQueue<e extends="" delayed="">：**	
+<p>**DelayQueue<e extends="" delayed="">：**	 
 &gt;&gt; Note: `DelayQueue<e extends="" delayed="">`队列中的元素需要实现`Delayed`接口，该接口只有`long getDelay(TimeUnit unit);`方法即可使用延迟阻塞队列。此外，需要注意，可能存在的时间延时，即任务元素不一定会准时执行，会有一点点的延迟。</e></e></p>
 
-<p><strong>LinkedBlockingDeque：</strong>	
+<p><strong>LinkedBlockingDeque：</strong>  	
 » Note: <code>LinkedBlockingDeque</code>队列用的最多的地方，就是使用<code>工作窃取算法</code>的地方。工作窃取（work-stealing）算法是指某个线程从其他队列里窃取任务来执行。如下图（参考<a href="http://ifeve.com/talk-concurrency-forkjoin/">工作窃取运行说明</a>）：</p>
 
 <p><img src="http://kxcoder.github.io/images/2014/05/work-stealing.png" /></p>
 
-<p><strong>PriorityBlockingQueue：</strong>	
+<p><strong>PriorityBlockingQueue：</strong>  	
 » Note: <code>PriorityBlockingQueue</code>队列，默认情况下元素采取自然顺序排列，也可以通过比较器comparator来指定元素的排序规则。比较器可使用修改键断开主优先级值之间的联系。元素默认按照升序排列。</p>
 
 <p>选择其中的<code>LinkedBlockingQueue</code>来简单分析下，其内部实现结构和细节：</p>
