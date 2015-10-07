@@ -1,0 +1,33 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">protected</span> <span class="n">Object</span> <span class="nf">_readMapAndClose</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">,</span> <span class="n">JavaType</span> <span class="n">valueType</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonParseException</span><span class="o">,</span> <span class="n">JsonMappingException</span>
+<span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">Object</span> <span class="n">result</span><span class="o">;</span>
+        <span class="n">JsonToken</span> <span class="n">t</span> <span class="o">=</span> <span class="n">_initForReading</span><span class="o">(</span><span class="n">jp</span><span class="o">);</span>
+        
+        <span class="c1">// 省略一部分非重点代码。。。。。。</span>
+        
+        	<span class="n">DeserializationConfig</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">copyDeserializationConfig</span><span class="o">();</span><span class="c1">//创建一个反序列化配置的副本，内部采用copy-on-write模式，所以使用副本。</span>
+            <span class="n">DeserializationContext</span> <span class="n">ctxt</span> <span class="o">=</span> <span class="n">_createDeserializationContext</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">cfg</span><span class="o">);</span><span class="c1">//反序列化上下文</span>
+            <span class="n">JsonDeserializer</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">Object</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">deser</span> <span class="o">=</span> <span class="n">_findRootDeserializer</span><span class="o">(</span><span class="n">cfg</span><span class="o">,</span> <span class="n">valueType</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">cfg</span><span class="o">.</span><span class="na">isEnabled</span><span class="o">(</span><span class="n">DeserializationConfig</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">UNWRAP_ROOT_VALUE</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">_unwrapAndDeserialize</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">valueType</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">,</span> <span class="n">deser</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">deser</span><span class="o">.</span><span class="na">deserialize</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+            <span class="o">}</span>
+        
+        <span class="c1">// Need to consume the token too</span>
+        <span class="n">jp</span><span class="o">.</span><span class="na">clearCurrentToken</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">jp</span><span class="o">.</span><span class="na">close</span><span class="o">();</span><span class="c1">//关闭资源</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">ioe</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,114 @@
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * 一个缓存将所有他的方法调用转到其他cache上。子类需要重写一个或者多个方法来改变背后cache的行为。</span>
+<span class="cm"> * 因此，在该类里面会有一个delegate的成员，负责调用具体的cache类对象方法。</span>
+<span class="cm"> */</span>
+<span class="nd">@Beta</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">ForwardingCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="kd">extends</span> <span class="n">ForwardingObject</span> <span class="kd">implements</span> <span class="n">Cache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/** Constructor for use by subclasses. */</span>
+  <span class="kd">protected</span> <span class="nf">ForwardingCache</span><span class="o">()</span> <span class="o">{}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Cache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">delegate</span><span class="o">();&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * @since 11.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="nd">@Nullable</span>
+  <span class="kd">public</span> <span class="n">V</span> <span class="nf">getIfPresent</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">delegate</span><span class="o">().</span><span class="na">getIfPresent</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * @since 11.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">V</span> <span class="nf">get</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="n">Callable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?</span> <span class="kd">extends</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">valueLoader</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ExecutionException</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">delegate</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">valueLoader</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * @since 11.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">ImmutableMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getAllPresent</span><span class="o">(</span><span class="n">Iterable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">keys</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">delegate</span><span class="o">().</span><span class="na">getAllPresent</span><span class="o">(</span><span class="n">keys</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * @since 11.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">put</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="n">V</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">delegate</span><span class="o">().</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * @since 12.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">putAll</span><span class="o">(</span><span class="n">Map</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?</span> <span class="kd">extends</span> <span class="n">K</span><span class="o">,?</span> <span class="kd">extends</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">delegate</span><span class="o">().</span><span class="na">putAll</span><span class="o">(</span><span class="n">m</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">invalidate</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">delegate</span><span class="o">().</span><span class="na">invalidate</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * @since 11.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">invalidateAll</span><span class="o">(</span><span class="n">Iterable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">keys</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">delegate</span><span class="o">().</span><span class="na">invalidateAll</span><span class="o">(</span><span class="n">keys</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">invalidateAll</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">delegate</span><span class="o">().</span><span class="na">invalidateAll</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">long</span> <span class="nf">size</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">delegate</span><span class="o">().</span><span class="na">size</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">CacheStats</span> <span class="nf">stats</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">delegate</span><span class="o">().</span><span class="na">stats</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">ConcurrentMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">asMap</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">delegate</span><span class="o">().</span><span class="na">asMap</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cleanUp</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">delegate</span><span class="o">().</span><span class="na">cleanUp</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * A simplified version of {@link ForwardingCache} where subclasses can pass in an already</span>
+<span class="cm">   * constructed {@link Cache} as the delegete.</span>
+<span class="cm">   *</span>
+<span class="cm">   * @since 10.0</span>
+<span class="cm">   */</span>
+  <span class="nd">@Beta</span>
+  <span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">SimpleForwardingCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="kd">extends</span> <span class="n">ForwardingCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Cache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">delegate</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">protected</span> <span class="nf">SimpleForwardingCache</span><span class="o">(</span><span class="n">Cache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">delegate</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">delegate</span> <span class="o">=</span> <span class="n">Preconditions</span><span class="o">.</span><span class="na">checkNotNull</span><span class="o">(</span><span class="n">delegate</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kd">final</span> <span class="n">Cache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">delegate</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">delegate</span><span class="o">;</span>
+<span class="o">}</span>   <span class="o">}</span> <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

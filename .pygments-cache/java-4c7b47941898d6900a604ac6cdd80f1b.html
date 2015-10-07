@@ -1,0 +1,20 @@
+<div class="highlight"><pre> <span class="n">V</span> <span class="nf">getAndRecordStats</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">,</span> <span class="n">LoadingValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">loadingValueReference</span><span class="o">,</span>
+                <span class="n">ListenableFuture</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">newValue</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ExecutionException</span> <span class="o">{</span>
+            <span class="n">V</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">getUninterruptibly</span><span class="o">(</span><span class="n">newValue</span><span class="o">);</span><span class="c1">// 非中断方式调用future.get方法获取值</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidCacheLoadException</span><span class="o">(</span><span class="s">&quot;CacheLoader returned null for key &quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="n">statsCounter</span><span class="o">.</span><span class="na">recordLoadSuccess</span><span class="o">(</span><span class="n">loadingValueReference</span><span class="o">.</span><span class="na">elapsedNanos</span><span class="o">());</span>
+                <span class="c1">//线程安全地把key和value存放到cache中。</span>
+                <span class="n">storeLoadedValue</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">loadingValueReference</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+                <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">statsCounter</span><span class="o">.</span><span class="na">recordLoadException</span><span class="o">(</span><span class="n">loadingValueReference</span><span class="o">.</span><span class="na">elapsedNanos</span><span class="o">());</span>
+                    <span class="n">removeLoadingValue</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">loadingValueReference</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+</pre></div>

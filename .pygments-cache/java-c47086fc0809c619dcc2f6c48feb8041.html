@@ -1,0 +1,91 @@
+<div class="highlight"><pre> <span class="cm">/**</span>
+<span class="cm">         * 这里开始从我们实现cacheLoader继承类中的load方法获取 key对应的值。</span>
+<span class="cm">         * </span>
+<span class="cm">         * 加锁get或者load</span>
+<span class="cm">         */</span>
+        <span class="n">V</span> <span class="nf">lockedGetOrLoad</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">,</span> <span class="n">CacheLoader</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">loader</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ExecutionException</span> <span class="o">{</span>
+            <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">e</span><span class="o">;</span>
+            <span class="n">ValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">valueReference</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="n">LoadingValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">loadingValueReference</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="kt">boolean</span> <span class="n">createNewEntry</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+            <span class="c1">// 确保线程安全，使用加锁来确保加载。当然这个也是针对segment粒度来加的</span>
+            <span class="n">lock</span><span class="o">();</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="c1">// re-read ticker once inside the lock</span>
+                <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">ticker</span><span class="o">.</span><span class="na">read</span><span class="o">();</span>
+                <span class="n">preWriteCleanup</span><span class="o">(</span><span class="n">now</span><span class="o">);</span><span class="c1">// 加锁清GC遗留引用数据和超时数据</span>
+
+                <span class="kt">int</span> <span class="n">newCount</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+                <span class="n">AtomicReferenceArray</span><span class="o">&lt;</span><span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">table</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">table</span><span class="o">;</span>
+                <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">hash</span> <span class="o">&amp;</span> <span class="o">(</span><span class="n">table</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span><span class="c1">// 根据hash和table长度来确定index索引</span>
+                <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">first</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+
+                <span class="k">for</span> <span class="o">(</span><span class="n">e</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span> <span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getNext</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">K</span> <span class="n">entryKey</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">==</span> <span class="n">hash</span> <span class="o">&amp;&amp;</span> <span class="n">entryKey</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">map</span><span class="o">.</span><span class="na">keyEquivalence</span><span class="o">.</span><span class="na">equivalent</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">entryKey</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="n">valueReference</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getValueReference</span><span class="o">();</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">valueReference</span><span class="o">.</span><span class="na">isLoading</span><span class="o">())</span> <span class="o">{</span>
+                            <span class="n">createNewEntry</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span><span class="c1">// 如果正在加载，则返回false，表示不需要新建entry</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="c1">// 对value进行判断处理，</span>
+                            <span class="n">V</span> <span class="n">value</span> <span class="o">=</span> <span class="n">valueReference</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="c1">// 相关通知操作，GC原因回收了</span>
+                                <span class="n">enqueueNotification</span><span class="o">(</span><span class="n">entryKey</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">valueReference</span><span class="o">,</span> <span class="n">RemovalCause</span><span class="o">.</span><span class="na">COLLECTED</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">isExpired</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">now</span><span class="o">))</span> <span class="o">{</span>
+                                <span class="c1">// This is a duplicate check, as preWriteCleanup already purged expired</span>
+                                <span class="c1">// entries, but let&#39;s accomodate an incorrect expiration queue.</span>
+                                <span class="n">enqueueNotification</span><span class="o">(</span><span class="n">entryKey</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">valueReference</span><span class="o">,</span> <span class="n">RemovalCause</span><span class="o">.</span><span class="na">EXPIRED</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                <span class="c1">// cache存在value，命中缓存</span>
+                                <span class="n">recordLockedRead</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+                                <span class="n">statsCounter</span><span class="o">.</span><span class="na">recordHits</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+                                <span class="c1">// we were concurrent with loading; don&#39;t consider refresh</span>
+                                <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+                            <span class="o">}</span>
+
+                            <span class="c1">// 最后写count，保证前面的变量操作，对内存立刻可见</span>
+                            <span class="n">writeQueue</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+                            <span class="n">accessQueue</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+                            <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">newCount</span><span class="o">;</span> <span class="c1">// write-volatile</span>
+                        <span class="o">}</span>
+                        <span class="k">break</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="c1">// 处理需要新增entry，从load方法获取的逻辑</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">createNewEntry</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">loadingValueReference</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoadingValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;();</span>
+
+                    <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">e</span> <span class="o">=</span> <span class="n">newEntry</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">first</span><span class="o">);</span><span class="c1">// segment神马都没有的时候，新建一个</span>
+                        <span class="n">e</span><span class="o">.</span><span class="na">setValueReference</span><span class="o">(</span><span class="n">loadingValueReference</span><span class="o">);</span>
+                        <span class="n">table</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">index</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="n">e</span><span class="o">.</span><span class="na">setValueReference</span><span class="o">(</span><span class="n">loadingValueReference</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+                <span class="n">unlock</span><span class="o">();</span>
+                <span class="n">postWriteCleanup</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="c1">// ok,上面加锁部分建完了新的entry，设置完valueReference</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">createNewEntry</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">try</span> <span class="o">{</span>
+
+                    <span class="c1">// 在entry同步，但检测到递归load则会快速失败。当entry被copy时候可能绕行，但是绝大部分时间会快速失败</span>
+                    <span class="kd">synchronized</span> <span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="nf">loadSync</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">loadingValueReference</span><span class="o">,</span> <span class="n">loader</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+                    <span class="n">statsCounter</span><span class="o">.</span><span class="na">recordMisses</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span><span class="c1">// 处理命中率</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="c1">// 如果正在加载，则等待加载完成</span>
+                <span class="c1">// The entry already exists. Wait for loading.</span>
+                <span class="k">return</span> <span class="nf">waitForLoadingValue</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">valueReference</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+</pre></div>

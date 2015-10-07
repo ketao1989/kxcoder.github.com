@@ -1,0 +1,1140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Redis | 柯小小西の小水滴]]></title>
+  <link href="http://kxcoder.github.io/blog/categories/redis/atom.xml" rel="self"/>
+  <link href="http://kxcoder.github.io/"/>
+  <updated>2015-10-07T12:19:26+08:00</updated>
+  <id>http://kxcoder.github.io/</id>
+  <author>
+    <name><![CDATA[柯小小西]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/"/>
+    <updated>2014-12-29T00:00:00+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+</ol>
+
+<h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
+
+<p>存储分析或者其他基于时间序列的数据，对于传统的存储系统（比如RDBMS）来说，是有一点挑战的。可能你想要对输入流量的速率进行限制（要求快速和高并发更新）或者简单地追踪网站访问者（或者其他更复杂的度量指标），然后以图表的形式画出来。</p>
+
+<p>虽然当前在其他系统中，有很多的方式存储这类数据；但是，Redis是一个非常优秀的候选者，由于它强大的数据结构。</p>
+
+<h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
+
+<p>Redis 理念上非常适合存储这类数据，以及跟踪某种特定的事件。具有原子性的，并且非常快的（O(1)时间复杂度）<code>HINCR</code>和<code>HINCRBY</code>命令，结合快速数据查找，使得它非常适合这类场景。</p>
+
+<p>在Redis中一种好的高效内存存储这类数据的方式是使用hash来存储统计值，使用<code>HINCRBY</code>增加它们，然后使用<code>HGET</code>和<code>HMGET</code>来获取这些数据。查找位于top位置的元素通过<code>SORT</code>命令也是很容易做到的。</p>
+
+<h2 id="a-iddiscussiona">3. <a id="Discussion">讨论</a></h2>
+
+<p>为了简单起见，在这个实例中，我们将只追踪网页点击率数据。这也可以很简单地扩展到其他任务类型的事件。</p>
+
+<p><figure class='code'><figcaption><span>网页点击率数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;require ‘rubygems’</span>
+</span><span class='line'><span class="sr">require ‘active_support/</span><span class="n">time</span><span class="err">’</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;iddatefield&quot;&gt;增加访问者的点击数，id表，date键，field数值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">add_hit</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="err">“</span><span class="n">clients</span><span class="err">”</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, “total”, 1) </span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, Date.today.to_s(:number), 1)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>我们在这里把用户（如果我们追踪网站的访问者，那么可以只简单地根据IP地址来区分用户）的ID添加到访问者列表中，然后记录在两个不同时间空挡中的点击数：”total”总数和日常的数。因此，这就允许我们追踪每天的网页点击数和一段时间内的全局总数。</p>
+
+<p><figure class='code'><figcaption><span>网页点击率数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;idkey&quot;&gt;获取某id的key对应的值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">hits</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">today</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, day.to_s(:number)).to_i</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;section-1&quot;&gt;判断是否超过阈值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">over_limit?</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">hits</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">limit</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>这允许我们通过简单地检查访问者访问，是否超过了我们设置的在一段时间区间内的阈值，来执行速率限制功能。</p>
+
+<p>获取一个给定时间区间内的数据，也是一项琐碎但是高效的操作，我们可以用来画图表或者以其他方式展示这些数据：</p>
+
+<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;key&quot;&gt;计算给定开始时间和结束时间对应的key值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">keys</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'>    <span class="k">while</span> <span class="n">beg_p</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="n">end_p</span>
+</span><span class='line'>        <span class="n">keys</span> <span class="err">« </span><span class="k">if</span> <span class="nb">block_given?</span>
+</span><span class='line'>            <span class="k">yield</span><span class="p">(</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">))</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>        <span class="n">beg_p</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">.</span><span class="n">day</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="n">keys</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def stats_for_period(id, beginning_of_period, end_of_period) </span>
+</span><span class='line'><span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
+</span><span class='line'><span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1"># 获取id表中key对应的数据集</span>
+</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span> <span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>  <span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>我们也可以获取我们存储数据中在任何时间空挡的位于top的用户，可以使用<code>SORT</code>命令完成。SORT允许我们排序一个集合set，有序的集合sorted set,，或者本例中得列表list，访问者可以选择使用外键-我们时间片，然后指定order，offset，limit等参数：</p>
+
+<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># 按照key为period进行排序，默认DESC，前0-limit个元素</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">top_clients</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="err">“</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="err">“</span><span class="n">clients</span><span class="err">”</span><span class="p">,</span> <span class="ss">:by</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="c1">#{period}”, :order =&amp;gt; “DESC”,:get =&amp;gt; [”#”, “stats/client:&lt;/em&gt;-&amp;gt;#{period}”], :limit =&amp;gt; [0, limit])</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>使用hash的实现方式，对于存储，检索和更新都是高度优化的（所有都是O(1)操作），但是对于计算top用户而言则不是（尤其是一个时间区间内）。你需要要求这些操作-比如当你显示一个高分值表格，你可以重新使用有序集合sorted set来完成排序，这样可以保证你拿到的数据是有序的：</p>
+
+<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def add_hit(id)</span>
+</span><span class='line'><span class="sr">    $redis.zincrby(“stats/</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="c1">#{Date.today.to_s(:number)}”, 1, id)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def hits(id, day = Date.today) </span>
+</span><span class='line'><span class="sr">    $redis.zrank(“stats/</span><span class="c1">#{day.to_s(:number)}”, id)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def over_limit?(id, limit) </span>
+</span><span class='line'><span class="sr">    hits(id) &amp;gt; limit</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">stats_for_period</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">beginning_of_period</span><span class="p">,</span> <span class="n">end_of_period</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">beg_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">beginning_of_period</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">end_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">end_of_period</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;keys(beg_p, end_p) { |k| $redis.zrank(&quot;stats/</span><span class="c1">#{k}&quot;, id) }  end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">top_clients</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="err">“</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="c1">#{period}”, 0, limit, :withscores =&amp;gt; true)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def top_for_period(beginning_of_period, end_of_period, limit = 5) </span>
+</span><span class='line'><span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
+</span><span class='line'><span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">result_key</span> <span class="o">=</span> <span class="s2">&quot;top/</span><span class="si">#{</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">end_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="k">return</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="n">result_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="ss">:withscores</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kp">true</span><span class="p">)</span> <span class="k">if</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">exists</span> <span class="n">result_key</span>
+</span><span class='line'>
+</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">multi</span> <span class="k">do</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zunionstore</span> <span class="n">result_key</span><span class="p">,</span> <span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">){</span><span class="o">|</span><span class="n">k</span><span class="o">|</span> <span class="s2">&quot;stats/</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">expire</span> <span class="n">result_key</span><span class="p">,</span> <span class="mi">10</span><span class="o">.</span><span class="n">minutes</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span> <span class="n">result_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="ss">:withscores</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span><span class="o">.</span><span class="n">last</span>  <span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：我们保持了<code>ZUNIONSTORE</code>的结果，然后在它上面设置一个超时时间戳。这是一个通用的Redis模式：缓存一个计算昂贵的操作结果，然后每次有请求过来，都会在重新操作之前先检查缓存情况。
+在上面的例子中，我们使用hash的地方，我们也可以存储SORT操作的结果，然后使用和EXISTS相似的方式检查它的缓存对象的存在性。</p>
+
+  </blockquote>
+</blockquote>
+
+<p>当我们使用有序集合sorted sets时，这些top操作会更高效率的多（因为数据已经是排好序了），但是我们的内存使用率也会更高。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Warns：这个特定的例子有一个竞争条件：如果缓存不存在，我们可能在结束之前会进行多次<code>ZUNIONSTORE</code>操作。因为我们最后期待的输出显然是相同或者更新的数值结果，因此存在竞争条件比使用<code>WATCH</code>，然后在我们在做客户端的计算时锁定其他访问者，效果可能会更好。</p>
+  </blockquote>
+</blockquote>
+
+<p>-</p>
+
+<blockquote>
+  <blockquote>
+    <p><em>Redis 命令</em>:</p>
+
+    <ul>
+      <li>
+        <p><code>HINCRBY hash-name field increment-value</code></p>
+
+        <p>按照给定的increment-value值增加hash表中存储的对应整数。这个命令和INCRBY很相似，但是和增加字符串不一样，这个使用在hash表中。而且increment-value的值也允许为负数。</p>
+      </li>
+      <li>
+        <p><code>HMGET hash-name field1 [field2 ...]</code></p>
+
+        <p>从给定的hash表中获取一些field值。这个命令和HGET很相似，但是这个允许你在一个单操作中获取一些field值。</p>
+      </li>
+      <li>
+        <p><code>SORT key [BY pattern] [LIMIT offset count] [GET pattern1 [GET pattern2 ...]] [ASC| DESC] [ALPHA] [STORE destination]</code></p>
+
+        <p>允许你排序一个list,set,或者sorted set，比较他们的值。排序也可以是使用外键完成，使用来自字符串或者hashes的模式匹配查询，就像我们在上面的例子中那样：<code>SORT clients BY stats/client:*-&gt;20110407</code>。其中，通配符*可以被set中成员所替换，所以在这些hash表中排序是基于匹配field 为20110407的值来完成的。如果我们把分析数据存储在strings中而不是hash表，则我们可以提交命令：<code>SORT clients BY stats/client:*/20110407</code>。
+   使用相同的模式，你除了排好序的list也可以获取更多地数据（比如你用来排序的值）.可选择地，在list里SORT的输出也可以被排序。</p>
+      </li>
+      <li>
+        <p><code>ZRANK set-name member</code></p>
+
+        <p>返回在给定的有序集合中给定成员的排名。</p>
+      </li>
+      <li>
+        <p><code>ZUNIONSTORE destination number-of-keys sorted-set1 [sorted-set2 ...] [WEIGHTS weight1 [weight2 ...]] [AGGREGATE SUM|MIN|MAX]</code></p>
+
+        <p>聚合sorted sets集合，然后作为一个新的sorted set存储。可选择地，你可以为每一个set指定 weight，并且只需聚合函数：sum（默认）,maximum scores, 或者 minimum scores。</p>
+      </li>
+      <li>
+        <p><code>EXISTS key</code></p>
+
+        <p>检查key是否存在。如果key存在则返回1；否则返回0.</p>
+      </li>
+    </ul>
+
+  </blockquote>
+</blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redis Cookbook 之 基于Redis 实现倒序索引全文搜索]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search/"/>
+    <updated>2014-12-28T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+  <li><a href="#InvertedIndex">倒序索引介绍</a></li>
+</ol>
+
+<h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
+
+<p>倒序索引是一种索引数据结构，该索引存储单词（或者其他内容）到它们位于文件，档案或者数据库等位置之间的映射关系。这个通常被用来实现全文搜素服务，但是这要求在搜索之前这些文档的相关倒序索引就必须建立好。</p>
+
+<p>因此，我们想要事业Redis来作为背后的存储系统来实现全文搜索服务。</p>
+
+<h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
+
+<p>我们的实现，将为每一个单词，准备一个set集合，这些集合包含对应的文档的ID。为了允许快速搜索，我们将在开始之前为所有的文档建立索引。</p>
+
+<p>搜索服务本身先分割请求为各个单词，然后获取每个单词匹配的集合set的交集，最后就可以返回包含所有我们搜索的单词的文档ID集。</p>
+
+<h2 id="a-iddiscussiona">3. <a id="Discussion">讨论</a></h2>
+
+<h3 id="section-1">3.1 建立索引</h3>
+
+<p>首先，让我们假设我们有一百个允许我们搜索的文档或者网页，因此需要对它们建立倒序索引。为了建立索引，我们必须分割文本为分开的单词（分词操作），在此过程中，可能需要排除<code>stop word</code>以及长度小于3的单词。使用Ruby脚本，如下所示：</p>
+
+<p><figure class='code'><figcaption><span>建立索引 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def id_for_document(filename)</span>
+</span><span class='line'><span class="sr">    doc_id = $redis.hget(“documents”, filename) </span>
+</span><span class='line'><span class="sr">    if doc_id.nil?</span>
+</span><span class='line'><span class="sr">        doc_id = $redis.incr(“next_document_id”) </span>
+</span><span class='line'><span class="sr">        $redis.hset(“documents”, filename, doc_id) </span>
+</span><span class='line'><span class="sr">        $redis.hset(“filenames”, doc_id, filename)</span>
+</span><span class='line'><span class="sr">    end</span>
+</span><span class='line'><span class="sr">    doc_id </span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="no">STOP_WORDS</span> <span class="o">=</span> <span class="o">[</span><span class="err">“</span><span class="n">the</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">of</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">to</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="ow">and</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">a</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="k">in</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">is</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">it</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">you</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="n">that</span><span class="err">”</span><span class="o">]</span> <span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class='line'><span class="n">doc_id</span> <span class="o">=</span> <span class="n">id_for_document</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class='line'><span class="n">f</span><span class="o">.</span><span class="n">each_line</span> <span class="k">do</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/ |,|)|(|\;|./</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">word</span><span class="o">|</span>
+</span><span class='line'>        <span class="n">continue</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">size</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="mi">3</span> <span class="o">||</span> <span class="no">STOP_WORDS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">add_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>所以，我们将过滤掉这些已经被加入到索引的单词，然后为我们的文档生成唯一的ID。此外，我们仍然需要完成上面的索引方法：</p>
+
+<p><figure class='code'><figcaption><span>建立索引 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def add_word(word, doc_id) </span>
+</span><span class='line'><span class="sr">    $redis.sadd(“word:</span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="sr">”, doc_id)</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>因此，对于每一个我们在文档中发现的单词，我们都已经创建了一个新的集合set，该set包含被发现单词的文档ID集。</p>
+
+<h3 id="section-2">3.2 搜索</h3>
+
+<p>倒序索引的优势是查找的时候真的非常的快，因为绝大部分的工作在文档建索引的时候就已经完成了。为了搜索，我们仅仅需要，找到我们搜索查询里面单词对应的集合set的交集。下面的代码使用<code>redis-rb</code>接口完成查询redis服务器命令。</p>
+
+<p><figure class='code'><figcaption><span>搜索 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def search(&lt;em&gt;terms)</span>
+</span><span class='line'><span class="sr">    # 对每一查询单词求对应的id集合，然后求集合的交集</span>
+</span><span class='line'><span class="sr">    document_ids = $redis.sinter(&lt;/em</span><span class="o">&gt;</span><span class="n">terms</span><span class="o">.</span><span class="n">map</span><span class="p">{</span><span class="o">|</span><span class="n">t</span><span class="o">|</span> <span class="err">“</span><span class="ss">word</span><span class="p">:</span><span class="c1">#{t}”}) </span>
+</span><span class='line'>    <span class="c1"># 根据id集合，查找对应文件名集合</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span><span class="p">(</span><span class="err">“</span><span class="n">filenames</span><span class="err">”</span><span class="p">,</span> <span class="o">*</span><span class="n">document_ids</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes: <code>sinter方法</code>：求指定多个集合的交集</p>
+  </blockquote>
+</blockquote>
+
+<h3 id="section-3">3.3 排序计分</h3>
+
+<p>虽然前面的方法某种程度上是有限制的，并且非常简单；但是也是很容易扩展的。其中一件我们可以做的事情就是，当返回搜索结果的时候排序我们的文档，我们可以考虑计算一种分数：高分表示和我们搜索的查询更相关（比如查询单词位于文档的主题或者标题中）或者只是单纯地以为出现更高的次数。因此，我们将该索引方法如下所示：</p>
+
+<p><figure class='code'><figcaption><span>排序计分 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def add_word(word, doc_id) </span>
+</span><span class='line'><span class="sr">    $redis.zincrby(“word:</span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="sr">”, 1, doc_id)</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>搜索的结构会变得更加复杂一点点：</p>
+
+<p><figure class='code'><figcaption><span>排序计分 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def search(*terms)</span>
+</span><span class='line'><span class="sr">    document_ids = $redis.multi do</span>
+</span><span class='line'><span class="sr">        $redis.zinterstore(“temp_set”, terms.map{|t| “word:</span><span class="si">#{</span><span class="n">t</span><span class="si">}</span><span class="sr">”})</span>
+</span><span class='line'><span class="sr">        $redis.zrevrange(“temp_set”, 0, -1) </span>
+</span><span class='line'><span class="sr">    end.last</span>
+</span><span class='line'><span class="sr">    $redis.hmget(“filenames”, *document_ids) </span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes: 这里使用了前面代码中多个方法，这是因为我们在有序的<code>temp_set</code>集合中有一个潜在的竞争条件。当你必须在任务其他人也尝试访问他们改变的数据之前，都使用这两个或者更多命令（在<code>ZREVRANGE</code>命令之前完成<code>ZINTERSTORE</code>命令），就会有潜在的竞争条件存在。</p>
+  </blockquote>
+</blockquote>
+
+<p>为了避免在运行的时候出现竞争条件，当我们执行并发的搜索查询的时候，我们必须要么使用Redis的<code>MULTI/EXEC</code>命令，要么可能为每一个查询搜索产生一个唯一键。（在上例中，我们必须在我们自己之后清除并且删除临时的排序set集合）。</p>
+
+<p><code>MULTI 和 EXEC</code>命令运行Redis中得事务行为。在<code>MULTI/EXEC</code>块中得命令保证运行的时候序列化串行，这意味着在块长度期间，没有其他的Redis客户端获取服务。在先前的例子里，它排除了在<code>temp_set</code>中的竞争条件，因为其他客户端不可能在<code>ZINTERSTORE</code>和<code>ZREVRANGE</code>操作之间修改值。在事务内部使用<code>DISCARD</code>就会放弃事务，丢弃所有的命令，然后返回一个正常状态。</p>
+
+<p>由于命令只会在<code>EXEC</code>之后才会被调用执行，因此只有在那个时刻你才会接收事务内部所有命令做出的回答响应。因此，不可能会使用同一个事务的事务内部一个命令运行的响应结果。为了达到这点，你将需要使用<code>WATCH</code>.</p>
+
+<p><code>redis-rb</code>没有直接的<code>EXEC</code>调用。换句话说，在提交给你的<code>multi方法</code>的块的开始和结束，表明也是事务的开始和结束。在你块结束的时候，<code>redis-rb</code>内部会调用<code>EXEC</code>。</p>
+
+<blockquote>
+  <blockquote>
+    <p><em>Redis 命令</em>:</p>
+
+    <ul>
+      <li>
+        <p><code>ZINCRBY zset-name increment element</code></p>
+
+        <p>添加或者增长在有序集合中元素的分数。而使用ZADD和SADD，则如果集合不存在则将会被创建。</p>
+      </li>
+      <li>
+        <p><code>ZINTERSTORE destination-zset number-of-zsets-to-intersect zset1 [zset2 ...] [WEIGHTS weight1 [weight2 ...]] [AGGREGATE SUM | MIN | MAX]</code></p>
+
+        <p>计算给定的一些ZSETS集合的交集，然后把结果存储在新的ZSET中。此外，也可以使用增长因子或者聚合方法来获取新的集合。默认情况下，它是所有集合中分数的和，但是它也可以是最大或者最小值。</p>
+      </li>
+      <li>
+        <p><code>ZREVRANGE zset-name start-index stop-index [WITHSCORES]</code></p>
+
+        <p>返回在有序集合中给定范围内的元素，以递减的顺序。这个命令也可以选择在返回结果中包含元素的分数。ZRANGE命令执行相同的操作，但是是以递增的顺序。</p>
+      </li>
+    </ul>
+  </blockquote>
+</blockquote>
+
+<h3 id="section-4">3.4 其他优化</h3>
+
+<p>对于搜索，还有许多地方可以被优化：</p>
+
+<ul>
+  <li>
+    <p><em>大小写敏感</em></p>
+
+    <p>我们可以在建立索引之前单词和查询之前的搜索项，使用单词的大小写敏感。</p>
+  </li>
+  <li>
+    <p><em>模糊搜索</em></p>
+
+    <p>可能你也感兴趣实现模糊搜索作为你的搜索应用的一部分。它考虑基于通常错误的拼写单词。例如，在我们的例子中，在建立索引的时候也一起考虑为拼写错误单词的项建立索引，要么从一个列表中查找，要么为这个目标使用专门的算法（例如语音学上的算法）</p>
+  </li>
+  <li>
+    <p><em>部分单词匹配</em></p>
+
+    <p>虽然这个非常有用，但是将会增加索引内存的使用，并且给出一些你不想要的搜索结果。为了达到这个目的，你不得不分解你的单词为子串，然后为它们建索引。例如，为单词<code>matching</code>建索引，你不得不增加下面这些：</p>
+
+    <pre><code>  matching
+  mat 
+  matc 
+  match 
+  matchi 
+  matchin
+</code></pre>
+
+    <p>假设设置的最小长度为3个字符，并且也假设我们只匹配单词的前缀。如果我们有兴趣建立所有可能的组合，你需要为这个单词其他的子串也建立索引。</p>
+
+    <p>使用有序集合对于这个和前面的模糊查找增强技术都是很有用的。你可以根据部分单词匹配和错误拼写单词而让它们<em>获取更低的分数来提高你的搜索结果质量</em>。</p>
+  </li>
+</ul>
+
+<h2 id="a-idinvertedindexa">4. <a id="InvertedIndex">倒序索引介绍</a></h2>
+
+<p>如果不使用倒序索引技术，在每次进行检索时，搜索引擎必须遍历每一个网页，查找网页中是否包含你指定的关键词。这个工作量是十分巨大的，主要原因有二：</p>
+
+<ul>
+  <li>
+    <p>互联网的网页基数非常大；</p>
+  </li>
+  <li>
+    <p>在每一个网页中检索是否含有指定的关键词不是一件简单的事情，它需要遍历网页的每个字符。
+为了更好的建立被搜索的关键字和含有这些关键字的页面之间的映射关系，倒序索引产生了。简单的说，倒序索引的倒序，指的是这个索引是从关键词中查找对应的源的，而不是从源中检索对应的关键词。</p>
+  </li>
+</ul>
+
+<p><em>举例如下</em>：为了检索关键词 A，首先从倒序索引的索引表中，找到关键词 A，然后查找 A 所在的页。由于倒序索引表排序后，在其中查找一个关键词可以使用二分查找，特别是在采用分布式数据、服务器集群、多线程技术等条件下，效率极高，所以，查找含有某个关键词的页变得非常简单。</p>
+
+<p>假设数据库中含有1000000条记录，其中有 10 条记录符合搜寻条件，如果使用倒序索引，可以很快找到这些关键词，并且定位到含有这些关键词的十条记录；否则，需要遍历1000000条记录，效率的差异可想而知。</p>
+
+<p>所以，倒序索引相当于一本出处大字典，查阅其中的每个词汇，都可以告诉你它的所有出处。</p>
+
+<p>倒序索引中的关键词，一般是 <em>蜘蛛（Spider）</em>在网页爬行时对网页进行分词的结果。中文分词也是一件比较麻烦的事情。关于 <em>分词技术</em>，请查阅其他相关文章。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redis Cookbook 之 基于Redis 实现一个聊天系统]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/12/20/Redis-Cookbook-Chat-System/"/>
+    <updated>2014-12-20T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/12/20/Redis-Cookbook-Chat-System</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+</ol>
+
+<h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
+
+<p>想要借助 <code>Redis</code>的<code>PUB/SUB</code>功能，使用node.js和Socket.io实现一个轻量级的实时聊天系统。</p>
+
+<h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
+
+<p>由于Redis 天生就支持发布订阅(pub/sub)模式，所以我们可以很容易就使用<code>Node.js</code> 和 <code>Socket.IO</code>来快速创建一个实时的聊天系统。</p>
+
+<p>发布订阅模式，其实就是接收者订阅某种特定模式的消息(比如，发送到某个指定channel的消息)，而发送者发送一个消息到消息云上。当一个消息到达云上的时候，订阅了这一种类的客户端就会获得消息。这中发布订阅模式，然后就可以允许发送者和接收客户端在不知道彼此的情况下，亲密结对交流。而他们仅仅需要以一种既定的模式发送消息和接收匹配类型的消息即可。</p>
+
+<p><code>Redis</code>直接支持<code>pub/sub</code>模式，意味着其可以让接收客户端订阅指定的匹配消息频道channel，以及发布消息到一个给定的频道channel。这意味着，我们可以很简单地创建像<code>chat:cars</code>的聊车频道；或者像<code>chat:sausage</code>这种关于食物的谈话。此外，频道channel的命名跟Redis 的keySpace无关，所以不用担心会存在某些冲突情况。下面给出，Redis支持的一些命令：</p>
+
+<pre><code>    * PUBLISH：发布消息到指定的频道；
+
+    * SUBSCRIBE：订阅一个指定频道的消息；
+
+    * UNSUBSCRIBE：取消订阅一个指定频道；
+
+    * PSUBSCRIBE：订阅一个满足给定模式的频道集；
+
+    * PUNSUBSCRIBE：取消订阅满足指定模式的频道集。
+</code></pre>
+
+<p>拥有上面这些知识，为在应用程序逻辑部分之间的终端用户或者流消息实现一个聊天和统计系统，其实还是很琐碎的。
+<code>pub/sub</code>甚至可以被用来作为一个内建的强壮阻塞队列系统。接下来看看，如何去实现这么一个消息聊天系统吧。</p>
+
+<p>在服务端，<code>Node.js</code> 和 <code>Socket.IO</code>将来实现网络层，然后Redis将作为一个在客户端之间递交消息的<code>pub/sub</code>功能的实现。在客户端，我们使用jQuery来处理消息，然后发送数据到服务器上。</p>
+
+<h2 id="a-iddiscussiona">3. <a id="Discussion">讨论</a></h2>
+
+<p>由于本文使用Node.js来实现一个聊天系统，所以我们假设你已经安装了node.js，并且我们也希望你可以按顺序安装支持我们聊天系统所需要的<code>node库(Socket.IO and Redis)</code>。</p>
+
+<h3 id="section-1">3.1 初始设置</h3>
+<p>安装所需要的第三方库：</p>
+
+<pre><code>    npm install socket.io
+
+    npm install redis
+</code></pre>
+
+<h3 id="section-2">3.2 服务端代码实现</h3>
+
+<p>在服务端，我们正在运行<code>Redis</code>并且创建了一个运行node.js的javaScript文件。该代码主要负责建立到Redis服务之间的链接conn，然后一直监听来自clients端连接请求的端口。因此，我们创建一个javascript代码文件<code>chat.js</code>:</p>
+
+<p><figure class='code'><figcaption><span>服务端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="kd">var</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="nx">io</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;socket.io&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="nx">redis</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;redis&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="nx">rc</span> <span class="o">=</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">createClient</span><span class="p">();</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>上面的代码，可以建立redis连接，和引入http,socket.io,redis库。接下来，我们需要设置一个简单地server，让客户端可以连接，请求数据：</p>
+
+<p><figure class='code'><figcaption><span>服务端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+</span><span class='line'>    <span class="c1">// we may want to redirect a client that hits this page </span>
+</span><span class='line'>    <span class="c1">// to the chat URL instead</span>
+</span><span class='line'>    <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;text/html&#39;</span><span class="p">});</span>
+</span><span class='line'>    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;&amp;lt;h1&amp;gt;Hello world&amp;lt;/h1&amp;gt;&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Set up our server to listen on 8000 and serve socket.io server.listen(8000);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">socketio</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">server</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>接下来，建立连接了就可以开始使用node.js来完成开发连接redis，客户端订阅某个channel，接收到消息处理动作等功能。所以，接下来使用redis来完成订阅消息：</p>
+
+<p><figure class='code'><figcaption><span>服务端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="c1">// if the Redis server emits a connect event, it means we&#39;re ready to work, </span>
+</span><span class='line'><span class="c1">// which in turn means we should subscribe to our channels. Which we will. rc.on(&quot;connect&quot;, function() {</span>
+</span><span class='line'>    <span class="nx">rc</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">&quot;chat&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">// we could subscribe to more channels here </span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>    <span class="c1">// When we get a message in one of the channels we&#39;re subscribed to, // we send it over to all connected clients.</span>
+</span><span class='line'><span class="nx">rc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Sending: &quot;</span> <span class="o">+</span> <span class="nx">message</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">socketio</span><span class="p">.</span><span class="nx">sockets</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>ok，如你所见，这段代码非常简单。其实现，就是我们在特定的channel监听消息，当有消息接收到的时候，服务端就广播给所有订阅该消息的客户端。</p>
+
+<h3 id="section-3">3.2 客户端代码实现</h3>
+
+<p>完成了server端部分的开发，接下来完成一个小页面来连接Node.js，建立客户端的Socket.IO，然后处理进来和出去的消息。所以我们创建了一个很简单的<code>HTML5</code>页面：</p>
+
+<p><figure class='code'><figcaption><span>客户端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span><span class="ni">&amp;lt;</span>!doctype html<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>html lang=&quot;en&quot;<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>head<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>meta charset=&quot;utf-8&quot;<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>title<span class="ni">&amp;gt;</span>Chat with Redis<span class="ni">&amp;lt;</span>/title<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>/head<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>body<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>ul id=&quot;messages&quot;<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>!-- chat messages go here --<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>/ul<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>/body<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>/html<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>现在我们需要引入两个非常重要的库来获得想要的功能：jQuery 和 Socket.IO：</p>
+
+<p><figure class='code'><figcaption><span>客户端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span><span class="ni">&amp;lt;</span>script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js&quot;<span class="ni">&amp;gt;&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>script src=&quot;http://localhost:8000/socket.io/socket.io.js&quot;<span class="ni">&amp;gt;&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>现在我们准备好了从页面连接Node.js，然后开始监听处理消息。在页面的头部增加下面的代码：</p>
+
+<p><figure class='code'><figcaption><span>客户端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span><span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span>
+</span><span class='line'>var socket = io.connect(&#39;localhost&#39;, { port: 8000 });
+</span><span class='line'>socket.on(&#39;message&#39;, function(data){
+</span><span class='line'>    var li = new Element(&#39;li&#39;).insert(data);
+</span><span class='line'>    $(&#39;messages&#39;).insert({top: li});
+</span><span class='line'>});
+</span><span class='line'><span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>这个javascript代码片段表示，客户端使用<code>Socket.IO</code>连接我们的node.js实例8000端口，然后开始监听消息事件。当一个消息到达时，它创建一个新的list元素，并且把它添加到我们事先已经建好的未排序list中。</p>
+
+<p>到这里，还剩下的，就是客户端发送消息了。和server端一样，我们使用<code>Socket.IO emit</code>方法，如下所示：</p>
+
+<p><figure class='code'><figcaption><span>客户端代码实现 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span><span class="ni">&amp;lt;</span>form id=&quot;chatform&quot; action=&quot;&quot;<span class="ni">&amp;gt;</span>
+</span><span class='line'>    <span class="ni">&amp;lt;</span>input id=&quot;chattext&quot; type=&quot;text&quot; value=&quot;&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'>    <span class="ni">&amp;lt;</span>input type=&quot;submit&quot; value=&quot;Send&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>/form<span class="ni">&amp;gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span>
+</span><span class='line'>$(&#39;#chatform&#39;).submit(function() {
+</span><span class='line'>    socket.emit(&#39;message&#39;, $(&#39;chattext&#39;).val());
+</span><span class='line'>    $(&#39;chattext&#39;).val(&quot;&quot;); // cleanup the field
+</span><span class='line'>    return false;
+</span><span class='line'>});
+</span><span class='line'><span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>当一个用户写东西到<code>form</code>中，然后点击<code>Send</code>，jQuery将会使用我们的socket变量emit发送一个消息事件到服务器端，服务器然后会广播这条消息给其他所有人。最后返回false表示消息事件真的被发送提交出去了。提交的这个动作是由<code>Socket.IO</code>完成的。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redis Cookbook 之 基于Redis 实现Oauth协议]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/08/11/Redis-Cookbook-Implementing-OAuth/"/>
+    <updated>2014-08-11T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/08/11/Redis-Cookbook-Implementing-OAuth</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+</ol>
+
+<h2 id="a-idproblema"><a id="Problem">问题</a></h2>
+
+<p>在我们案例里，我们将实现一个数据模型和交互来支持Oauth v1.0a API。一般常常是基于MySQL或者其他的RDBMS实现，但是我们可以利用Redis的数据结构更高效的实现Oauth协议。</p>
+
+<h2 id="a-idsolutiona"><a id="Solution">解决方法</a></h2>
+
+<p>我们不会去实现Oauth的API或者交互。这里我们仅仅感兴趣的是这种类型场景里所需要的数据。我们将在Redis里面存储五种类型的数据：</p>
+
+<ul>
+  <li>consumer keys</li>
+  <li>consumer secrets</li>
+  <li>request tokens</li>
+  <li>access tokens</li>
+  <li>nonces</li>
+</ul>
+
+<p>所以我们的需求如下：通过一对<code>key</code>和<code>secret</code>标识的应用（客户）。这些客户根据他们的需求会有许多次的请求和访问token，并且每个用户/时间戳对是唯一的。</p>
+
+<p>根据他们的要求和交互情况，这种类型的数据可以被存储在<code>hashes</code>、<code>sets</code>和<code>strings</code>。</p>
+
+<h2 id="a-iddiscussiona"><a id="Discussion">讨论</a></h2>
+
+<h3 id="section-1">3.1 初始设置</h3>
+
+<p>一开始，在客户发出一个请求之前，他们必须输入他们的数据。我们将这个数据和客户信息放入hash中。当他注册我们系统的时候，key是我们为特定的商户存储的数据之一：</p>
+
+<pre><code>HMSET /consumers/key:dpf43f3p2l4k3l03 secret kd94hf93k423kf44 created_at 201103060000 redirect_url http://www.example.com/oauth_redirect name test_application
+</code></pre>
+
+<p>如同命令所示，这个hash包含它的正常的数据，并且可以随着时间进行扩展。这样，和Memcache一样，或者以不同的keys来存储所有的值，或者存储像JSON一样的数据。</p>
+
+<pre><code>HSET hash-name key value
+    Sets a value on a hash with the given key. As with other Redis commands, if the hash doesn’t exist, it’s created.
+    
+HMSET hash-name key1 value1 [key2 value2 ...]
+    Allows you to set several values in a hash with a single command
+</code></pre>
+
+<h3 id="token">3.2 获取一个请求token</h3>
+
+<p>为了获取一个请求token，客户发送他们的key、时间戳、唯一生成随机数、回调url和一个请求的签名（使用客户的secret对请求路径和参数hash计算结果）。</p>
+
+<p>API提供者需要验证签名是否正确，检查随机数/时间戳在之前是否使用过，并且生成一个新的请求token。</p>
+
+<p>为了做到这样，server需要获取客户的数据：</p>
+
+<pre><code>HGETALL /consumers/key:dpf43f3p2l4k3l03
+</code></pre>
+
+<p>然后检查这个随机数是否以前使用过：</p>
+
+<pre><code>SADD /nonces/key:dpf43f3p2l4k3l03/timestamp:20110306182600 dji430splmx33448
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redis Cookbook 之 Redis 键值对存储服务]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/08/10/Redis-Cookbook-Redis-KeyValue-Store/"/>
+    <updated>2014-08-10T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/08/10/Redis-Cookbook-Redis-KeyValue-Store</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+</ol>
+
+<h2 id="a-idproblema"><a id="Problem">问题</a></h2>
+
+<p>许多的应用服务都需要存储关于使用，配置或者其他相关的信息的临时数据，这些数据结构并不适合存储在关系数据库中。
+通常情况下，开发者会是MySQL或者其他RDBMS来存储这种数据。在这里，我们将使用Redis和它内建的数据结构，以一种更轻量级、更快速、更宽松的方式完成存储应用临时数据的功能。</p>
+
+<h2 id="a-idsolutiona"><a id="Solution">解决方法</a></h2>
+
+<p>Redis本身的定位并不仅仅是<code>key/value</code>存储服务，同时也可以作为存储数据结构的服务器。这意味着，在传统的<code>key/value</code>存储功能之上，它还提供给你一些存储和操作应用数据的方式。
+我们将使用这些数据结构和命令来存储应用示例数据：比如，我们在一些<code>regular keys</code>里面存储有用的计数器，在<code>Redis hashes</code>里面存储用户对象，以及使用<code>sets</code>实现朋友圈（像Google+）。</p>
+
+<h2 id="a-iddiscussiona"><a id="Discussion">讨论</a></h2>
+
+<h3 id="section-1">3.1 存储应用使用计数器</h3>
+
+<p>首先，让我们开始存储一些非常基础的事情：计数器。想象我们运营一个商业的社交网络，然后想要追踪<code>profile/page</code>的访问数据。我们可以在RDBMS的存储我们页数据的表里面增加一列，
+但是希望我们的流量足够高以至于每次更新这一列会带来一些麻烦。因此，我们需要更快的工具来更新和查询，所以我们使用Redis来代替。</p>
+
+<p>由于Redis命令的原子性，我们知道如果我们存储一个计数器的key，则我们可以使用命令，比如：<code>INCR(或者INCRBY)和DECR(或者DECRBY)</code>，来增加增加或者减少它包含的值。所以，通过为我们的数据设计一个合适的命名保证我们的计数器单次操作成本微乎其微。</p>
+
+<p>Redis系统内实际上并没有约定的方法来组织keys，但是许多人（包括作者）都喜欢使用<code>冒号：</code>来区分关键字从而创建keys，因此在这里也这样约定。为了存储我们的社交网络页面访问数据，我们可以有一个像<code>visits:pageid:totals</code>的命名，比如页面id为635，则命名为<code>visits:635:totals</code>。如果我们已经在一些地方存储访问数据，我们可以首先根据这些数据产生redis的keys，并且设置对应的值，比如：</p>
+
+<pre><code>	SET visits:1:totals 21389 
+	SET visits:2:totals 1367894 
+	(...)
+</code></pre>
+
+<p>当访问一个给定的页面，一个简单地<code>INCR</code>命令将更新Redis中的计数器：</p>
+
+<pre><code>	INCR visits:635:totals
+</code></pre>
+
+<p>然后我们可以获取任何页面在任何时候的访问次数，这只需要通过简单地<code>GET</code>命令：</p>
+
+<pre><code>	GET visits:635:totals
+</code></pre>
+
+<p>你也可以让你的命令更智能，比如你可以在人们查看页面的时候，显示当前该页面被访问的次数给他看。当然，你也可以计算他自己访问的次数，所以你甚至不需要执行最后的<code>GET</code>命令：你可以利用<code>INCR</code>命令返回值的特点，因为<code>INCR</code>命令会返回自增之后的计数值。一个简单地关于访问和计数器的伪代码如下所示：</p>
+
+<pre><code>	1. 访问者访问页面.
+	2. 我们 INCR 相关页面的访问计数器 (比如：INCR visits:635:totals）		3. 我们获取INCR命令的返回值。
+	4. 我们展示返回的值在用户页面上。
+</code></pre>
+
+<p>这种方式我们保证用户在查看页面的时候，常常可以看见实时计数值，以及他自己访问的计数–着所有都可以使用Redis命令。</p>
+
+<h3 id="hashes">3.2 存储对象数据在hashes内</h3>
+
+<p>Redis关于hashes的实现对于存储对象数据应用来说是一个很好的方案。在下面的例子里，我们将调查我们怎样使用<code>hashes</code>来在给定系统上存储用户相关的信息。</p>
+
+<p>我们将开始设计一个key命名来存储我们的用户。在此之前，我们使用分号来分割我们的关键字，进而产生意义丰富的key。为了达到这个案例的目的，我们将构建一个简单的key，形如：<code>users:alias</code>，其中<code>alias</code>是二进制安全的字符串。所以，为了存储一个叫做<code>John Doe</code>的用户，我们将建一个hash叫做<code>users:jdoe</code>。</p>
+
+<p>我们也假设我们将要存储关于用户的许多属性，比如全名、邮件地址、电话号码、以及访问我们英语的次数。我们将使用Redis的<code>hash管理命令</code>–像<code>HSET</code>、<code>HGET</code>和<code>HINCRBY</code>–存储用户的这些信息。</p>
+
+<pre><code>	redis&gt; hset users:jdoe name "John Doe" 
+	(integer) 1
+	
+	redis&gt; hset users:jdoe email "jdoe@test.com" 
+	(integer) 1
+	
+	redis&gt; hset users:jdoe phone "+1555313940" 
+	(integer) 1
+	
+	redis&gt; hincrby users:jdoe visits 1 
+	(integer) 1
+</code></pre>
+
+<p>随着我们hash的建立，我们可以在合适的地方通过<code>HGET</code>获取简单地属性值或者通过<code>HGETALL</code>命令所有hash对象数据，如同下面的示例：</p>
+
+<pre><code>	redis&gt; hget users:jdoe email 
+	"jdoe@test.com"
+
+	redis&gt; hgetall users:jdoe
+	1) "name"
+	2) "John Doe"
+	3) "email"
+	4) "jdoe@test.com" 5) "phone"
+	6) "+1555313940" 7) "visits"
+	8) "1"
+</code></pre>
+
+<p>还有辅助的命令，比如<code>HKEYS</code>，该命令返回一个特定的hash里面存储的所有keys；<code>HVALS</code>，该命令仅仅返回values。当从你应用的Redis中检索数据时，你可能会发现使用<code>HGETALL</code>或者其他命令很有用，这其实取决于你想怎样检索你的数据。</p>
+
+<pre><code>	redis&gt; hkeys users:jdoe 
+	1) "name"
+	2) "email"
+	3) "phone"
+	4) "visits"
+
+	redis&gt; hvals users:jdoe 
+	1) "John Doe"
+	2) "jdoe@test.com"
+	3) "+1555313940"
+	4) "1"
+</code></pre>
+
+<p>关于我们用户hash的其他命令列表，你可以详细阅读 <code>Redis official documentation for hash commands</code>，这里面包含他自己的使用<code>hashes</code>管理数据的示例。</p>
+
+<h3 id="sets">3.2 使用sets存储用户的朋友圈</h3>
+
+<p>为了完成Redis特有的方式存储数据，我们看看怎么样使用Redis支持的sets来创建和google+相似的朋友圈功能。sets天生就适应朋友圈，因为sets代码数据的集合，并且有一些天生的功能来做一些有趣的事情，比如交集和并集。</p>
+
+<p>首先，让我们定义一个朋友圈的命名。我们想要为我们每一个用户存储一些朋友圈，所以我们的key需要包含用户和实际的朋友圈。举个例子，<code>John Doe</code>的家庭圈可能有一个key像<code>circle:jdoe:family</code>样子。相似地，他的足球训练朋友可能在key为<code>circle:jdoe:soccer</code>的set里面。这里没有key设计的设置规则，所以常常以一种对我们应用有意义的方式来设计它们。</p>
+
+<p>现在，我们知道存储我们sets里面的keys，接下来，我们来创建<code>John Doe</code>的家庭集和足球朋友集。在集合本身里面，我们可以通过用户id来获取Redis里其他的keys。如果我们想要获取属于<code>John Doe</code>家庭圈用户的列表，和它们的用户信息，我们可以使用我们set的操作结果，然后为每一个用户提取真实的hashes（使用hashes来存储用户信息）。</p>
+
+<pre><code>	redis&gt; sadd circle:jdoe:family users:anna 
+	(integer) 1
+
+	redis&gt; sadd circle:jdoe:family users:richard
+	(integer) 1 
+	
+	redis&gt; sadd circle:jdoe:family users:mike
+	(integer) 1 
+	
+	redis&gt; sadd circle:jdoe:soccer users:mike
+	(integer) 1 
+	
+	redis&gt; sadd circle:jdoe:soccer users:adam
+	(integer) 1 
+	
+	redis&gt; sadd circle:jdoe:soccer users:toby
+	(integer) 1 
+	
+	redis&gt; sadd circle:jdoe:soccer users:apollo
+	(integer) 1
+</code></pre>
+
+<p>需要记住的是，在上面的例子里，我们需要规范化我们set的成员通过使用实际的id数值而不是<code> users:name</code>。虽然上面的例子工作得很好，但它可能为了性能原因牺牲一些可读性而获取更快的速度和更高的内存使用效率。</p>
+
+<p>现在我们有一个set叫做<code>circle:jdoe:family</code>,带有三个值（分别是：users:anna, users:richard, and users:mike），第二个叫做<code>	circle:jdoe:soccer</code>,带有四个值（分别是：users:mike, users:adam, users:toby, and users:apollo）。它们的值仅仅只是字符串，但是通过使用字符串对我们来说是有意义的（这和我们设计用户的hashes很相似），我们可以使用<code>SMEMBERS</code>命令的结果进而获取特点用户的信息。如下面的例子：</p>
+
+<pre><code>	redis&gt; smembers circle:jdoe:family 
+	1) "users:richard"
+	2) "users:mike"
+	3) "users:anna"
+
+	redis&gt; hgetall users:mike 
+	(...)
+</code></pre>
+
+<p>现在，我们已经知道了怎么在sets里面存储信息了，我们可以扩展这个只是，做一些有趣的事情，比如获取属于这两个sets里面的人，或者获取一个<code>John Doe</code>添加到我们系统朋友圈中的完整的用户列表。</p>
+
+<pre><code>	redis&gt; sinter circle:jdoe:family circle:jdoe:soccer 
+	1) "users:mike"
+
+	redis&gt; sunion circle:jdoe:family circle:jdoe:soccer 
+	1) "users:anna"
+	2) "users:mike"
+	3) "users:apollo" 
+	4) "users:adam"
+	5) "users:richard" 
+	6) "users:toby"
+</code></pre>
+
+<p>根据我们的结果，<code>Mike</code>在<code>John Doe</code>的家庭圈和足球圈里面，通过两个圈的并集，我们也可以获取完整地成员列表。</p>
+
+<p>如你所见，Redis sets使得RDBMS一些查询变得非常简单。Redis完成得非常的快，使得对于那些管理集合操作的应用来说，<code>Redis sets</code>是一个理想的候选者。朋友圈就是一个例子，此外像 推荐或者甚至文本搜素也很适合。在随后的案例里面，将会看到更深入的例子。</p>
+
+<pre><code>SET key value
+	Sets the key to hold the given value. Existing data is overwritten (even if of a dif- ferent data type).	
+
+GET key
+	Returns the content held by the key. Works only with string values.
+
+INCR key
+	Increments the integer stored at key by 1.
+
+INCRBY key value
+	Performs the same operation as INCR, but incrementing by value instead.	
+DECR key
+	Decrements the integer stored at key by 1.
+
+DECRBY key value
+	Performs the same operation as DECR, but decrementing by value instead
+</code></pre>
+
+]]></content>
+  </entry>
+  
+</feed>

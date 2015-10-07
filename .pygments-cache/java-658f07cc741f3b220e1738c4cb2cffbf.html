@@ -1,0 +1,58 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="n">JavaType</span> <span class="nf">constructType</span><span class="o">(</span><span class="n">Type</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">_constructType</span><span class="o">(</span><span class="n">type</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+<span class="o">}</span>
+
+
+<span class="cm">/**</span>
+<span class="cm"> * Factory method that can be used if type information is passed</span>
+<span class="cm"> * as Java typing returned from &amp;lt;code&amp;gt;getGenericXxx&amp;lt;/code&amp;gt; methods</span>
+<span class="cm"> * (usually for a return or argument type).</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="n">JavaType</span> <span class="nf">_constructType</span><span class="o">(</span><span class="n">Type</span> <span class="n">type</span><span class="o">,</span> <span class="n">TypeBindings</span> <span class="n">context</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="n">JavaType</span> <span class="n">resultType</span><span class="o">;</span>
+
+    <span class="c1">// simple class?</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">type</span> <span class="k">instanceof</span> <span class="n">Class</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;)</span> <span class="o">{</span>
+        <span class="n">Class</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">cls</span> <span class="o">=</span> <span class="o">(</span><span class="n">Class</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;)</span> <span class="n">type</span><span class="o">;</span>
+        <span class="cm">/* 24-Mar-2010, tatu: Better create context if one was not passed;</span>
+<span class="cm">         *   mostly matters for root serialization types</span>
+<span class="cm">         */</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">context</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">TypeBindings</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">cls</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">resultType</span> <span class="o">=</span> <span class="n">_fromClass</span><span class="o">(</span><span class="n">cls</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="c1">// But if not, need to start resolving.</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">type</span> <span class="k">instanceof</span> <span class="n">ParameterizedType</span><span class="o">)</span> <span class="o">{</span><span class="c1">//带有参数化的类型，比如Collection&amp;lt;String&amp;gt;</span>
+        <span class="n">resultType</span> <span class="o">=</span> <span class="n">_fromParamType</span><span class="o">((</span><span class="n">ParameterizedType</span><span class="o">)</span> <span class="n">type</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">type</span> <span class="k">instanceof</span> <span class="n">GenericArrayType</span><span class="o">)</span> <span class="o">{</span><span class="c1">//表示一个数组类型，成员有参数化类型或者type变量</span>
+        <span class="n">resultType</span> <span class="o">=</span> <span class="n">_fromArrayType</span><span class="o">((</span><span class="n">GenericArrayType</span><span class="o">)</span> <span class="n">type</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">type</span> <span class="k">instanceof</span> <span class="n">TypeVariable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;)</span> <span class="o">{</span><span class="c1">//其他类型的父接口</span>
+        <span class="n">resultType</span> <span class="o">=</span> <span class="n">_fromVariable</span><span class="o">((</span><span class="n">TypeVariable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;)</span> <span class="n">type</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">type</span> <span class="k">instanceof</span> <span class="n">WildcardType</span><span class="o">)</span> <span class="o">{</span><span class="c1">//通配符类型，比如? 或者 ? extends Number</span>
+        <span class="n">resultType</span> <span class="o">=</span> <span class="n">_fromWildcard</span><span class="o">((</span><span class="n">WildcardType</span><span class="o">)</span> <span class="n">type</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    
+    <span class="c1">// 最后类型都不符合，就会抛出非法参数异常Unrecognized Type</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">&quot;Unrecognized Type: &quot;</span><span class="o">+</span><span class="n">type</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="cm">/* </span>
+<span class="cm">     * 目前只会被 simple types调用 (i.e. not for arrays, map or collections).</span>
+<span class="cm">     */</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">_modifiers</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">!</span><span class="n">resultType</span><span class="o">.</span><span class="na">isContainerType</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">TypeModifier</span> <span class="n">mod</span> <span class="o">:</span> <span class="n">_modifiers</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">resultType</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="na">modifyType</span><span class="o">(</span><span class="n">resultType</span><span class="o">,</span> <span class="n">type</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">resultType</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,47 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="cm">/**</span>
+<span class="cm">     * segments 维护一个entry列表的table，确保一致性状态。所以可以不加锁去读。节点的next field是不可修改的final，因为所有list的增加操作</span>
+<span class="cm">     * 是执行在每个容器的头部。因此，这样子很容易去检查变化，也可以快速遍历。此外，当节点被改变的时候，新的节点将被创建然后替换它们。 由于容器的list一般都比较短（平均长度小于2），所以对于hash</span>
+<span class="cm">     * tables来说，可以工作的很好。虽然说读操作因此可以不需要锁进行，但是是依赖</span>
+<span class="cm">     * 使用volatile确保其他线程完成写操作。对于绝大多数目的而言，count变量，跟踪元素的数量，其作为一个volatile变量确保可见性（其内部原理可以参考其他相关博文）。</span>
+<span class="cm">     * 这样一下子变得方便的很多，因为这个变量在很多读操作的时候都会被获取：所有非同步的（unsynchronized）读操作必须首先读取这个count值，并且如果count为0则不会 查找table</span>
+<span class="cm">     * 的entries元素；所有的同步（synchronized）操作必须在结构性的改变任务bin容器之后，才会写操作这个count值。</span>
+<span class="cm">     * 这些操作必须在并发读操作看到不一致的数据的时候，不采取任务动作。在map中读操作性质可以更容易实现这个限制。例如：没有操作可以显示出 当table</span>
+<span class="cm">     * 增长了，但是threshold值没有更新，所以考虑读的时候不要求原子性。作为一个原则，所有危险的volatile读和写count变量都必须在代码中标记。</span>
+<span class="cm">     */</span>
+
+    <span class="kd">final</span> <span class="n">LocalCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">map</span><span class="o">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该segment区域内所有存活的元素个数</span>
+<span class="cm">     */</span>
+    <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">count</span><span class="o">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 改变table大小size的更新次数。这个在批量读取方法期间保证它们可以看到一致性的快照：</span>
+<span class="cm">     * 如果modCount在我们遍历段加载大小或者核对containsValue期间被改变了，然后我们会看到一个不一致的状态视图，以至于必须去重试。</span>
+<span class="cm">     * count+modCount 保证内存一致性</span>
+<span class="cm">     * </span>
+<span class="cm">     * 感觉这里有点像是版本控制，比如数据库里的version字段来控制数据一致性</span>
+<span class="cm">     */</span>
+    <span class="kt">int</span> <span class="n">modCount</span><span class="o">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 每个段表，使用乐观锁的Array来保存entry The per-segment table.</span>
+<span class="cm">     */</span>
+    <span class="kd">volatile</span> <span class="n">AtomicReferenceArray</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">table</span><span class="o">;</span> <span class="c1">// 这里和concurrentHashMap不一致，原因是这边元素是引用，直接使用不会线程安全</span>
+    <span class="cm">/**</span>
+<span class="cm">     * A queue of elements currently in the map, ordered by write time. Elements are added to the tail of the queue</span>
+<span class="cm">     * on write.</span>
+<span class="cm">     */</span>
+    <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&quot;Segment.this&quot;</span><span class="o">)</span>
+    <span class="kd">final</span> <span class="n">Queue</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">writeQueue</span><span class="o">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * A queue of elements currently in the map, ordered by access time. Elements are added to the tail of the queue</span>
+<span class="cm">     * on access (note that writes count as accesses).</span>
+<span class="cm">     */</span>
+    <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&quot;Segment.this&quot;</span><span class="o">)</span>
+    <span class="kd">final</span> <span class="n">Queue</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">accessQueue</span><span class="o">;</span> 
+</pre></div>

@@ -1,0 +1,33 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="n">JsonParser</span> <span class="nf">createJsonParser</span><span class="o">(</span><span class="n">String</span> <span class="n">content</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonParseException</span>
+<span class="o">{</span>
+<span class="c1">// true -&amp;gt; we own the Reader (and must close); not a big deal（还记得上面的配置吗:)）</span>
+<span class="n">Reader</span> <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">StringReader</span><span class="o">(</span><span class="n">content</span><span class="o">);</span>
+<span class="k">return</span> <span class="nf">_createJsonParser</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">_createContext</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="c1">// 构造实际使用的parser的工厂方法。</span>
+<span class="c1">// _parserFeatures就是上面默认的属性int，collectDefaults()方法返回值。</span>
+<span class="c1">// _objectCodec：实现在JAVA对象和JSON内容之间的转换功能，没有默认，需要显式去设置。一般我们直接使用MappingJsonFactory构造。</span>
+<span class="kd">protected</span> <span class="n">JsonParser</span> <span class="nf">_createJsonParser</span><span class="o">(</span><span class="n">Reader</span> <span class="n">r</span><span class="o">,</span> <span class="n">IOContext</span> <span class="n">ctxt</span><span class="o">)</span>
+<span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonParseException</span>
+<span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">ReaderBasedParser</span><span class="o">(</span><span class="n">ctxt</span><span class="o">,</span> <span class="n">_parserFeatures</span><span class="o">,</span> <span class="n">r</span><span class="o">,</span> <span class="n">_objectCodec</span><span class="o">,</span>
+            <span class="n">_rootCharSymbols</span><span class="o">.</span><span class="na">makeChild</span><span class="o">(</span><span class="n">isEnabled</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">CANONICALIZE_FIELD_NAMES</span><span class="o">),</span>
+                <span class="n">isEnabled</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">INTERN_FIELD_NAMES</span><span class="o">)));</span>
+<span class="o">}</span>
+
+<span class="c1">// 直接调用构造函数构造一个JsonParser实现类实例</span>
+<span class="kd">public</span> <span class="nf">ReaderBasedParser</span><span class="o">(</span><span class="n">IOContext</span> <span class="n">ioCtxt</span><span class="o">,</span> <span class="kt">int</span> <span class="n">features</span><span class="o">,</span> <span class="n">Reader</span> <span class="n">r</span><span class="o">,</span>
+                         <span class="n">ObjectCodec</span> <span class="n">codec</span><span class="o">,</span> <span class="n">CharsToNameCanonicalizer</span> <span class="n">st</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="kd">super</span><span class="o">(</span><span class="n">ioCtxt</span><span class="o">,</span> <span class="n">features</span><span class="o">,</span> <span class="n">r</span><span class="o">);</span>
+    <span class="n">_objectCodec</span> <span class="o">=</span> <span class="n">codec</span><span class="o">;</span>
+    <span class="n">_symbols</span> <span class="o">=</span> <span class="n">st</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

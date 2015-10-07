@@ -1,0 +1,24 @@
+<div class="highlight"><pre>&lt;/h2&gt;
+&lt;p&gt;LATEST DETECTED DEADLOCK
+————————
+<span class="m">141009</span> 12:54:59
+&lt;em&gt;** <span class="o">(</span>1<span class="o">)</span> TRANSACTION:
+TRANSACTION AEE50DCB, ACTIVE <span class="m">0</span> sec starting index <span class="nb">read</span>
+mysql tables in use 1, locked 1
+LOCK WAIT <span class="m">2</span> lock struct<span class="o">(</span>s<span class="o">)</span>, heap size 376, <span class="m">1</span> row lock<span class="o">(</span>s<span class="o">)</span>
+MySQL thread id 6055694, OS thread handle 0x7f4345c8d700, query id <span class="m">2443700084</span> 192.168.249.154 crm_w updating
+DELETE FROM crm_business WHERE <span class="nv">serial_number</span> <span class="o">=</span> ‘CH01313320’
+**&lt;/em&gt; <span class="o">(</span>1<span class="o">)</span> WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id <span class="m">244</span> page no <span class="m">817</span> n bits <span class="m">824</span> index &lt;code&gt;uniq_serial_number_business_type&lt;/code&gt; of table &lt;code&gt;crm&lt;/code&gt;.&lt;code&gt;crm_business&lt;/code&gt; trx id AEE50DCB lock_mode X waiting
+&lt;em&gt;** <span class="o">(</span>2<span class="o">)</span> TRANSACTION:
+TRANSACTION AEE50DCA, ACTIVE <span class="m">0</span> sec inserting, thread declared inside InnoDB 500
+mysql tables in use 1, locked 1
+<span class="m">3</span> lock struct<span class="o">(</span>s<span class="o">)</span>, heap size 1248, <span class="m">3</span> row lock<span class="o">(</span>s<span class="o">)</span>, undo log entries 1
+MySQL thread id 6055696, OS thread handle 0x7f4344941700, query id <span class="m">2443700084</span> 192.168.249.154 crm_w update
+INSERT INTO crm_business<span class="o">(</span>serial_number, business_type<span class="o">)</span> values <span class="o">(</span>‘CH01313318’, 2<span class="o">)</span>
+**&lt;/em&gt; <span class="o">(</span>2<span class="o">)</span> HOLDS THE LOCK<span class="o">(</span>S<span class="o">)</span>:
+RECORD LOCKS space id <span class="m">244</span> page no <span class="m">817</span> n bits <span class="m">824</span> index &lt;code&gt;uniq_serial_number_business_type&lt;/code&gt; of table &lt;code&gt;crm&lt;/code&gt;.&lt;code&gt;crm_business&lt;/code&gt; trx id AEE50DCA lock mode S
+&lt;em&gt;** <span class="o">(</span>2<span class="o">)</span> WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id <span class="m">244</span> page no <span class="m">817</span> n bits <span class="m">824</span> index &lt;code&gt;uniq_serial_number_business_type&lt;/code&gt; of table &lt;code&gt;crm&lt;/code&gt;.&lt;code&gt;crm_business&lt;/code&gt; trx id AEE50DCA lock_mode X locks gap before rec insert intention waiting
+**&lt;/em&gt; WE ROLL BACK TRANSACTION <span class="o">(</span>1<span class="o">)</span>
+</pre></div>

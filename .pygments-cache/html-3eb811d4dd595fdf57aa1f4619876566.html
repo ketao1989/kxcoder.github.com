@@ -1,0 +1,19 @@
+<div class="highlight"><pre><span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;pre&gt;&lt;code&gt;</span><span class="ni">&amp;lt;</span>form id=&quot;chatform&quot; action=&quot;&quot;<span class="ni">&amp;gt;</span>
+    <span class="ni">&amp;lt;</span>input id=&quot;chattext&quot; type=&quot;text&quot; value=&quot;&quot; /<span class="ni">&amp;gt;</span> 
+    <span class="ni">&amp;lt;</span>input type=&quot;submit&quot; value=&quot;Send&quot; /<span class="ni">&amp;gt;</span>
+<span class="ni">&amp;lt;</span>/form<span class="ni">&amp;gt;</span>
+
+
+<span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span> 
+$(&#39;#chatform&#39;).submit(function() {
+    socket.emit(&#39;message&#39;, $(&#39;chattext&#39;).val()); 
+    $(&#39;chattext&#39;).val(&quot;&quot;); // cleanup the field 
+    return false;
+}); 
+<span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+<span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>
+</pre></div>

@@ -1,0 +1,25 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">protected</span> <span class="n">JsonToken</span> <span class="nf">_initForReading</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonParseException</span><span class="o">,</span> <span class="n">JsonMappingException</span>
+<span class="o">{</span>
+    <span class="cm">/* 首先：必须只想一个token；没有token的情况只可以出现在第一次，和当前token被清除。</span>
+<span class="cm">     * 此外，这里的JsonParser具体是指ReaderBaseParser实例，（还记得把String Reader处理吗？！）</span>
+<span class="cm">     */</span>
+    <span class="n">JsonToken</span> <span class="n">t</span> <span class="o">=</span> <span class="n">jp</span><span class="o">.</span><span class="na">getCurrentToken</span><span class="o">();</span> <span class="c1">//内部使用了简单地缓存ConcurrentHashMap实现</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// and then we must get something...</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">jp</span><span class="o">.</span><span class="na">nextToken</span><span class="o">();</span> <span class="c1">// 判断当前是什么类型的JSON标识，比如对象JSON刚开始为&quot;START_OBJECT&quot;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="cm">/* [JACKSON-99] Should throw EOFException, closest thing</span>
+<span class="cm">             *   semantically</span>
+<span class="cm">             */</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">EOFException</span><span class="o">(</span><span class="s">&quot;No content to map to Object due to end of input&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">t</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

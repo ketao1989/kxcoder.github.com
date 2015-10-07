@@ -1,0 +1,39 @@
+<div class="highlight"><pre>&lt;/p&gt;
+
+&lt;p&gt;AR   函数库打包程序，可创建静态库.a文档。默认是”ar”。
+AS   汇编程序。默认是”as”。
+CC   C编译程序。默认是”cc”。
+CXX  C++编译程序。默认是”g++”。
+CPP  C/C++预处理器。默认是”<span class="k">$(</span>CC<span class="k">)</span> -E”。
+FC   Fortran编译器。默认是”f77”。
+PC   Pascal语言编译器。默认是”pc”。
+YACC Yacc文法分析器。默认是”yacc”。&lt;/p&gt;
+
+&lt;p&gt;ARFLAGS     函数库打包程序的命令行参数。默认值是”rv”。
+ASFLAGS     汇编程序的命令行参数。
+CFLAGS      C编译程序的命令行参数。
+CXXFLAGS    C++编译程序的命令行参数。
+CPPFLAGS    C/C++预处理器的命令行参数。
+FFLAGS      Fortran编译器的命令行参数。
+PFLAGS      Pascal编译器的命令行参数。
+YFLAGS      Yacc文法分析器的命令行参数。
+LDFLAGS     链接器的命令行参数。&lt;/p&gt;
+
+&lt;p&gt;prefix      /usr/local
+exec_prefix <span class="k">$(</span>prefix<span class="k">)</span>
+bindir      <span class="k">$(</span>exec_prefix<span class="k">)</span>/bin
+sbindir     <span class="k">$(</span>exec_prefix<span class="k">)</span>/sbin
+libexecdir  <span class="k">$(</span>exec_prefix<span class="k">)</span>/libexec
+datadir     <span class="k">$(</span>prefix<span class="k">)</span>/share
+sysconfdir  <span class="k">$(</span>prefix<span class="k">)</span>/etc
+sharedstatedir <span class="k">$(</span>prefix<span class="k">)</span>/com
+localstatedir  <span class="k">$(</span>prefix<span class="k">)</span>/var
+libdir      <span class="k">$(</span>exec_prefix<span class="k">)</span>/lib
+infodir     <span class="k">$(</span>prefix<span class="k">)</span>/info
+includedir  <span class="k">$(</span>prefix<span class="k">)</span>/include
+oldincludedir  <span class="k">$(</span>prefix<span class="k">)</span>/include
+mandir      <span class="k">$(</span>prefix<span class="k">)</span>/man
+srcdir      需要编译的源文件所在的目录，无默认值&lt;/p&gt;
+
+&lt;p&gt;
+</pre></div>

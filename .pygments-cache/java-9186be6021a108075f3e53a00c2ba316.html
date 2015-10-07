@@ -1,0 +1,30 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">long</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0L</span><span class="o">;</span>
+    <span class="n">Segment</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;[]</span> <span class="n">segments</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">segments</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">segments</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">segments</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">count</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">segments</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">modCount</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">sum</span> <span class="o">!=</span> <span class="mi">0L</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// recheck unless no modifications</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">segments</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">segments</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">count</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="n">sum</span> <span class="o">-=</span> <span class="n">segments</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">modCount</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">sum</span> <span class="o">!=</span> <span class="mi">0L</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

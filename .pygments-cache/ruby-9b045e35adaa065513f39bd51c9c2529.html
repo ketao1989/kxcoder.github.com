@@ -1,0 +1,10 @@
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;active_support/time&#39;</span>
+
+<span class="c1"># 增加访问者的点击数，id表，date键，field数值</span>
+<span class="k">def</span> <span class="nf">add_hit</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="vg">$redis</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="s2">&quot;clients&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="no">Date</span><span class="o">.</span><span class="n">today</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>

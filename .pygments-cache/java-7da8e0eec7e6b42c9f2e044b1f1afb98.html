@@ -1,0 +1,16 @@
+<div class="highlight"><pre><span class="n">ListeningExecutorService</span> <span class="n">service</span> <span class="o">=</span> <span class="n">MoreExecutors</span><span class="o">.</span><span class="na">listeningDecorator</span><span class="o">(</span><span class="n">Executors</span><span class="o">.</span><span class="na">newFixedThreadPool</span><span class="o">(</span><span class="mi">10</span><span class="o">));</span>
+<span class="n">ListenableFuture</span> <span class="n">explosion</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="nf">Callable</span><span class="o">()</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="n">Explosion</span> <span class="nf">call</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">pushBigRedButton</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">});</span>
+<span class="n">Futures</span><span class="o">.</span><span class="na">addCallback</span><span class="o">(</span><span class="n">explosion</span><span class="o">,</span> <span class="k">new</span> <span class="nf">FutureCallback</span><span class="o">()</span> <span class="o">{</span>
+  <span class="c1">// we want this handler to run immediately after we push the big red button!</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">Explosion</span> <span class="n">explosion</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">walkAwayFrom</span><span class="o">(</span><span class="n">explosion</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">thrown</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">battleArchNemesis</span><span class="o">();</span> <span class="c1">// escaped the explosion!</span>
+  <span class="o">}</span>
+<span class="o">});</span>
+</pre></div>

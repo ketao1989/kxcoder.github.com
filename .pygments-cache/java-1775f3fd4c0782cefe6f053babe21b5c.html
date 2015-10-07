@@ -1,0 +1,41 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="nd">@Nullable</span>
+    <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getEntry</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// hash链表</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">getFirst</span><span class="o">(</span><span class="n">hash</span><span class="o">);</span> <span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getNext</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">!=</span> <span class="n">hash</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="c1">// hash值相同的，接下来找key值也相同的ReferenceEntry</span>
+            <span class="n">K</span> <span class="n">entryKey</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">entryKey</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">tryDrainReferenceQueues</span><span class="o">();</span><span class="c1">//线程安全的清除搜集到的entries，使用lock机制。</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">keyEquivalence</span><span class="o">.</span><span class="na">equivalent</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">entryKey</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">e</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * AtomicReferenceArray 可以确保原子的更新引用的元素。</span>
+<span class="cm">     * </span>
+<span class="cm">     * 为给定的hash值返回第一个entry节点.</span>
+<span class="cm">     */</span>
+    <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getFirst</span><span class="o">(</span><span class="kt">int</span> <span class="n">hash</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 复制到线程安全的数组中，形成一个快照，确保读的时候，数据一致性。只会读取这个域一次。</span>
+        <span class="c1">// 此外，这样子可以提供读对于整个table的影响，因为全局的table并不会锁住。（猜测）</span>
+        <span class="n">AtomicReferenceArray</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">table</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">table</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">hash</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(</span><span class="n">table</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

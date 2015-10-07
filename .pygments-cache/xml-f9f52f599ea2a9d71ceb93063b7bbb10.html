@@ -1,0 +1,18 @@
+<div class="highlight"><pre><span class="nt">&lt;/p&gt;</span>
+
+<span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;beans</span> <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:dubbo=</span><span class="s">&quot;http://code.alibabatech.com/schema/dubbo&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.springframework.org/schema/beans&quot;</span> <span class="na">xsi:schemalocation=</span><span class="s">&quot;http://www.springframework.org/schema/beans</span>
+<span class="s">           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd</span>
+<span class="s">        http://code.alibabatech.com/schema/dubbo</span>
+<span class="s">        http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;dubbo:registry</span> <span class="na">id=</span><span class="s">&quot;crm-message-registry&quot;</span> <span class="na">group=</span><span class="s">&quot;crm-message&quot;</span> <span class="na">address=</span><span class="s">&quot;${qxx-public.zookeeper.address}&quot;</span> <span class="na">protocol=</span><span class="s">&quot;zookeeper&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;dubbo:protocol</span> <span class="na">name=</span><span class="s">&quot;dubbo&quot;</span> <span class="na">port=</span><span class="s">&quot;${dubbo.protocol} &quot;</span> <span class="nt">/&gt;</span>
+    
+    <span class="nt">&lt;dubbo:service</span> <span class="na">interface=</span><span class="s">&quot;com.qxx.scm.message.api.IPushMessageBiz&quot;</span> <span class="na">ref=</span><span class="s">&quot;pushMessageBiz&quot;</span> <span class="na">timeout=</span><span class="s">&quot;6000&quot;</span> <span class="na">version=</span><span class="s">&quot;1.0.1&quot;</span> <span class="na">registry=</span><span class="s">&quot;crm-message-registry&quot;</span> <span class="nt">/&gt;</span>
+ 
+    <span class="nt">&lt;/beans&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>
+</pre></div>

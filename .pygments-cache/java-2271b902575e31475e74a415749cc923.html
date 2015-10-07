@@ -1,0 +1,100 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">java.util.concurrent.Callable</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.ExecutorService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.Executors</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">com.google.common.util.concurrent.AsyncFunction</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.util.concurrent.FutureCallback</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.util.concurrent.Futures</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.util.concurrent.ListenableFuture</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.util.concurrent.ListeningExecutorService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.util.concurrent.MoreExecutors</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * @author tao.ke Date: 14-12-26 Time: 下午5:28</span>
+<span class="cm"> * @version $Id$</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ListenerFutureChain</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ExecutorService</span> <span class="n">executor</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newFixedThreadPool</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ListeningExecutorService</span> <span class="n">executorService</span> <span class="o">=</span> <span class="n">MoreExecutors</span><span class="o">.</span><span class="na">listeningDecorator</span><span class="o">(</span><span class="n">executor</span><span class="o">);</span>
+
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">executeChain</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="n">AsyncFunction</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">asyncFunction</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AsyncFunction</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">ListenableFuture</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">apply</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">input</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+            <span class="n">ListenableFuture</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">executorService</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="n">String</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+                    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;STEP1 &amp;gt;&amp;gt;&amp;gt;&quot;</span> <span class="o">+</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+                    <span class="k">return</span> <span class="n">input</span> <span class="o">+</span> <span class="s">&quot;|||step 1 ===--===||| &quot;</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+
+            <span class="k">return</span> <span class="n">future</span><span class="o">;</span>
+
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="n">AsyncFunction</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">asyncFunction2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AsyncFunction</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">ListenableFuture</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">apply</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">input</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+            <span class="n">ListenableFuture</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">executorService</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="n">String</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+                    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;STEP2 &amp;gt;&amp;gt;&amp;gt;&quot;</span> <span class="o">+</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+                    <span class="k">return</span> <span class="n">input</span> <span class="o">+</span> <span class="s">&quot;|||step 2 ===--===---||| &quot;</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+
+            <span class="k">return</span> <span class="n">future</span><span class="o">;</span>
+
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="n">ListenableFuture</span> <span class="n">startFuture</span> <span class="o">=</span> <span class="n">executorService</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="nf">Callable</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">Object</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;BEGIN &amp;gt;&amp;gt;&amp;gt;&quot;</span> <span class="o">+</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+            <span class="k">return</span> <span class="s">&quot;BEGIN---&amp;gt;&quot;</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+
+    <span class="n">ListenableFuture</span> <span class="n">future</span> <span class="o">=</span> <span class="n">Futures</span><span class="o">.</span><span class="na">transform</span><span class="o">(</span><span class="n">startFuture</span><span class="o">,</span> <span class="n">asyncFunction</span><span class="o">,</span> <span class="n">executor</span><span class="o">);</span>
+    <span class="n">ListenableFuture</span> <span class="n">endFuture</span> <span class="o">=</span> <span class="n">Futures</span><span class="o">.</span><span class="na">transform</span><span class="o">(</span><span class="n">future</span><span class="o">,</span> <span class="n">asyncFunction2</span><span class="o">,</span> <span class="n">executor</span><span class="o">);</span>
+
+    <span class="n">Futures</span><span class="o">.</span><span class="na">addCallback</span><span class="o">(</span><span class="n">endFuture</span><span class="o">,</span> <span class="k">new</span> <span class="nf">FutureCallback</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="n">Object</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;=======OK=======&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">t</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+
+        <span class="o">}</span>
+    <span class="o">});</span>
+
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;========START=======&quot;</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;MAIN &amp;gt;&amp;gt;&amp;gt;&quot;</span> <span class="o">+</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+    <span class="n">ListenerFutureChain</span> <span class="n">chain</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ListenerFutureChain</span><span class="o">();</span>
+    <span class="n">chain</span><span class="o">.</span><span class="na">executeChain</span><span class="o">();</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;========END=======&quot;</span><span class="o">);</span>
+
+    <span class="n">executor</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+    <span class="c1">// System.exit(0);</span>
+<span class="o">}</span> <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

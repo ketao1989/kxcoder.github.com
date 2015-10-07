@@ -1,0 +1,20 @@
+<div class="highlight"><pre>        <span class="cm">/**</span>
+<span class="cm">         * 如果segment满了，则执行evict操作。这个调用仅仅发生在增加一个新的entry并且增加了count的时候。</span>
+<span class="cm">         */</span>
+        <span class="nd">@GuardedBy</span><span class="o">(</span><span class="err">“</span><span class="n">Segment</span><span class="o">.</span><span class="na">this</span><span class="err">”</span><span class="o">)</span>
+        <span class="kt">void</span> <span class="nf">evictEntries</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">map</span><span class="o">.</span><span class="na">evictsBySize</span><span class="o">())</span> <span class="o">{</span> <span class="c1">// 如果没有设置cache的权重，则不执行evict操作</span>
+                <span class="k">return</span><span class="o">;</span>
+            <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>        <span class="c1">//清除recencyQueue队列，按照指定的相关顺序来读取entries并且更新驱赶的元数据。</span>
+        <span class="c1">// 把他们加到相关的evict列表 （这表明他们可以被移除出map中，由于被加到了recencyQueue队列中。）</span>
+        <span class="n">drainRecencyQueue</span><span class="o">();</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">totalWeight</span> <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">maxSegmentWeight</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 当总的权重大于设置的最大段权重，才会执行remove操作</span>
+            <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">getNextEvictable</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">removeEntry</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">(),</span> <span class="n">RemovalCause</span><span class="o">.</span><span class="na">SIZE</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">AssertionError</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span> 
+</pre></div>

@@ -1,0 +1,8 @@
+<div class="highlight"><pre><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;p&gt;def add_word(word, doc_id) </span>
+<span class="sr">    $redis.zincrby(“word:</span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="sr">”, 1, doc_id)</span>
+<span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</pre></div>

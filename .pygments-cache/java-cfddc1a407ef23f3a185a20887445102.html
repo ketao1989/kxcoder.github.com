@@ -1,0 +1,39 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;*</span>
+    <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">File</span> <span class="nl">Name:</span> <span class="n">StringChange</span><span class="o">.</span><span class="na">java</span>
+    <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nl">Author:</span> <span class="n">ketao1989</span>
+    <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nl">Mail:</span> <span class="n">ketao1989</span><span class="nd">@gmail.com</span>
+    <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">Created</span> <span class="nl">Time:</span> <span class="mi">2014</span><span class="n">年12月10日</span> <span class="n">星期三</span> <span class="mi">20</span><span class="n">时48分37秒</span>
+ <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;/</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Field</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StringChange</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kd">static</span> <span class="n">Field</span> <span class="n">valueField</span><span class="o">;</span>
+
+<span class="kd">static</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">valueField</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">&quot;value&quot;</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">valueField</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">valueField</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>                                                            
+        <span class="o">}</span>
+        <span class="c1">// (1)</span>
+        <span class="n">valueField</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">&quot;Immutable String&quot;</span><span class="o">,</span> <span class="s">&quot;Change Now！&quot;</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">());</span> 
+                                            
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+                                
+    <span class="o">}</span>
+            
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Immutable String&quot;</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

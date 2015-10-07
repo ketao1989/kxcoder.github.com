@@ -1,0 +1,26 @@
+<div class="highlight"><pre><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;h1 id=&quot;key&quot;&gt;计算给定开始时间和结束时间对应的key值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span> 
+    <span class="n">keys</span> <span class="o">=</span> <span class="o">[]</span>
+    <span class="k">while</span> <span class="n">beg_p</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="n">end_p</span>
+        <span class="n">keys</span> <span class="err">« </span><span class="k">if</span> <span class="nb">block_given?</span> 
+            <span class="k">yield</span><span class="p">(</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">))</span>
+        <span class="k">else</span> 
+            <span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">beg_p</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">.</span><span class="n">day</span> 
+    <span class="k">end</span>
+    <span class="n">keys</span> 
+<span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;p&gt;def stats_for_period(id, beginning_of_period, end_of_period) </span>
+<span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
+<span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1"># 获取id表中key对应的数据集</span>
+<span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span> <span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>  <span class="k">end</span>
+<span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</pre></div>

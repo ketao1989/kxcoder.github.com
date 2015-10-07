@@ -1,0 +1,90 @@
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm">     * 默认空的缓存命中统计类</span>
+<span class="cm">     */</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="n">Supplier</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">StatsCounter</span><span class="o">&gt;</span> <span class="n">NULL_STATS_COUNTER</span> <span class="o">=</span> <span class="n">Suppliers</span><span class="o">.</span><span class="na">ofInstance</span><span class="o">(</span><span class="k">new</span> <span class="nf">StatsCounter</span><span class="o">()</span> <span class="o">{</span>
+        
+        <span class="c1">//......省略空override</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">CacheStats</span> <span class="nf">snapshot</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">EMPTY_STATS</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="n">CacheStats</span> <span class="n">EMPTY_STATS</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">CacheStats</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span><span class="c1">// 初始状态的统计对象</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 系统实现的简单的缓存状态统计类</span>
+<span class="cm">     */</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">StatsCounter</span><span class="o">&gt;</span> <span class="n">CACHE_STATS_COUNTER</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">StatsCounter</span><span class="o">&gt;()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">StatsCounter</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">SimpleStatsCounter</span><span class="o">();</span><span class="c1">//这里构造简单地统计类实现</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 自定义的空RemovalListener，监听到移除通知，默认空处理。</span>
+<span class="cm">     */</span>
+    <span class="kd">enum</span> <span class="n">NullListener</span> <span class="kd">implements</span> <span class="n">RemovalListener</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="n">INSTANCE</span><span class="o">;</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRemoval</span><span class="o">(</span><span class="n">RemovalNotification</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">notification</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 默认权重类，任何对象的权重均为1</span>
+<span class="cm">     */</span>
+    <span class="kd">enum</span> <span class="n">OneWeigher</span> <span class="kd">implements</span> <span class="n">Weigher</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="n">INSTANCE</span><span class="o">;</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">weigh</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kd">final</span> <span class="n">Ticker</span> <span class="n">NULL_TICKER</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Ticker</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">read</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 默认的key等同判断</span>
+<span class="cm">     * @return</span>
+<span class="cm">     */</span>
+    <span class="n">Equivalence</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="nf">getKeyEquivalence</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">firstNonNull</span><span class="o">(</span><span class="n">keyEquivalence</span><span class="o">,</span> <span class="n">getKeyStrength</span><span class="o">().</span><span class="na">defaultEquivalence</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 默认value的等同判断</span>
+<span class="cm">     * @return</span>
+<span class="cm">     */</span>
+    <span class="n">Equivalence</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="nf">getValueEquivalence</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">firstNonNull</span><span class="o">(</span><span class="n">valueEquivalence</span><span class="o">,</span> <span class="n">getValueStrength</span><span class="o">().</span><span class="na">defaultEquivalence</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 默认的key引用</span>
+<span class="cm">     * @return</span>
+<span class="cm">     */</span>
+    <span class="n">Strength</span> <span class="nf">getKeyStrength</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">firstNonNull</span><span class="o">(</span><span class="n">keyStrength</span><span class="o">,</span> <span class="n">Strength</span><span class="o">.</span><span class="na">STRONG</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 默认为Strong 属性的引用</span>
+<span class="cm">     * @return</span>
+<span class="cm">     */</span>
+    <span class="n">Strength</span> <span class="nf">getValueStrength</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">firstNonNull</span><span class="o">(</span><span class="n">valueStrength</span><span class="o">,</span> <span class="n">Strength</span><span class="o">.</span><span class="na">STRONG</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="o">&lt;</span><span class="n">K1</span> <span class="kd">extends</span> <span class="n">K</span><span class="o">,</span> <span class="n">V1</span> <span class="kd">extends</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">Weigher</span><span class="o">&lt;</span><span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;</span> <span class="nf">getWeigher</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">Weigher</span><span class="o">&lt;</span><span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;)</span> <span class="n">Objects</span><span class="o">.</span><span class="na">firstNonNull</span><span class="o">(</span><span class="n">weigher</span><span class="o">,</span> <span class="n">OneWeigher</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">);</span>
+    <span class="o">}</span>
+</pre></div>

@@ -1,0 +1,198 @@
+<div class="highlight"><pre>	<span class="cm">/**</span>
+<span class="cm">     * 定义序列化对象所需配置的一些枚举.</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kd">enum</span> <span class="n">Feature</span> <span class="kd">implements</span> <span class="n">MapperConfig</span><span class="o">.</span><span class="na">ConfigFeature</span>
+    <span class="o">{</span>
+        <span class="cm">/*</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">        /*  Introspection features</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">         */</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * 注解扫描配置</span>
+<span class="cm">         */</span>
+        <span class="n">USE_ANNOTATIONS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 获取getter方法，前缀为get</span>
+<span class="cm">         */</span>
+        <span class="n">AUTO_DETECT_GETTERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 获取getter方法，前缀为is</span>
+<span class="cm">         */</span>
+        <span class="n">AUTO_DETECT_IS_GETTERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 将对象所有的field作为json属性</span>
+<span class="cm">         */</span>
+         <span class="n">AUTO_DETECT_FIELDS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性决定当访问属性时候，方法和field访问是否修改设置。 如果设置为true，</span>
+<span class="cm">         * 则通过反射调用方法AccessibleObject#setAccessible 来允许访问不能访问的对象。</span>
+<span class="cm">         */</span>
+        <span class="n">CAN_OVERRIDE_ACCESS_MODIFIERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 获取的getter方法需要setter方法，否则，所有发现的getter都可以作为getter方法。</span>
+<span class="cm">         */</span>
+        <span class="n">REQUIRE_SETTERS_FOR_GETTERS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+        
+        <span class="cm">/*</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">        /* Generic output features</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 属性对应的值为null，是否需要写出来，write out。</span>
+<span class="cm">         */</span>
+        <span class="nd">@Deprecated</span>
+        <span class="n">WRITE_NULL_PROPERTIES</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 特征决定是使用运行时动态类型，还是声明的静态类型。</span>
+<span class="cm">         * 也可以使用{@link JsonSerialize#typing} 注解属性</span>
+<span class="cm">         */</span>
+        <span class="n">USE_STATIC_TYPING</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性决定拥有view注解{@link org.codehaus.jackson.map.annotate.JsonView}的属性是否在JSON序列化视图中。如果true，则非注解视图，也包含；</span>
+<span class="cm">         * 否则，它们将会被排除在外。</span>
+<span class="cm">         *</span>
+<span class="cm">         */</span>
+        <span class="n">DEFAULT_VIEW_INCLUSION</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * 在JAVA中配置XML root{@XmlRootElement.name}注解,最后xml数据中会出现对应root根name.</span>
+<span class="cm">         */</span>
+        <span class="n">WRAP_ROOT_VALUE</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性对于最基础的生成器，使用默认pretty printer {@link org.codehaus.jackson.JsonGenerator#useDefaultPrettyPrinter}</span>
+<span class="cm">         * 这只会对{@link org.codehaus.jackson.JsonGenerator}有影响.该属性值允许使用默认的实现。</span>
+<span class="cm">         */</span>
+        <span class="n">INDENT_OUTPUT</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 是否对属性使用排序，默认排序按照字母顺序。</span>
+<span class="cm">         */</span>
+        <span class="n">SORT_PROPERTIES_ALPHABETICALLY</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+        
+        <span class="cm">/*</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">        /*  Error handling features</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">         */</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * 是否允许一个类型没有注解表明打算被序列化。默认true，抛出一个异常；否则序列化一个空对象，比如没有任何属性。</span>
+<span class="cm">         *</span>
+<span class="cm">         * Note that empty types that this feature has only effect on</span>
+<span class="cm">         * those &quot;empty&quot; beans that do not have any recognized annotations</span>
+<span class="cm">         * (like &lt;code&gt;@JsonSerialize&lt;/code&gt;): ones that do have annotations</span>
+<span class="cm">         * do not result in an exception being thrown.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @since 1.4</span>
+<span class="cm">         */</span>
+        <span class="n">FAIL_ON_EMPTY_BEANS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 封装所有异常</span>
+<span class="cm">         */</span>
+        <span class="n">WRAP_EXCEPTIONS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/*</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">        /* Output life cycle features</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">         */</span>
+        
+         <span class="cm">/**</span>
+<span class="cm">          * 该特性决定序列化root级对象的实现closeable接口的close方法是否在序列化后被调用。</span>
+<span class="cm">          * </span>
+<span class="cm">          * 注意：如果true，则完成序列化后就关闭；如果，你可以在处理最后，调用排序操作等，则为false。</span>
+<span class="cm">          * </span>
+<span class="cm">          */</span>
+        <span class="n">CLOSE_CLOSEABLE</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性决定是否在writeValue()方法之后就调用JsonGenerator.flush()方法。</span>
+<span class="cm">         * 当我们需要先压缩，然后再flush，则可能需要false。</span>
+<span class="cm">         * </span>
+<span class="cm">         */</span>
+        <span class="n">FLUSH_AFTER_WRITE_VALUE</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+         
+        <span class="cm">/*</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">        /* Data type - specific serialization configuration</span>
+<span class="cm">        /******************************************************</span>
+<span class="cm">         */</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性决定是否将基于Date的值序列化为timestamp数字式的值，或者作为文本表示。</span>
+<span class="cm">         * 如果文本表示，则实际格式化的时候会调用{@link #getDateFormat}方法。</span>
+<span class="cm">         * </span>
+<span class="cm">         * 该特性可能会影响其他date相关类型的处理，虽然我们理想情况是只对date起作用。</span>
+<span class="cm">         * </span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_DATES_AS_TIMESTAMPS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 是否将Map中得key为Date的值，也序列化为timestamps形式（否则，会被序列化为文本形式的值）。</span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_DATE_KEYS_AS_TIMESTAMPS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性决定怎样处理类型char[]序列化，是否序列化为一个显式的JSON数组，还是默认作为一个字符串。</span>
+<span class="cm">         *</span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 该特性决定对Enum 枚举值使用标准的序列化机制。如果true，则返回Enum.toString()值，否则为Enum.name()</span>
+<span class="cm">         *</span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_ENUMS_USING_TO_STRING</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 这个特性决定Java枚举值是否序列化为数字（true）或者文本值（false）.如果是值的话，则使用Enum.ordinal().</span>
+<span class="cm">         * 该特性优先级高于上面的那个。</span>
+<span class="cm">         * </span>
+<span class="cm">         * @since 1.9</span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_ENUMS_USING_INDEX</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * 决定是否Map的带有null值的entry被序列化（true）</span>
+<span class="cm">         *</span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_NULL_MAP_VALUES</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 决定容器空的属性（声明为Collection或者array的值）是否被序列化为空的JSON数组（true），否则强制输出。</span>
+<span class="cm">         *</span>
+<span class="cm">         * Note that this does not change behavior of {@link java.util.Map}s, or</span>
+<span class="cm">         * &quot;Collection-like&quot; types.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @since 1.9</span>
+<span class="cm">         */</span>
+        <span class="n">WRITE_EMPTY_JSON_ARRAYS</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+        
+            <span class="o">;</span>
+
+        <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">_defaultState</span><span class="o">;</span>
+        
+        <span class="kd">private</span> <span class="nf">Feature</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">defaultState</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">_defaultState</span> <span class="o">=</span> <span class="n">defaultState</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">enabledByDefault</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">_defaultState</span><span class="o">;</span> <span class="o">}</span>
+    
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getMask</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="o">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">ordinal</span><span class="o">());</span> <span class="o">}</span>
+    <span class="o">}</span>
+</pre></div>

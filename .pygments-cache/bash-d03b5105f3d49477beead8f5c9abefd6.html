@@ -1,0 +1,87 @@
+<div class="highlight"><pre><span class="sb">`</span>-B, --always-make<span class="sb">`</span>
+无条件的重建所有规则的目标，而不是根据规则的依赖关系决定是否重建某些目标文件。
+
+<span class="sb">`</span>-C DIR, --directory<span class="o">=</span>DIR<span class="sb">`</span>
+在做任何动作之前先切换工作目录到 DIR ，然后再执行 make 程序。
+
+<span class="sb">`</span>-d<span class="sb">`</span>
+在 make 执行过程中打印出所有的调试信息。包括：make 认为那些文件需要重建；那些文件需要比较它们的最后修改时间、比较的结果；重建目标所要执行的命令；使用的隐含规则等。使用该选项我们可以看到 make 构造依赖关系链、重建目标过程的所有信息，它等效于<span class="s2">&quot;-debug=a&quot;</span>。
+
+<span class="sb">`</span>--debug<span class="o">=</span>FLAGS<span class="sb">`</span>
+    在 make 执行过程中打印出调试信息。FLAGS 用于控制调试信息级别：
+    a 输出所有类型的调试信息
+    b 输出基本调试信息。包括：那些目标过期、是否重建成功过期目标文件。
+    v 除 b 级别以外还包括：解析的 makefile 文件名，不需要重建文件等。
+    i 除 b 级别以外还包括：所有使用到的隐含规则描述。
+    j 输出所有执行命令的子进程，包括命令执行的 PID 等。
+    m 输出 make 读取、更新、执行 makefile 的信息。
+
+<span class="sb">`</span>-e, --environment-overrides<span class="sb">`</span>  
+使用系统环境变量的定义覆盖 Makefile 中的同名变量定义。
+
+<span class="sb">`</span>-f FILE, --file<span class="o">=</span>FILE, --makefile<span class="o">=</span>FILE<span class="sb">`</span>  
+将 FILE 指定为 Makefile 文件。
+
+<span class="sb">`</span>-h, --help<span class="sb">`</span>  
+打印帮助信息。
+
+<span class="sb">`</span>-i, --ignore-errors<span class="sb">`</span>  
+忽略规则命令执行过程中的错误。
+
+<span class="sb">`</span>-I DIR, --include-dir<span class="o">=</span>DIR<span class="sb">`</span>  
+指定包含 Makefile 文件的搜索目录。使用多个<span class="s2">&quot;-I&quot;</span>指定目录时，搜索目录按照指定顺序进行。
+
+<span class="sb">`</span>-j <span class="o">[</span>N<span class="o">]</span>, --jobs<span class="o">[=</span>N<span class="o">]</span><span class="sb">`</span>  
+指定并行执行的命令数目。在没有指定<span class="s2">&quot;-j&quot;</span>参数的情况下，执行的命令数目将是系统允许的最大可能数目。
+
+<span class="sb">`</span>-k, --keep-going<span class="sb">`</span>  
+遇见命令执行错误时不终止 make 的执行，也就是尽可能执行所有的命令，直到出现致命错误才终止。
+
+<span class="sb">`</span>-l <span class="o">[</span>N<span class="o">]</span>, --load-average<span class="o">[=</span>N<span class="o">]</span>, --max-load<span class="o">[=</span>N<span class="o">]</span><span class="sb">`</span>  
+如果系统负荷超过 LOAD<span class="o">(</span>浮点数<span class="o">)</span>，不再启动新任务。
+
+<span class="sb">`</span>-L, --check-symlink-times<span class="sb">`</span>  
+同时考察符号连接的时间戳和它所指向的目标文件的时间戳，以两者中较晚的时间戳为准。
+ 
+<span class="sb">`</span>-n, --just-print, --dry-run, --recon<span class="sb">`</span>  
+  只打印出所要执行的命令，但并不实际执行命令。
+  
+<span class="sb">`</span>-o FILE, --old-file<span class="o">=</span>FILE, --assume-old<span class="o">=</span>FILE<span class="sb">`</span>  
+即使相对于它的依赖已经过期也不重建 FILE 文件；同时也不重建依赖于此文件任何文件。
+
+<span class="sb">`</span>-p, --print-data-base<span class="sb">`</span>  
+命令执行之前，打印出 make 读取的 Makefile 的所有数据（包括规则和变量的值），同时打印出 make 的版本信息。如果只需要打印这些数据信息，可以使用 make -qp 命令。查看 make 执行前的预设规则和变量，可使用命令 make -p -f /dev/null 。
+
+<span class="sb">`</span>-q, --question<span class="sb">`</span>  
+<span class="s2">&quot;询问模式&quot;</span>。不运行任何命令，并且无输出，只是返回一个查询状态。返回状态为 <span class="m">0</span> 表示没有目标需要重建，1 表示存在需要重建的目标，2 表示有错误发生。
+ 
+<span class="sb">`</span>-r, --no-builtin-rules<span class="sb">`</span>  
+取消所有内嵌的隐含规则，不过你可以在 Makefile 中使用模式规则来定义规则。同时还会取消所有支持后追规则的隐含后缀列表，同样我们也可以在 Makefile 中使用<span class="s2">&quot;.SUFFIXES&quot;</span>定义我们自己的后缀规则。此选项不会取消 make 内嵌的隐含变量。
+
+<span class="sb">`</span>-R, --no-builtin-variables<span class="sb">`</span>   
+取消 make 内嵌的隐含变量，不过我们可以在 Makefile 中明确定义某些变量。注意，此选项同时打开了<span class="s2">&quot;-r&quot;</span>选项。因为隐含规则是以内嵌的隐含变量为基础的。
+
+<span class="sb">`</span>-s, --silent, --quiet<span class="sb">`</span>  
+不显示所执行的命令。
+
+<span class="sb">`</span>-S, --no-keep-going, --stop<span class="sb">`</span>  
+取消<span class="s2">&quot;-k&quot;</span>选项。在递归的 make 过程中子 make 通过 MAKEFLAGS 变量继承了上层的命令行选项。我们可以在子 make 中使用<span class="s2">&quot;-S&quot;</span>选项取消上层传递的<span class="s2">&quot;-k&quot;</span>选项，或者取消系统环境变量 MAKEFLAGS 中的<span class="s2">&quot;-k&quot;</span>选项。
+
+<span class="sb">`</span>-t, --touch<span class="sb">`</span>  
+更新所有目标文件的时间戳到当前系统时间。防止 make 对所有过时目标文件的重建。
+
+<span class="sb">`</span>-v, --version<span class="sb">`</span>  
+打印版本信息。
+
+<span class="sb">`</span>-w, --print-directory<span class="sb">`</span>  
+在 make 进入一个目录之前打印工作目录。使用<span class="s2">&quot;-C&quot;</span>选项时默认打开这个选项。
+
+<span class="sb">`</span>--no-print-directory <span class="sb">`</span> 
+取消<span class="s2">&quot;-w&quot;</span>选项。可以是用在递归的 make 调用过程中，取消<span class="s2">&quot;-C&quot;</span>参数将默认打开<span class="s2">&quot;-w&quot;</span>。
+
+<span class="sb">`</span>-W FILE, --what-if<span class="o">=</span>FILE, --new-file<span class="o">=</span>FILE, --assume-new<span class="o">=</span>FILE<span class="sb">`</span>  
+设定 FILE 文件的时间戳为当前时间，但不改变文件实际的最后修改时间。此选项主要是为实现了对所有依赖于 FILE 文件的目标的强制重建。
+
+<span class="sb">`</span>--warn-undefined-variables <span class="sb">`</span> 
+在发现 Makefile 中存在对未定义的变量进行引用时给出告警信息。此功能可以帮助我们调试一个存在多级套嵌变量引用的复杂 Makefile 。但是：我们建议在书写 Makefile 时尽量避免超过三级以上的变量套嵌引用。
+</pre></div>

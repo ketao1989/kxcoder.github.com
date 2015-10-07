@@ -1,0 +1,73 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.Callable</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.TimeUnit</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">com.google.common.cache.Cache</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.cache.CacheBuilder</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.cache.CacheLoader</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.cache.LoadingCache</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.cache.RemovalListener</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.cache.RemovalNotification</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * @author tao.ke Date: 14-12-20 Time: 下午1:55</span>
+<span class="cm"> * @version $Id$</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CacheSample</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">CacheSample</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="c1">// Callable形式的Cache</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Cache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">CALLABLE_CACHE</span> <span class="o">=</span> <span class="n">CacheBuilder</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">expireAfterWrite</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">).</span><span class="na">maximumSize</span><span class="o">(</span><span class="mi">1000</span><span class="o">).</span><span class="na">recordStats</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">removalListener</span><span class="o">(</span><span class="k">new</span> <span class="n">RemovalListener</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRemoval</span><span class="o">(</span><span class="n">RemovalNotification</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">notification</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Remove a map entry which key is {},value is {},cause is {}.&quot;</span><span class="o">,</span> <span class="n">notification</span><span class="o">.</span><span class="na">getKey</span><span class="o">(),</span>
+                        <span class="n">notification</span><span class="o">.</span><span class="na">getValue</span><span class="o">(),</span> <span class="n">notification</span><span class="o">.</span><span class="na">getCause</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">}).</span><span class="na">build</span><span class="o">();</span>
+
+<span class="c1">// CacheLoader形式的Cache</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">LoadingCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">LOADER_CACHE</span> <span class="o">=</span> <span class="n">CacheBuilder</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">expireAfterAccess</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">).</span><span class="na">maximumSize</span><span class="o">(</span><span class="mi">1000</span><span class="o">).</span><span class="na">recordStats</span><span class="o">().</span><span class="na">build</span><span class="o">(</span><span class="k">new</span> <span class="n">CacheLoader</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="n">String</span> <span class="nf">load</span><span class="o">(</span><span class="n">String</span> <span class="n">key</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="k">new</span> <span class="nf">Date</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+    <span class="kt">int</span> <span class="n">times</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">times</span><span class="o">--</span> <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">900</span><span class="o">);</span>
+
+        <span class="n">String</span> <span class="n">valueCallable</span> <span class="o">=</span> <span class="n">CALLABLE_CACHE</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&quot;key&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Callable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="n">String</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="s">&quot;key&quot;</span> <span class="o">+</span> <span class="k">new</span> <span class="nf">Date</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Callable Cache -----&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; key is {},value is {}&quot;</span><span class="o">,</span> <span class="s">&quot;key&quot;</span><span class="o">,</span> <span class="n">valueCallable</span><span class="o">);</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Callable Cache -----&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; stat miss:{},stat hit:{}&quot;</span><span class="o">,</span><span class="n">CALLABLE_CACHE</span><span class="o">.</span><span class="na">stats</span><span class="o">().</span><span class="na">missRate</span><span class="o">(),</span><span class="n">CALLABLE_CACHE</span><span class="o">.</span><span class="na">stats</span><span class="o">().</span><span class="na">hitRate</span><span class="o">());</span>
+
+        <span class="n">String</span> <span class="n">valueLoader</span> <span class="o">=</span> <span class="n">LOADER_CACHE</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&quot;key&quot;</span><span class="o">);</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Loader Cache -----&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; key is {},value is {}&quot;</span><span class="o">,</span> <span class="s">&quot;key&quot;</span><span class="o">,</span> <span class="n">valueLoader</span><span class="o">);</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Loader Cache -----&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; stat miss:{},stat hit:{}&quot;</span><span class="o">,</span><span class="n">LOADER_CACHE</span><span class="o">.</span><span class="na">stats</span><span class="o">().</span><span class="na">missRate</span><span class="o">(),</span><span class="n">LOADER_CACHE</span><span class="o">.</span><span class="na">stats</span><span class="o">().</span><span class="na">hitRate</span><span class="o">());</span>
+
+    <span class="o">}</span>
+
+<span class="o">}</span> <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

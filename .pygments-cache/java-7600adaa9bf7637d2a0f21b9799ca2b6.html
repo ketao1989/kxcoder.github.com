@@ -1,0 +1,29 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">SimpleStatsCounter</span> <span class="kd">implements</span> <span class="n">StatsCounter</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LongAddable</span> <span class="n">hitCount</span> <span class="o">=</span> <span class="n">LongAddables</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LongAddable</span> <span class="n">missCount</span> <span class="o">=</span> <span class="n">LongAddables</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LongAddable</span> <span class="n">loadSuccessCount</span> <span class="o">=</span> <span class="n">LongAddables</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LongAddable</span> <span class="n">loadExceptionCount</span> <span class="o">=</span> <span class="n">LongAddables</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LongAddable</span> <span class="n">totalLoadTime</span> <span class="o">=</span> <span class="n">LongAddables</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">LongAddable</span> <span class="n">evictionCount</span> <span class="o">=</span> <span class="n">LongAddables</span><span class="o">.</span><span class="na">create</span><span class="o">();&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="nf">SimpleStatsCounter</span><span class="o">()</span> <span class="o">{}</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">recordHits</span><span class="o">(</span><span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">hitCount</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">count</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="n">CacheStats</span> <span class="nf">snapshot</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nf">CacheStats</span><span class="o">(</span>
+      <span class="n">hitCount</span><span class="o">.</span><span class="na">sum</span><span class="o">(),</span>
+<span class="o">}</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Increments all counters by the values in {@code other}.</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">incrementBy</span><span class="o">(</span><span class="n">StatsCounter</span> <span class="n">other</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">CacheStats</span> <span class="n">otherStats</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="na">snapshot</span><span class="o">();</span>
+  <span class="n">hitCount</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">otherStats</span><span class="o">.</span><span class="na">hitCount</span><span class="o">());</span>
+<span class="o">}</span>   <span class="o">}</span> 
+</pre></div>

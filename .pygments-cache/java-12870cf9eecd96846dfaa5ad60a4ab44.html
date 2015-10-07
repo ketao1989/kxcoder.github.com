@@ -1,0 +1,71 @@
+<div class="highlight"><pre>        <span class="cm">/**</span>
+<span class="cm">         * 如果需要并且没到限制大小，则扩展表table。</span>
+<span class="cm">         *</span>
+<span class="cm">         */</span>
+        <span class="nd">@GuardedBy</span><span class="o">(</span><span class="s">&quot;Segment.this&quot;</span><span class="o">)</span>
+        <span class="kt">void</span> <span class="nf">expand</span><span class="o">()</span> <span class="o">{</span>
+            <span class="n">AtomicReferenceArray</span><span class="o">&lt;</span><span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">oldTable</span> <span class="o">=</span> <span class="n">table</span><span class="o">;</span><span class="c1">// 原子引用</span>
+            <span class="kt">int</span> <span class="n">oldCapacity</span> <span class="o">=</span> <span class="n">oldTable</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">oldCapacity</span> <span class="o">&gt;=</span> <span class="n">MAXIMUM_CAPACITY</span><span class="o">)</span> <span class="o">{</span><span class="c1">// 无法扩容</span>
+                <span class="k">return</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="cm">/**</span>
+<span class="cm">             * 把每个list的nodes分类到新的map中。 因为我们这里使用的是2的指数次扩容，所以在每个bin的元素，要么还是同样的index中待着，</span>
+<span class="cm">             * 要么移到2的指数个偏移。我们排除了不必要的节点创建（可以优化场景：因为老的节点们下一个fields不会被改变，所以老的节点可以被重复使用）。</span>
+<span class="cm">             *</span>
+<span class="cm">             * 以默认域设置来统计，当我们双倍扩展table时，仅仅只有六分之一的节点需要clone。这些节点将会被GC掉， 在他们不在被任务reader线程（这些线程可能正遍历在table的中间部分）引用的时候。</span>
+<span class="cm">             *</span>
+<span class="cm">             */</span>
+
+            <span class="kt">int</span> <span class="n">newCount</span> <span class="o">=</span> <span class="n">count</span><span class="o">;</span>
+            <span class="n">AtomicReferenceArray</span><span class="o">&lt;</span><span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">newTable</span> <span class="o">=</span> <span class="n">newEntryArray</span><span class="o">(</span><span class="n">oldCapacity</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">newTable</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">4</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">newMask</span> <span class="o">=</span> <span class="n">newTable</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">oldIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">oldIndex</span> <span class="o">&lt;</span> <span class="n">oldCapacity</span><span class="o">;</span> <span class="o">++</span><span class="n">oldIndex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// 我们必须保证任务对老Map的正在进行的读操作可以处理，所以我们不能每个bin设置null</span>
+                <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">head</span> <span class="o">=</span> <span class="n">oldTable</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">oldIndex</span><span class="o">);</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="n">head</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">next</span> <span class="o">=</span> <span class="n">head</span><span class="o">.</span><span class="na">getNext</span><span class="o">();</span>
+                    <span class="kt">int</span> <span class="n">headIndex</span> <span class="o">=</span> <span class="n">head</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">&amp;</span> <span class="n">newMask</span><span class="o">;</span>
+
+                    <span class="c1">// hash链只有一个节点的情况</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">next</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">newTable</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">headIndex</span><span class="o">,</span> <span class="n">head</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        
+                        <span class="c1">// 这里可以重复使用链表，如注释所述，2的倍数扩展，很多引用hash值还是一样，所以把链表头直接set过去就可以了</span>
+                        <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">head</span><span class="o">;</span>
+                        <span class="kt">int</span> <span class="n">tailIndex</span> <span class="o">=</span> <span class="n">headIndex</span><span class="o">;</span>
+                        <span class="k">for</span> <span class="o">(</span><span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">next</span><span class="o">;</span> <span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getNext</span><span class="o">())</span> <span class="o">{</span>
+                            <span class="kt">int</span> <span class="n">newIndex</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">&amp;</span> <span class="n">newMask</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">newIndex</span> <span class="o">!=</span> <span class="n">tailIndex</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="c1">// 如果hash更变了，则引用改变。将需要复制前面的节点</span>
+                                <span class="n">tailIndex</span> <span class="o">=</span> <span class="n">newIndex</span><span class="o">;</span>
+                                <span class="n">tail</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                        <span class="n">newTable</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">tailIndex</span><span class="o">,</span> <span class="n">tail</span><span class="o">);</span>
+
+                        <span class="c1">// Clone nodes leading up to the tail.</span>
+                        <span class="k">for</span> <span class="o">(</span><span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">head</span><span class="o">;</span> <span class="n">e</span> <span class="o">!=</span> <span class="n">tail</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getNext</span><span class="o">())</span> <span class="o">{</span>
+                            <span class="kt">int</span> <span class="n">newIndex</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">&amp;</span> <span class="n">newMask</span><span class="o">;</span>
+                            <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">newNext</span> <span class="o">=</span> <span class="n">newTable</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">newIndex</span><span class="o">);</span>
+                            <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">newFirst</span> <span class="o">=</span> <span class="n">copyEntry</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">newNext</span><span class="o">);</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">newFirst</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="c1">// 设置新位置的节点链表</span>
+                                <span class="n">newTable</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">newIndex</span><span class="o">,</span> <span class="n">newFirst</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                <span class="c1">// 移除节点相关操作</span>
+                                <span class="n">removeCollectedEntry</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+                                <span class="n">newCount</span><span class="o">--;</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">newTable</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">newCount</span><span class="o">;</span>
+        <span class="o">}</span>
+</pre></div>

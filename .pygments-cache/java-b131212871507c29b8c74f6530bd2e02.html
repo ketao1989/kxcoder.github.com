@@ -1,0 +1,196 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Enumeration that defines togglable features that guide the serialization feature.</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">enum</span> <span class="n">Feature</span> <span class="kd">implements</span> <span class="n">MapperConfig</span><span class="o">.</span><span class="na">ConfigFeature</span> <span class="o">{</span>
+    <span class="cm">/*</span>
+<span class="cm">     * /****************************************************** Introspection features</span>
+<span class="cm">     * /******************************************************</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定是否启动内部注解功能支持配置；如果允许，则使用AnnotationIntrospector扫描配置，否则，不考了注解配置。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 默认启动该功能配置属性。</span>
+<span class="cm">     * </span>
+<span class="cm">     * @since 1.2</span>
+<span class="cm">     */</span>
+    <span class="n">USE_ANNOTATIONS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定是否使用“getter”方法来根据标准bean命名转换方式来自动检测。如果true，则所有公共的带有一个参数</span>
+<span class="cm">     * 并且前缀为set的方法都将被当做setter方法。如果false，只会把显式注解的作为setter方法。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 注意: 这个特性的优先级低于显式注解，并且只会在获取不到更细粒度配置的情况下。</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="n">AUTO_DETECT_GETTERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>                        <span class="n">DETECT_IS_GETTERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定是否使用creator方法来根据公共构造函数以及名字为“valueOf”的静态单参数方法自动检测。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 注意：这个特性比每个类上注解的优先级要低。</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="n">AUTO_DETECT_CREATORS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 这个特性决定是否非静态field被当做属性。如果true，则所有公共成员field都被当做属性， 否则只有注解，才会被当做属性field。</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="n">AUTO_DETECT_FIELDS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 使用getter方法来作为setter方法（一般只处理集合和Maps，和其他没有setter的类型）。 该属性决定是否不需要setter方法，而只需要getter方法来修改属性。</span>
+<span class="cm">     * </span>
+<span class="cm">     * 注意：该配置优先级低于setter。</span>
+<span class="cm">     */</span>
+    <span class="n">USE_GETTERS_AS_SETTERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定当访问属性时候，方法和field访问是否修改设置。 如果设置为true，则通过反射调用方法AccessibleObject#setAccessible 来允许访问不能访问的对象。</span>
+<span class="cm">     * </span>
+<span class="cm">     */</span>
+    <span class="n">CAN_OVERRIDE_ACCESS_MODIFIERS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>                <span class="n">GETTERS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * /****************************************************** /* Type conversion features</span>
+<span class="cm">     * /******************************************************</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定对于json浮点数，是否使用BigDecimal来序列化。如果不允许，则使用Double序列化。</span>
+<span class="cm">     * </span>
+<span class="cm">     * 注意：该特性默认是关闭的，因为性能上来说，BigDecimal低于Double。</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="n">USE_BIG_DECIMAL_FOR_FLOATS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定对于json整形（非浮点），是否使用BigInteger来序列化。如果不允许，则根据数值大小来确定 是使用Integer}, {@link Long} 或者</span>
+<span class="cm">     * {@link java.math.BigInteger}</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="n">USE_BIG_INTEGER_FOR_INTS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="c1">// [JACKSON-652]</span>
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定JSON ARRAY是映射为Object[]还是List&amp;lt;Object&amp;gt;。如果开启，都为Object[]，false时，则使用List。</span>
+<span class="cm">     *</span>
+<span class="cm">     * @since 1.9</span>
+<span class="cm">     */</span>
+    <span class="n">USE_JAVA_ARRAY_FOR_JSON_ARRAY</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定了使用枚举值的标准序列化机制：如果允许，则枚举假定使用Enum.toString()返回的值作为序列化结构；如果禁止, 则返回Enum.name()的值。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 注意：默认使用的时Enum.name()的值作为枚举序列化结果。这个的设置和WRITE_ENUMS_USING_TO_STRING需要一致。</span>
+<span class="cm">     *</span>
+<span class="cm">     * For further details, check out [JACKSON-212]</span>
+<span class="cm">     * </span>
+<span class="cm">     * @since 1.6</span>
+<span class="cm">     */</span>
+    <span class="n">READ_ENUMS_USING_TO_STRING</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * /****************************************************** Error handling features</span>
+<span class="cm">     * /****************************************************** 错误处理特性</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定了当遇到未知属性（没有映射到属性，没有任何setter或者任何可以处理它的handler），是否应该抛出一个</span>
+<span class="cm">     * JsonMappingException异常。这个特性一般式所有其他处理方法对未知属性处理都无效后才被尝试，属性保留未处理状态。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 默认情况下，该设置是被打开的。</span>
+<span class="cm">     *</span>
+<span class="cm">     * @since 1.2</span>
+<span class="cm">     */</span>
+    <span class="n">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定当遇到JSON null的对象是java 原始类型，则是否抛出异常。当false时，则使用0 for &#39;int&#39;, 0.0 for double 来设定原始对象初始值。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 默认情况下，允许原始类型可以使用null。</span>
+<span class="cm">     *</span>
+<span class="cm">     * @since 1.7</span>
+<span class="cm">     */</span>
+    <span class="n">FAIL_ON_NULL_FOR_PRIMITIVES</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定JSON 整数是否是一个有效的值，当被用来反序列化Java枚举值。如果false，数字可以接受，并且映射为枚举的值ordinal()；</span>
+<span class="cm">     * 如果true，则数字不允许并且抛出JsonMappingException异常。后面一种行为原因是因为大部分情况下，枚举被反序列化为 JSON 字符串， 从而造成从整形到枚举的意外映射关系。</span>
+<span class="cm">     *</span>
+<span class="cm">     * Feature is disabled by default (to be consistent with behavior of Jackson 1.6), i.e. to allow use of JSON</span>
+<span class="cm">     * integers for Java enums.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @since 1.7</span>
+<span class="cm">     */</span>
+    <span class="n">FAIL_ON_NUMBERS_FOR_ENUMS</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 异常封装，不封装Error,catch异常之后，抛出IOException。默认封装异常。</span>
+<span class="cm">     *</span>
+<span class="cm">     * @since 1.7</span>
+<span class="cm">     */</span>
+    <span class="n">WRAP_EXCEPTIONS</span><span class="o">(</span><span class="kc">true</span><span class="o">),</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * /****************************************************** Structural conversion features</span>
+<span class="cm">     * /****************************************************** 数据结构转换特性</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性决定是否接受强制非数组（JSON）值到Java集合类型。如果允许，集合反序列化将尝试处理非数组值。</span>
+<span class="cm">     *</span>
+<span class="cm">     * Feature that determines whether it is acceptable to coerce non-array (in JSON) values to work with Java</span>
+<span class="cm">     * collection (arrays, java.util.Collection) types. If enabled, collection deserializers will try to handle</span>
+<span class="cm">     * non-array values as if they had &quot;implicit&quot; surrounding JSON array. This feature is meant to be used for</span>
+<span class="cm">     * compatibility/interoperability reasons, to work with packages (such as XML-to-JSON converters) that leave out</span>
+<span class="cm">     * JSON array in cases where there is just a single element in array.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @since 1.8</span>
+<span class="cm">     */</span>
+    <span class="n">ACCEPT_SINGLE_VALUE_AS_ARRAY</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特征允许 unwrap根级别JSON 值，来匹配WRAP_ROOT_VALUE 序列化设置。</span>
+<span class="cm">     *</span>
+<span class="cm">     * @since 1.9</span>
+<span class="cm">     */</span>
+    <span class="n">UNWRAP_ROOT_VALUE</span><span class="o">(</span><span class="kc">false</span><span class="o">),</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * /****************************************************** Value conversion features</span>
+<span class="cm">     * /****************************************************** 值转换特性</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 该特性可以允许JSON空字符串转换为POJO对象为null。如果禁用，则标准POJO只会从JSON null或者JSON对象转换过来；</span>
+<span class="cm">     * 如果允许，则空JSON字符串可以等价于JSON null。</span>
+<span class="cm">     * @since 1.8</span>
+<span class="cm">     */</span>
+    <span class="n">ACCEPT_EMPTY_STRING_AS_NULL_OBJECT</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+
+    <span class="o">;</span>
+
+    <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">_defaultState</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nf">Feature</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">defaultState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">_defaultState</span> <span class="o">=</span> <span class="n">defaultState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">enabledByDefault</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">_defaultState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getMask</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="mi">1</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">ordinal</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

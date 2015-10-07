@@ -1,0 +1,12 @@
+<div class="highlight"><pre>        
+    <span class="c1">// if the Redis server emits a connect event, it means we&#39;re ready to work, </span>
+    <span class="c1">// which in turn means we should subscribe to our channels. Which we will. rc.on(&quot;connect&quot;, function() {</span>
+        <span class="nx">rc</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">&quot;chat&quot;</span><span class="p">);</span>
+        <span class="c1">// we could subscribe to more channels here </span>
+    <span class="p">});</span>
+        <span class="c1">// When we get a message in one of the channels we&#39;re subscribed to, // we send it over to all connected clients.</span>
+    <span class="nx">rc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Sending: &quot;</span> <span class="o">+</span> <span class="nx">message</span><span class="p">);</span>
+        <span class="nx">socketio</span><span class="p">.</span><span class="nx">sockets</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">);</span> 
+    <span class="p">})</span>
+</pre></div>

@@ -1,0 +1,91 @@
+<div class="highlight"><pre>&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-B, --always-make&lt;/code&gt;
+无条件的重建所有规则的目标，而不是根据规则的依赖关系决定是否重建某些目标文件。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-C DIR, --directory<span class="o">=</span>DIR&lt;/code&gt;
+在做任何动作之前先切换工作目录到 DIR ，然后再执行 make 程序。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-d&lt;/code&gt;
+在 make 执行过程中打印出所有的调试信息。包括：make 认为那些文件需要重建；那些文件需要比较它们的最后修改时间、比较的结果；重建目标所要执行的命令；使用的隐含规则等。使用该选项我们可以看到 make 构造依赖关系链、重建目标过程的所有信息，它等效于”-debug<span class="o">=</span>a”。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;--debug<span class="o">=</span>FLAGS&lt;/code&gt;
+    在 make 执行过程中打印出调试信息。FLAGS 用于控制调试信息级别：
+    a 输出所有类型的调试信息
+    b 输出基本调试信息。包括：那些目标过期、是否重建成功过期目标文件。
+    v 除 b 级别以外还包括：解析的 makefile 文件名，不需要重建文件等。
+    i 除 b 级别以外还包括：所有使用到的隐含规则描述。
+    j 输出所有执行命令的子进程，包括命令执行的 PID 等。
+    m 输出 make 读取、更新、执行 makefile 的信息。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-e, --environment-overrides&lt;/code&gt;&lt;br /&gt;
+使用系统环境变量的定义覆盖 Makefile 中的同名变量定义。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-f FILE, --file<span class="o">=</span>FILE, --makefile<span class="o">=</span>FILE&lt;/code&gt;&lt;br /&gt;
+将 FILE 指定为 Makefile 文件。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-h, --help&lt;/code&gt;&lt;br /&gt;
+打印帮助信息。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-i, --ignore-errors&lt;/code&gt;&lt;br /&gt;
+忽略规则命令执行过程中的错误。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-I DIR, --include-dir<span class="o">=</span>DIR&lt;/code&gt;&lt;br /&gt;
+指定包含 Makefile 文件的搜索目录。使用多个”-I”指定目录时，搜索目录按照指定顺序进行。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-j <span class="o">[</span>N<span class="o">]</span>, --jobs<span class="o">[=</span>N<span class="o">]</span>&lt;/code&gt;&lt;br /&gt;
+指定并行执行的命令数目。在没有指定”-j”参数的情况下，执行的命令数目将是系统允许的最大可能数目。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-k, --keep-going&lt;/code&gt;&lt;br /&gt;
+遇见命令执行错误时不终止 make 的执行，也就是尽可能执行所有的命令，直到出现致命错误才终止。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-l <span class="o">[</span>N<span class="o">]</span>, --load-average<span class="o">[=</span>N<span class="o">]</span>, --max-load<span class="o">[=</span>N<span class="o">]</span>&lt;/code&gt;&lt;br /&gt;
+如果系统负荷超过 LOAD<span class="o">(</span>浮点数<span class="o">)</span>，不再启动新任务。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-L, --check-symlink-times&lt;/code&gt;&lt;br /&gt;
+同时考察符号连接的时间戳和它所指向的目标文件的时间戳，以两者中较晚的时间戳为准。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-n, --just-print, --dry-run, --recon&lt;/code&gt;&lt;br /&gt;
+  只打印出所要执行的命令，但并不实际执行命令。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-o FILE, --old-file<span class="o">=</span>FILE, --assume-old<span class="o">=</span>FILE&lt;/code&gt;&lt;br /&gt;
+即使相对于它的依赖已经过期也不重建 FILE 文件；同时也不重建依赖于此文件任何文件。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-p, --print-data-base&lt;/code&gt;&lt;br /&gt;
+命令执行之前，打印出 make 读取的 Makefile 的所有数据（包括规则和变量的值），同时打印出 make 的版本信息。如果只需要打印这些数据信息，可以使用 make -qp 命令。查看 make 执行前的预设规则和变量，可使用命令 make -p -f /dev/null 。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-q, --question&lt;/code&gt;&lt;br /&gt;
+“询问模式”。不运行任何命令，并且无输出，只是返回一个查询状态。返回状态为 <span class="m">0</span> 表示没有目标需要重建，1 表示存在需要重建的目标，2 表示有错误发生。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-r, --no-builtin-rules&lt;/code&gt;&lt;br /&gt;
+取消所有内嵌的隐含规则，不过你可以在 Makefile 中使用模式规则来定义规则。同时还会取消所有支持后追规则的隐含后缀列表，同样我们也可以在 Makefile 中使用”.SUFFIXES”定义我们自己的后缀规则。此选项不会取消 make 内嵌的隐含变量。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-R, --no-builtin-variables&lt;/code&gt; &lt;br /&gt;
+取消 make 内嵌的隐含变量，不过我们可以在 Makefile 中明确定义某些变量。注意，此选项同时打开了”-r”选项。因为隐含规则是以内嵌的隐含变量为基础的。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-s, --silent, --quiet&lt;/code&gt;&lt;br /&gt;
+不显示所执行的命令。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-S, --no-keep-going, --stop&lt;/code&gt;&lt;br /&gt;
+取消”-k”选项。在递归的 make 过程中子 make 通过 MAKEFLAGS 变量继承了上层的命令行选项。我们可以在子 make 中使用”-S”选项取消上层传递的”-k”选项，或者取消系统环境变量 MAKEFLAGS 中的”-k”选项。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-t, --touch&lt;/code&gt;&lt;br /&gt;
+更新所有目标文件的时间戳到当前系统时间。防止 make 对所有过时目标文件的重建。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-v, --version&lt;/code&gt;&lt;br /&gt;
+打印版本信息。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-w, --print-directory&lt;/code&gt;&lt;br /&gt;
+在 make 进入一个目录之前打印工作目录。使用”-C”选项时默认打开这个选项。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;--no-print-directory &lt;/code&gt; 
+取消”-w”选项。可以是用在递归的 make 调用过程中，取消”-C”参数将默认打开”-w”。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-W FILE, --what-if<span class="o">=</span>FILE, --new-file<span class="o">=</span>FILE, --assume-new<span class="o">=</span>FILE&lt;/code&gt;&lt;br /&gt;
+设定 FILE 文件的时间戳为当前时间，但不改变文件实际的最后修改时间。此选项主要是为实现了对所有依赖于 FILE 文件的目标的强制重建。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;--warn-undefined-variables &lt;/code&gt; 
+在发现 Makefile 中存在对未定义的变量进行引用时给出告警信息。此功能可以帮助我们调试一个存在多级套嵌变量引用的复杂 Makefile 。但是：我们建议在书写 Makefile 时尽量避免超过三级以上的变量套嵌引用。&lt;/p&gt;
+
+&lt;p&gt;
+</pre></div>

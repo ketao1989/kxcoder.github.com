@@ -1,0 +1,40 @@
+<div class="highlight"><pre><span class="cm">/*************************************************************************</span>
+<span class="cm">	&gt; File Name: RotateString.java</span>
+<span class="cm">	&gt; Author: ketao</span>
+<span class="cm">	&gt; Mail: ketao1989@gmail.com</span>
+<span class="cm">	&gt; Created Time: 2014年11月26日 星期三 16时33分28秒</span>
+<span class="cm"> ************************************************************************/</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RotateString</span><span class="o">{</span>
+    
+    <span class="cm">/**</span>
+<span class="cm">     * 把一个字符数组，按照指定位置移动</span>
+<span class="cm">     */</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">rotateString</span><span class="o">(</span><span class="kt">char</span><span class="o">[]</span> <span class="n">str</span><span class="o">,</span><span class="kt">int</span> <span class="n">n</span><span class="o">,</span><span class="kt">int</span> <span class="n">len</span><span class="o">){</span>
+        <span class="n">reverseString</span><span class="o">(</span><span class="n">str</span><span class="o">,</span><span class="mi">0</span><span class="o">,</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">reverseString</span><span class="o">(</span><span class="n">str</span><span class="o">,</span><span class="n">n</span><span class="o">,</span><span class="n">len</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">reverseString</span><span class="o">(</span><span class="n">str</span><span class="o">,</span><span class="mi">0</span><span class="o">,</span><span class="n">len</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     *反转指定区间的字符数组</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">reverseString</span><span class="o">(</span><span class="kt">char</span><span class="o">[]</span> <span class="n">str</span><span class="o">,</span><span class="kt">int</span> <span class="n">from</span><span class="o">,</span><span class="kt">int</span> <span class="n">to</span><span class="o">){</span>
+        
+        <span class="k">while</span><span class="o">(</span><span class="n">from</span> <span class="o">&lt;</span> <span class="n">to</span><span class="o">){</span>
+            <span class="kt">char</span> <span class="n">ch</span> <span class="o">=</span> <span class="n">str</span><span class="o">[</span><span class="n">from</span><span class="o">];</span>
+            <span class="n">str</span><span class="o">[</span><span class="n">from</span><span class="o">++]</span> <span class="o">=</span> <span class="n">str</span><span class="o">[</span><span class="n">to</span><span class="o">];</span>
+            <span class="n">str</span><span class="o">[</span><span class="n">to</span><span class="o">--]</span> <span class="o">=</span> <span class="n">ch</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     *测试代码</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">){</span>
+        <span class="kt">char</span><span class="o">[]</span> <span class="n">str</span> <span class="o">=</span> <span class="o">{</span><span class="sc">&#39;a&#39;</span><span class="o">,</span><span class="sc">&#39;b&#39;</span><span class="o">,</span><span class="sc">&#39;c&#39;</span><span class="o">,</span><span class="sc">&#39;d&#39;</span><span class="o">,</span><span class="sc">&#39;c&#39;</span><span class="o">,</span><span class="sc">&#39;g&#39;</span><span class="o">};</span>
+        <span class="n">rotateString</span><span class="o">(</span><span class="n">str</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">6</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>

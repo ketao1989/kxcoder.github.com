@@ -1,0 +1,60 @@
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">org.apache.commons.lang3.builder.ToStringBuilder</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.commons.lang3.builder.ToStringStyle</span><span class="o">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * @author tao.ke Date: 14-12-22 Time: 下午8:57</span>
+<span class="cm"> * @version \$Id$</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BuilderPattern</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 姓名</span>
+<span class="cm">     */</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 年龄</span>
+<span class="cm">     */</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 性别</span>
+<span class="cm">     */</span>
+    <span class="kd">private</span> <span class="n">Gender</span> <span class="n">gender</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">BuilderPattern</span> <span class="nf">newBuilder</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">BuilderPattern</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">BuilderPattern</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">BuilderPattern</span> <span class="nf">setAge</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">BuilderPattern</span> <span class="nf">setGender</span><span class="o">(</span><span class="n">Gender</span> <span class="n">gender</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="n">gender</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">ToStringBuilder</span><span class="o">.</span><span class="na">reflectionToString</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">ToStringStyle</span><span class="o">.</span><span class="na">SHORT_PREFIX_STYLE</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">enum</span> <span class="n">Gender</span> <span class="o">{</span>
+        <span class="n">MALE</span><span class="o">,</span> <span class="n">FEMALE</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="n">BuilderPattern</span> <span class="n">bp</span> <span class="o">=</span> <span class="n">BuilderPattern</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">setAge</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="na">setName</span><span class="o">(</span><span class="s">&quot;zhangsan&quot;</span><span class="o">).</span><span class="na">setGender</span><span class="o">(</span><span class="n">Gender</span><span class="o">.</span><span class="na">FEMALE</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">bp</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>

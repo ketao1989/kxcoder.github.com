@@ -1,0 +1,62 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="n">Object</span> <span class="nf">deserializeFromObject</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">,</span> <span class="n">DeserializationContext</span> <span class="n">ctxt</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span>
+<span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">_nonStandardCreation</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">_unwrappedPropertyHandler</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nf">deserializeWithUnwrapped</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">_externalTypeIdHandler</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nf">deserializeWithExternalTypeId</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nf">deserializeFromObjectUsingNonDefault</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">final</span> <span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">_valueInstantiator</span><span class="o">.</span><span class="na">createUsingDefault</span><span class="o">();</span><span class="c1">// 构造一个默认的初始化类型对象，对象属性值使用初始化默认值。</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">_injectables</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">injectValues</span><span class="o">(</span><span class="n">ctxt</span><span class="o">,</span> <span class="n">bean</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">for</span> <span class="o">(;</span> <span class="n">jp</span><span class="o">.</span><span class="na">getCurrentToken</span><span class="o">()</span> <span class="o">!=</span> <span class="n">JsonToken</span><span class="o">.</span><span class="na">END_OBJECT</span><span class="o">;</span> <span class="n">jp</span><span class="o">.</span><span class="na">nextToken</span><span class="o">())</span> <span class="o">{</span> <span class="c1">//迭代输入流来设置各个属性的值</span>
+        <span class="n">String</span> <span class="n">propName</span> <span class="o">=</span> <span class="n">jp</span><span class="o">.</span><span class="na">getCurrentName</span><span class="o">();</span>
+        <span class="c1">// Skip field name:</span>
+        <span class="n">jp</span><span class="o">.</span><span class="na">nextToken</span><span class="o">();</span><span class="c1">// 迭代到下一个输入流的token名字，即使在POJO中没有对应属性，则会调用_handleUnknown来处理。</span>
+        <span class="n">SettableBeanProperty</span> <span class="n">prop</span> <span class="o">=</span> <span class="n">_beanProperties</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="n">propName</span><span class="o">);</span> <span class="c1">//具体实现如下</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">prop</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 如果在POJO中有对应属性，则返回kv</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">prop</span><span class="o">.</span><span class="na">deserializeAndSet</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">,</span> <span class="n">bean</span><span class="o">);</span><span class="c1">//根据类型调用具体的方法设置属性值，比如StringDeserializer类对字符串。</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">wrapAndThrow</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">bean</span><span class="o">,</span> <span class="n">propName</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">continue</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">_handleUnknown</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">,</span> <span class="n">bean</span><span class="o">,</span> <span class="n">propName</span><span class="o">);</span><span class="c1">//这里会根据上面的配置来决定处理方案</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">bean</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="c1">// BeanPropertyMap类是一个存储属性名到SettableBeanProperty实例之间的映射的工具类。该类主要代替HashMap，做了一些业务优化。</span>
+<span class="kd">public</span> <span class="n">SettableBeanProperty</span> <span class="nf">find</span><span class="o">(</span><span class="n">String</span> <span class="n">key</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="na">hashCode</span><span class="o">()</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">_hashMask</span><span class="o">;</span><span class="c1">//hash找到bucket位置</span>
+    <span class="n">Bucket</span> <span class="n">bucket</span> <span class="o">=</span> <span class="n">_buckets</span><span class="o">[</span><span class="n">index</span><span class="o">];</span><span class="c1">//</span>
+    <span class="c1">// Let&#39;s unroll first lookup since that is null or match in 90+% cases</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span><span class="c1">//如果不存在，则返回null</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="c1">// Primarily we do just identity comparison as keys should be interned</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span><span class="o">.</span><span class="na">key</span> <span class="o">==</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 当没有hash碰撞时，则会相等</span>
+        <span class="k">return</span> <span class="n">bucket</span><span class="o">.</span><span class="na">value</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">while</span> <span class="o">((</span><span class="n">bucket</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="na">next</span><span class="o">)</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span><span class="c1">//不能直接相等，则遍历找到bucket里面所有的key</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">bucket</span><span class="o">.</span><span class="na">key</span> <span class="o">==</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">bucket</span><span class="o">.</span><span class="na">value</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="c1">// Do we need fallback for non-interned Strings?</span>
+    <span class="k">return</span> <span class="nf">_findWithEquals</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">index</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

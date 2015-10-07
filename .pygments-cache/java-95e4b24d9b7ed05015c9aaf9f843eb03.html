@@ -1,0 +1,20 @@
+<div class="highlight"><pre>	<span class="kd">public</span> <span class="nf">IOContext</span><span class="o">(</span><span class="n">BufferRecycler</span> <span class="n">br</span><span class="o">,</span> <span class="n">Object</span> <span class="n">sourceRef</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">managedResource</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="n">_bufferRecycler</span> <span class="o">=</span> <span class="n">br</span><span class="o">;</span>
+        <span class="n">_sourceRef</span> <span class="o">=</span> <span class="n">sourceRef</span><span class="o">;</span>
+        <span class="n">_managedResource</span> <span class="o">=</span> <span class="n">managedResource</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="c1">//  _recyclerRef 是一个定义全局的ThreadLocal&lt;SoftReference&lt;BufferRecycler&gt;&gt;</span>
+     <span class="kd">public</span> <span class="n">BufferRecycler</span> <span class="nf">_getBufferRecycler</span><span class="o">()</span>
+    <span class="o">{</span>
+        <span class="n">SoftReference</span><span class="o">&lt;</span><span class="n">BufferRecycler</span><span class="o">&gt;</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">_recyclerRef</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+        <span class="n">BufferRecycler</span> <span class="n">br</span> <span class="o">=</span> <span class="o">(</span><span class="n">ref</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">ref</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">br</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">BufferRecycler</span><span class="o">();</span>
+            <span class="n">_recyclerRef</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="k">new</span> <span class="n">SoftReference</span><span class="o">&lt;</span><span class="n">BufferRecycler</span><span class="o">&gt;(</span><span class="n">br</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">br</span><span class="o">;</span>
+    <span class="o">}</span>
+</pre></div>

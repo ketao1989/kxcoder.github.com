@@ -1,0 +1,71 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;*</span>
+	<span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">File</span> <span class="nl">Name:</span> <span class="n">StringContain</span><span class="o">.</span><span class="na">java</span>
+	<span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nl">Author:</span> <span class="n">ketao</span>
+	<span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nl">Mail:</span> <span class="n">ketao1989</span><span class="nd">@gmail.com</span>
+	<span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">Created</span> <span class="nl">Time:</span> <span class="mi">2014</span><span class="n">年11月26日</span> <span class="n">星期三</span> <span class="mi">21</span><span class="n">时16分42秒</span>
+ <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;**&lt;/</span><span class="n">strong</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StringContain</span><span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isContainString</span><span class="o">(</span><span class="n">String</span> <span class="n">longger</span><span class="o">,</span><span class="n">String</span> <span class="n">shortter</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">{</span>
+    
+    <span class="c1">//26*2个字符，使用long就可以了</span>
+    <span class="kt">long</span> <span class="n">hash</span> <span class="o">=</span> <span class="mi">0L</span><span class="o">;</span>
+
+    <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">longger</span><span class="o">.</span><span class="na">length</span><span class="o">();</span><span class="n">i</span><span class="o">++){</span>
+        <span class="n">hash</span> <span class="o">|=</span> <span class="o">(</span><span class="mi">1L</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">computeLetterBit</span><span class="o">(</span><span class="n">longger</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">)));</span>
+    <span class="o">}</span>
+
+    <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">shortter</span><span class="o">.</span><span class="na">length</span><span class="o">();</span><span class="n">i</span><span class="o">++){</span>
+
+        <span class="c1">//如果&amp;amp;操作为0，表示该位对应的字符，longger没有包含</span>
+        <span class="k">if</span><span class="o">((</span><span class="n">hash</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(</span><span class="mi">1L</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">computeLetterBit</span><span class="o">(</span><span class="n">shortter</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">))))</span> <span class="o">==</span> <span class="mi">0</span><span class="o">){</span>
+            <span class="k">return</span> <span class="kc">false</span> <span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">computeLetterBit</span><span class="o">(</span><span class="kt">char</span> <span class="n">ch</span><span class="o">){</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">ch</span> <span class="o">&amp;</span><span class="n">gt</span><span class="o">;=</span> <span class="sc">&#39;A&#39;</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">ch</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="sc">&#39;Z&#39;</span><span class="o">){</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">ch</span><span class="o">-</span><span class="sc">&#39;A&#39;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span><span class="o">(</span><span class="n">ch</span> <span class="o">&amp;</span><span class="n">gt</span><span class="o">;=</span><span class="sc">&#39;a&#39;</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">ch</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="sc">&#39;z&#39;</span><span class="o">){</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">ch</span><span class="o">-</span><span class="sc">&#39;a&#39;</span><span class="o">+</span><span class="mi">26</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">&quot;参数错误！非法字符！&quot;</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">{</span>
+    <span class="n">String</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&quot;AcBbDg&quot;</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">b</span> <span class="o">=</span> <span class="s">&quot;AcD&quot;</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">c</span> <span class="o">=</span> <span class="s">&quot;DdD&quot;</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">d</span> <span class="o">=</span><span class="s">&quot;*AcN&quot;</span><span class="o">;</span>
+
+    <span class="k">if</span><span class="o">(</span><span class="n">isContainString</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)){</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;a 包含b所有的字符！！&quot;</span><span class="o">);</span>
+    <span class="o">}</span><span class="k">else</span><span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;a 不包含b所有的字符！！！&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span><span class="o">(</span><span class="n">isContainString</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">c</span><span class="o">)){</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;a 包含c所有的字符！！&quot;</span><span class="o">);</span>
+    <span class="o">}</span><span class="k">else</span><span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;a 不包含c所有的字符！！&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span><span class="o">(</span><span class="n">isContainString</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">d</span><span class="o">)){</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;a 包含d所有的字符！&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span> <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,22 @@
+<div class="highlight"><pre><span class="c1"># 计算给定开始时间和结束时间对应的key值</span>
+<span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span> 
+    <span class="n">keys</span> <span class="o">=</span> <span class="o">[]</span>
+    <span class="k">while</span> <span class="n">beg_p</span> <span class="o">&lt;=</span> <span class="n">end_p</span>
+        <span class="n">keys</span> <span class="o">&lt;&lt;</span> <span class="k">if</span> <span class="nb">block_given?</span> 
+            <span class="k">yield</span><span class="p">(</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">))</span>
+        <span class="k">else</span> 
+            <span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">beg_p</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">.</span><span class="n">day</span> 
+    <span class="k">end</span>
+    <span class="n">keys</span> 
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">stats_for_period</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">beginning_of_period</span><span class="p">,</span> <span class="n">end_of_period</span><span class="p">)</span> 
+    <span class="n">beg_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">beginning_of_period</span><span class="p">)</span>
+    <span class="n">end_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">end_of_period</span><span class="p">)</span>
+
+    <span class="c1"># 获取id表中key对应的数据集</span>
+    <span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span> <span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span> 
+<span class="k">end</span>
+</pre></div>

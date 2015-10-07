@@ -1,0 +1,4 @@
+<div class="highlight"><pre><span class="nt">&lt;dubbo:registry</span> <span class="na">id=</span><span class="s">&quot;xxx1&quot;</span> <span class="na">address=</span><span class="s">&quot;xxx://ip:port&quot;</span> <span class="nt">/&gt;</span> <span class="c">&lt;!-- 定义注册中心 --&gt;</span>
+<span class="nt">&lt;dubbo:service</span> <span class="na">registry=</span><span class="s">&quot;xxx1&quot;</span> <span class="nt">/&gt;</span> <span class="c">&lt;!-- 引用注册中心，如果没有配置registry属性，将在ApplicationContext中自动扫描registry配置 --&gt;</span>
+<span class="nt">&lt;dubbo:provider</span> <span class="na">registry=</span><span class="s">&quot;xxx1&quot;</span> <span class="nt">/&gt;</span> <span class="c">&lt;!-- 引用注册中心缺省值，当&lt;dubbo:service&gt;没有配置registry属性时，使用此配置 --&gt;</span>
+</pre></div>

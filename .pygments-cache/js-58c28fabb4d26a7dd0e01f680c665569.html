@@ -1,0 +1,11 @@
+<div class="highlight"><pre>        
+    <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+        <span class="c1">// we may want to redirect a client that hits this page </span>
+        <span class="c1">// to the chat URL instead</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;text/html&#39;</span><span class="p">});</span> 
+        <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Hello world&lt;/h1&gt;&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+    
+    <span class="c1">// Set up our server to listen on 8000 and serve socket.io server.listen(8000);</span>
+    <span class="kd">var</span> <span class="nx">socketio</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">server</span><span class="p">);</span>
+</pre></div>

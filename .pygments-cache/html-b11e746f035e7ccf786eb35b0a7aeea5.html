@@ -1,0 +1,9 @@
+<div class="highlight"><pre>        
+    <span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">port</span><span class="o">:</span> <span class="mi">8000</span> <span class="p">});</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Element</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;messages&#39;</span><span class="p">).</span><span class="nx">insert</span><span class="p">({</span><span class="nx">top</span><span class="o">:</span> <span class="nx">li</span><span class="p">});</span> 
+    <span class="p">});</span>
+    <span class="nt">&lt;/script&gt;</span>
+</pre></div>

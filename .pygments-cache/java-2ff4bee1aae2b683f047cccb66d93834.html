@@ -1,0 +1,47 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">// 找到大于并发水平的最小2的次方的值，作为segment数量</span>
+    <span class="kt">int</span> <span class="n">segmentShift</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">segmentCount</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">segmentCount</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">concurrencyLevel</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(!</span><span class="n">evictsBySize</span><span class="o">()</span> <span class="o">||</span> <span class="n">segmentCount</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="n">maxWeight</span><span class="o">))</span> <span class="o">{</span>
+        <span class="o">++</span><span class="n">segmentShift</span><span class="o">;</span>
+        <span class="n">segmentCount</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">segmentShift</span> <span class="o">=</span> <span class="mi">32</span> <span class="o">-</span> <span class="n">segmentShift</span><span class="o">;</span><span class="c1">//位 偏移数</span>
+    <span class="n">segmentMask</span> <span class="o">=</span> <span class="n">segmentCount</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span><span class="c1">//mask码</span>
+
+    <span class="k">this</span><span class="o">.</span><span class="na">segments</span> <span class="o">=</span> <span class="n">newSegmentArray</span><span class="o">(</span><span class="n">segmentCount</span><span class="o">);</span><span class="c1">// 构造数据数组，如上图所示</span>
+    <span class="c1">//获取每个segment初始化容量，并且保证大于等于map初始容量</span>
+    <span class="kt">int</span> <span class="n">segmentCapacity</span> <span class="o">=</span> <span class="n">initialCapacity</span> <span class="o">/</span> <span class="n">segmentCount</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">segmentCapacity</span> <span class="o">*</span> <span class="n">segmentCount</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">initialCapacity</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">++</span><span class="n">segmentCapacity</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">//段Size 必须为2的次数，并且刚刚大于段初始容量</span>
+    <span class="kt">int</span> <span class="n">segmentSize</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">segmentSize</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">segmentCapacity</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">segmentSize</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 权重设置，确保权重和==map权重</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">evictsBySize</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// Ensure sum of segment max weights = overall max weights</span>
+        <span class="kt">long</span> <span class="n">maxSegmentWeight</span> <span class="o">=</span> <span class="n">maxWeight</span> <span class="o">/</span> <span class="n">segmentCount</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="kt">long</span> <span class="n">remainder</span> <span class="o">=</span> <span class="n">maxWeight</span> <span class="o">%</span> <span class="n">segmentCount</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="k">this</span><span class="o">.</span><span class="na">segments</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">remainder</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">maxSegmentWeight</span><span class="o">--;</span>
+            <span class="o">}</span>
+            <span class="c1">//构造每个段结构</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">segments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">createSegment</span><span class="o">(</span><span class="n">segmentSize</span><span class="o">,</span> <span class="n">maxSegmentWeight</span><span class="o">,</span> <span class="n">builder</span><span class="o">.</span><span class="na">getStatsCounterSupplier</span><span class="o">().</span><span class="na">get</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="k">this</span><span class="o">.</span><span class="na">segments</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">//构造每个段结构</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">segments</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">createSegment</span><span class="o">(</span><span class="n">segmentSize</span><span class="o">,</span> <span class="n">UNSET_INT</span><span class="o">,</span> <span class="n">builder</span><span class="o">.</span><span class="na">getStatsCounterSupplier</span><span class="o">().</span><span class="na">get</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

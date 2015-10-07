@@ -1,0 +1,12 @@
+<div class="highlight"><pre><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+
+<span class="sr">&lt;p&gt;def search(*terms)</span>
+<span class="sr">    document_ids = $redis.multi do</span>
+<span class="sr">        $redis.zinterstore(“temp_set”, terms.map{|t| “word:</span><span class="si">#{</span><span class="n">t</span><span class="si">}</span><span class="sr">”})</span>
+<span class="sr">        $redis.zrevrange(“temp_set”, 0, -1) </span>
+<span class="sr">    end.last</span>
+<span class="sr">    $redis.hmget(“filenames”, *document_ids) </span>
+<span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</pre></div>

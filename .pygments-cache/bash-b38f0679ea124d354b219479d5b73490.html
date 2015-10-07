@@ -1,0 +1,35 @@
+<div class="highlight"><pre><span class="nv">CC</span><span class="o">=</span>gcc
+<span class="nv">CPPFLAGS</span><span class="o">=</span>
+<span class="nv">CFLAGS</span><span class="o">=</span>-O2 -pipe
+<span class="nv">LDFLAGS</span><span class="o">=</span>-s
+<span class="nv">PREFIX</span><span class="o">=</span>/usr
+
+all : prog1 prog2
+
+prog1 : prog1.o
+	<span class="k">$(</span>CC<span class="k">)</span> <span class="k">$(</span>LDFLAGS<span class="k">)</span> -o prog1 prog1.o
+
+prog1.o : prog1.c
+	<span class="k">$(</span>CC<span class="k">)</span> -c <span class="k">$(</span>CFLAGS<span class="k">)</span> prog1.c
+
+prog2 : prog2.o
+	<span class="k">$(</span>CC<span class="k">)</span> <span class="k">$(</span>CFLAGS<span class="k">)</span> <span class="k">$(</span>LDFLAGS<span class="k">)</span> -o prog2 prog2.o
+
+prog2.o : prog2.c
+	<span class="k">$(</span>CC<span class="k">)</span> -c <span class="k">$(</span>CPPFLAGS<span class="k">)</span> <span class="k">$(</span>CFLAGS<span class="k">)</span> prog2.c
+
+clean :
+	rm -f *.<span class="o">{</span>o,a<span class="o">}</span> prog<span class="o">{</span>1,2<span class="o">}</span>
+
+install : prog1 prog2
+	<span class="k">if</span> <span class="o">(</span> <span class="nb">test</span> ! -d <span class="k">$(</span>PREFIX<span class="k">)</span>/bin <span class="o">)</span> <span class="p">;</span> <span class="k">then</span> mkdir -p <span class="k">$(</span>PREFIX<span class="k">)</span>/bin <span class="p">;</span> <span class="k">fi</span>
+	cp -f prog1 <span class="k">$(</span>PREFIX<span class="k">)</span>/bin/prog1
+	cp -f prog2 <span class="k">$(</span>PREFIX<span class="k">)</span>/bin/prog2
+
+check <span class="nb">test</span> : prog1 prog2
+	prog1 &lt; sample1.ref &gt; sample1.rz
+	prog1 &lt; sample2.ref &gt; sample3.rz
+	cmp sample1.ok sample1.rz
+	cmp sample2.ok sample2.rz
+	
+</pre></div>

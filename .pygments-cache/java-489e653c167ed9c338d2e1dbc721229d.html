@@ -1,0 +1,36 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">final</span> <span class="n">Object</span> <span class="nf">deserialize</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">,</span> <span class="n">DeserializationContext</span> <span class="n">ctxt</span><span class="o">)</span>
+        <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span>
+    <span class="o">{</span>
+        <span class="n">JsonToken</span> <span class="n">t</span> <span class="o">=</span> <span class="n">jp</span><span class="o">.</span><span class="na">getCurrentToken</span><span class="o">();</span>
+        <span class="c1">// common case first:</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">JsonToken</span><span class="o">.</span><span class="na">START_OBJECT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">jp</span><span class="o">.</span><span class="na">nextToken</span><span class="o">();</span>
+            <span class="k">return</span> <span class="nf">deserializeFromObject</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// and then others, generally requiring use of @JsonCreator</span>
+        <span class="k">switch</span> <span class="o">(</span><span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="nl">VALUE_STRING:</span>
+            <span class="k">return</span> <span class="nf">deserializeFromString</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="k">case</span> <span class="nl">VALUE_NUMBER_INT:</span>
+            <span class="k">return</span> <span class="nf">deserializeFromNumber</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="k">case</span> <span class="nl">VALUE_NUMBER_FLOAT:</span>
+	    <span class="k">return</span> <span class="nf">deserializeFromDouble</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="k">case</span> <span class="nl">VALUE_EMBEDDED_OBJECT:</span>
+            <span class="k">return</span> <span class="n">jp</span><span class="o">.</span><span class="na">getEmbeddedObject</span><span class="o">();</span>
+        <span class="k">case</span> <span class="nl">VALUE_TRUE:</span>
+        <span class="k">case</span> <span class="nl">VALUE_FALSE:</span>
+            <span class="k">return</span> <span class="nf">deserializeFromBoolean</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="k">case</span> <span class="nl">START_ARRAY:</span>
+            <span class="c1">// these only work if there’s a (delegating) creator…</span>
+            <span class="k">return</span> <span class="nf">deserializeFromArray</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+        <span class="k">case</span> <span class="nl">FIELD_NAME:</span>
+        <span class="k">case</span> <span class="nl">END_OBJECT:</span> <span class="c1">// added to resolve [JACKSON-319], possible related issues</span>
+            <span class="k">return</span> <span class="nf">deserializeFromObject</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+	<span class="o">}</span>
+        <span class="k">throw</span> <span class="n">ctxt</span><span class="o">.</span><span class="na">mappingException</span><span class="o">(</span><span class="n">getBeanClass</span><span class="o">());</span>
+    <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

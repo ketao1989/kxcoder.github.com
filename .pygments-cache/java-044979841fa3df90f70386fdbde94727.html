@@ -1,0 +1,52 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">static</span> <span class="kd">class</span> <span class="nc">LocalLoadingCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="kd">extends</span> <span class="n">LocalManualCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="kd">implements</span> <span class="n">LoadingCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="nf">LocalLoadingCache</span><span class="o">(</span><span class="n">CacheBuilder</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?</span> <span class="kd">super</span> <span class="n">K</span><span class="o">,</span> <span class="o">?</span> <span class="kd">super</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">builder</span><span class="o">,</span> <span class="n">CacheLoader</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?</span> <span class="kd">super</span> <span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">loader</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="k">new</span> <span class="n">LocalCache</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;(</span><span class="n">builder</span><span class="o">,</span> <span class="n">checkNotNull</span><span class="o">(</span><span class="n">loader</span><span class="o">)));</span>
+    <span class="o">}</span>
+
+    <span class="c1">// LoadingCache methods</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">V</span> <span class="nf">get</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ExecutionException</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">localCache</span><span class="o">.</span><span class="na">getOrLoad</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">V</span> <span class="nf">getUnchecked</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nf">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ExecutionException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">UncheckedExecutionException</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getCause</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">ImmutableMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getAll</span><span class="o">(</span><span class="n">Iterable</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?</span> <span class="kd">extends</span> <span class="n">K</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">keys</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ExecutionException</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">localCache</span><span class="o">.</span><span class="na">getAll</span><span class="o">(</span><span class="n">keys</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">refresh</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">localCache</span><span class="o">.</span><span class="na">refresh</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="n">V</span> <span class="nf">apply</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">getUnchecked</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Serialization Support</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="n">Object</span> <span class="nf">writeReplace</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">LoadingSerializationProxy</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;(</span><span class="n">localCache</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span> <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

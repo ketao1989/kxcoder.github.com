@@ -1,0 +1,36 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">for</span> <span class="o">(</span><span class="kd">final</span> <span class="n">C</span> <span class="n">c</span> <span class="o">:</span> <span class="n">cs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">threadPool</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="k">new</span> <span class="nf">Runnable</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="n">processOneC</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kt">void</span> <span class="nf">processOneC</span><span class="o">(</span><span class="n">C</span> <span class="n">c</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="nf">if</span> <span class="o">(</span><span class="n">Strings</span><span class="o">.</span><span class="na">isNullOrEmpty</span><span class="o">(</span><span class="n">c</span><span class="o">.</span><span class="na">getSeqNumber</span><span class="o">()))</span> <span class="o">{</span>
+        <span class="k">return</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">try</span> <span class="o">{</span>
+
+        <span class="c1">// 删除原合作业务</span>
+        <span class="n">cBusinessDAO</span><span class="o">.</span><span class="na">deleteBySN</span><span class="o">(</span><span class="n">c</span><span class="o">.</span><span class="na">getSerialNumber</span><span class="o">());</span> <span class="c1">//delete操作</span>
+
+        <span class="c1">//..........</span>
+        
+        <span class="n">setTuanBusiness</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="n">hotelResult</span><span class="o">);</span> <span class="c1">//insert操作</span>
+        <span class="n">setDirectBusiness</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="n">hotelResult</span><span class="o">);</span> <span class="c1">//insert操作</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    
+        <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;CustomerBusinessProcess.processOneCustomer error, Exception&quot;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;==========&quot;</span> <span class="o">+</span> <span class="n">co</span><span class="o">.</span><span class="na">addAndGet</span><span class="o">(</span><span class="mi">1</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,36 @@
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * 从builder中获取相应的配置参数。 </span>
+<span class="cm"> */</span>
+
+<span class="n">LocalCache</span><span class="o">(</span><span class="n">CacheBuilder</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">K</span><span class="o">,</span> <span class="o">?</span> <span class="kd">super</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">builder</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">CacheLoader</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">loader</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">concurrencyLevel</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">getConcurrencyLevel</span><span class="o">(),</span> <span class="n">MAX_SEGMENTS</span><span class="o">);</span>
+
+    <span class="n">keyStrength</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getKeyStrength</span><span class="o">();</span>
+    <span class="n">valueStrength</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getValueStrength</span><span class="o">();</span>
+
+    <span class="n">keyEquivalence</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getKeyEquivalence</span><span class="o">();</span>
+    <span class="n">valueEquivalence</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getValueEquivalence</span><span class="o">();</span>
+
+    <span class="n">maxWeight</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getMaximumWeight</span><span class="o">();</span>
+    <span class="n">weigher</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getWeigher</span><span class="o">();</span>
+    <span class="n">expireAfterAccessNanos</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getExpireAfterAccessNanos</span><span class="o">();</span>
+    <span class="n">expireAfterWriteNanos</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getExpireAfterWriteNanos</span><span class="o">();</span>
+    <span class="n">refreshNanos</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getRefreshNanos</span><span class="o">();</span>
+
+    <span class="n">removalListener</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getRemovalListener</span><span class="o">();</span>
+    <span class="n">removalNotificationQueue</span> <span class="o">=</span> <span class="o">(</span><span class="n">removalListener</span> <span class="o">==</span> <span class="n">NullListener</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">)</span> <span class="o">?</span> <span class="n">LocalCache</span>
+                <span class="o">.&lt;</span><span class="n">RemovalNotification</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="nf">discardingQueue</span><span class="o">()</span> <span class="o">:</span> <span class="k">new</span> <span class="n">ConcurrentLinkedQueue</span><span class="o">&lt;</span><span class="n">RemovalNotification</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;();</span>
+
+    <span class="n">ticker</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getTicker</span><span class="o">(</span><span class="n">recordsTime</span><span class="o">());</span>
+    <span class="n">entryFactory</span> <span class="o">=</span> <span class="n">EntryFactory</span><span class="o">.</span><span class="na">getFactory</span><span class="o">(</span><span class="n">keyStrength</span><span class="o">,</span> <span class="n">usesAccessEntries</span><span class="o">(),</span> <span class="n">usesWriteEntries</span><span class="o">());</span>
+    <span class="n">globalStatsCounter</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">getStatsCounterSupplier</span><span class="o">().</span><span class="na">get</span><span class="o">();</span>
+    <span class="n">defaultLoader</span> <span class="o">=</span> <span class="n">loader</span><span class="o">;</span>
+
+    <span class="kt">int</span> <span class="n">initialCapacity</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">getInitialCapacity</span><span class="o">(),</span> <span class="n">MAXIMUM_CAPACITY</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">evictsBySize</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">customWeigher</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">initialCapacity</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">initialCapacity</span><span class="o">,</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">maxWeight</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">//.......</span>
+<span class="o">}</span>
+</pre></div>

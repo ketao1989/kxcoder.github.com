@@ -1,0 +1,14 @@
+<div class="highlight"><pre>    
+    <span class="c1">// 获取value可以通过key计算出</span>
+   <span class="kd">public</span> <span class="o">&lt;</span><span class="n">K1</span> <span class="kd">extends</span> <span class="n">K</span><span class="o">,</span> <span class="n">V1</span> <span class="kd">extends</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">LoadingCache</span><span class="o">&lt;</span><span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;</span> <span class="nf">build</span><span class="o">(</span><span class="n">CacheLoader</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;</span> <span class="n">loader</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">checkWeightWithWeigher</span><span class="o">();</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">LocalCache</span><span class="o">.</span><span class="na">LocalLoadingCache</span><span class="o">&lt;</span><span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;(</span><span class="k">this</span><span class="o">,</span> <span class="n">loader</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 手动加载</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">K1</span> <span class="kd">extends</span> <span class="n">K</span><span class="o">,</span> <span class="n">V1</span> <span class="kd">extends</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">Cache</span><span class="o">&lt;</span><span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;</span> <span class="nf">build</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">checkWeightWithWeigher</span><span class="o">();</span>
+        <span class="n">checkNonLoadingCache</span><span class="o">();</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">LocalCache</span><span class="o">.</span><span class="na">LocalManualCache</span><span class="o">&lt;</span><span class="n">K1</span><span class="o">,</span> <span class="n">V1</span><span class="o">&gt;(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+</pre></div>

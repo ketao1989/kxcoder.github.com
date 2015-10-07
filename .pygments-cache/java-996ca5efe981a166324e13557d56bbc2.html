@@ -1,0 +1,68 @@
+<div class="highlight"><pre>        <span class="cm">/**</span>
+<span class="cm">         * 首先，这里是线程安全的。把key和value存放到cache中。</span>
+<span class="cm">         */</span>
+        <span class="kt">boolean</span> <span class="nf">storeLoadedValue</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">,</span> <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">oldValueReference</span><span class="o">,</span> <span class="n">V</span> <span class="n">newValue</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">lock</span><span class="o">();</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">ticker</span><span class="o">.</span><span class="na">read</span><span class="o">();</span>
+                <span class="n">preWriteCleanup</span><span class="o">(</span><span class="n">now</span><span class="o">);</span><span class="c1">// clean工作&lt;/p&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>            <span class="kt">int</span> <span class="n">newCount</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">newCount</span> <span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="k">this</span><span class="o">.</span><span class="na">threshold</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 保证大小够用ensure capacity</span>
+                <span class="n">expand</span><span class="o">();</span>
+                <span class="n">newCount</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span><span class="c1">// 扩容之后，count可能会变化</span>
+            <span class="o">}</span>
+
+            <span class="n">AtomicReferenceArray</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">table</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">table</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">hash</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(</span><span class="n">table</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">first</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+
+            <span class="c1">// 如果当前segment中已经存在了该key元素</span>
+            <span class="k">for</span> <span class="o">(</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span> <span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getNext</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">K</span> <span class="n">entryKey</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+                <span class="c1">// 找到hash链中对应的相等节点,则add操作;但是如果value是活跃的,则先移除</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">==</span> <span class="n">hash</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">entryKey</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">map</span><span class="o">.</span><span class="na">keyEquivalence</span><span class="o">.</span><span class="na">equivalent</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">entryKey</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="n">ValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">valueReference</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getValueReference</span><span class="o">();</span>
+                    <span class="n">V</span> <span class="n">entryValue</span> <span class="o">=</span> <span class="n">valueReference</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+
+                    <span class="c1">// 实现就有value引用的情况下</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">oldValueReference</span> <span class="o">==</span> <span class="n">valueReference</span> <span class="o">||</span> <span class="o">(</span><span class="n">entryValue</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">valueReference</span> <span class="o">!=</span> <span class="n">UNSET</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="o">++</span><span class="n">modCount</span><span class="o">;</span>
+                        <span class="c1">// 首先如果value引用活跃,则让放入等待GC回收队列中,等待被回收.</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">oldValueReference</span><span class="o">.</span><span class="na">isActive</span><span class="o">())</span> <span class="o">{</span>
+                            <span class="n">RemovalCause</span> <span class="n">cause</span> <span class="o">=</span> <span class="o">(</span><span class="n">entryValue</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="n">RemovalCause</span><span class="o">.</span><span class="na">COLLECTED</span>
+                                    <span class="o">:</span> <span class="n">RemovalCause</span><span class="o">.</span><span class="na">REPLACED</span><span class="o">;</span>
+                            <span class="c1">// 如果监听类配置了,则这里会触发监听方法响应</span>
+                            <span class="n">enqueueNotification</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">oldValueReference</span><span class="o">,</span> <span class="n">cause</span><span class="o">);</span>
+                            <span class="n">newCount</span><span class="o">--;</span>
+                        <span class="o">}</span>
+                        <span class="c1">// 更新新的值引用,如上所述,如果有老值,不直接删除,让GC回收.</span>
+                        <span class="c1">// 这里会操作访问队列和写队列,还有其他对外的抽象监听方法调用等</span>
+                        <span class="n">setValue</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">newValue</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+                        <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">newCount</span><span class="o">;</span> <span class="c1">// write-volatile,确保modCount能及时写入共享内存中</span>
+                        <span class="n">evictEntries</span><span class="o">();</span><span class="c1">// 移除操作,put方法也调用.</span>
+                        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="o">}</span>
+
+                    <span class="c1">//那如果value引用已经没有了呢?!也就是value引用已经被回收了,而不只是value值为null</span>
+                    <span class="c1">// 新建一个value引用就好了呀?为什么返回false呢???</span>
+                    <span class="n">valueReference</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WeightedStrongValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;(</span><span class="n">newValue</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+                    <span class="n">enqueueNotification</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">valueReference</span><span class="o">,</span> <span class="n">RemovalCause</span><span class="o">.</span><span class="na">REPLACED</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="c1">// 如果事先segment数组中没有该key,则新建一个节点entry</span>
+            <span class="o">++</span><span class="n">modCount</span><span class="o">;</span>
+            <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">newEntry</span> <span class="o">=</span> <span class="n">newEntry</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">first</span><span class="o">);</span>
+            <span class="n">setValue</span><span class="o">(</span><span class="n">newEntry</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">newValue</span><span class="o">,</span> <span class="n">now</span><span class="o">);</span>
+            <span class="n">table</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">index</span><span class="o">,</span> <span class="n">newEntry</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">newCount</span><span class="o">;</span> <span class="c1">// write-volatile</span>
+            <span class="n">evictEntries</span><span class="o">();</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">unlock</span><span class="o">();</span>
+            <span class="n">postWriteCleanup</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span> 
+</pre></div>

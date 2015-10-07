@@ -1,0 +1,78 @@
+<div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * 引用map中一个entry节点。</span>
+<span class="cm">     *</span>
+<span class="cm">     * 在map中得entries节点有下面几种状态：</span>
+<span class="cm">     * valid：-live：设置了有效的key/value;-loading：加载正在处理中….</span>
+<span class="cm">     * invalid：-expired：时间过期(但是key/value可能仍然设置了)；Collected：key/value部分被垃圾收集了，但是还没有被清除；</span>
+<span class="cm">     * -unset：标记为unset，表示等待清除或者重新使用。</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="kd">interface</span> <span class="nc">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 从entry中返回value引用</span>
+<span class="cm">         */</span>
+        <span class="n">ValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getValueReference</span><span class="o">();&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="cm">/**</span>
+<span class="cm">     * 为entry设置value引用</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">setValueReference</span><span class="o">(</span><span class="n">ValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">valueReference</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 返回链中下一个entry（解决hash碰撞存在链表）</span>
+<span class="cm">     */</span>
+    <span class="nd">@Nullable</span>
+    <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getNext</span><span class="o">();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 返回entry的hash</span>
+<span class="cm">     */</span>
+    <span class="kt">int</span> <span class="nf">getHash</span><span class="o">();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 返回entry的key</span>
+<span class="cm">     */</span>
+    <span class="nd">@Nullable</span>
+    <span class="n">K</span> <span class="nf">getKey</span><span class="o">();</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Used by entries that use access order. Access entries are maintained in a doubly-linked list. New entries are</span>
+<span class="cm">     * added at the tail of the list at write time; stale entries are expired from the head of the list.</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 返回该entry最近一次被访问的时间ns</span>
+<span class="cm">     */</span>
+    <span class="kt">long</span> <span class="nf">getAccessTime</span><span class="o">();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 设置entry访问时间ns.</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">setAccessTime</span><span class="o">(</span><span class="kt">long</span> <span class="n">time</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 返回访问队列中下一个entry</span>
+<span class="cm">     */</span>
+    <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getNextInAccessQueue</span><span class="o">();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets the next entry in the access queue.</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">setNextInAccessQueue</span><span class="o">(</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">next</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the previous entry in the access queue.</span>
+<span class="cm">     */</span>
+    <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">getPreviousInAccessQueue</span><span class="o">();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets the previous entry in the access queue.</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">setPreviousInAccessQueue</span><span class="o">(</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">previous</span><span class="o">);</span>
+
+    <span class="c1">// ...... 省略write队列相关方法，和access一样</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,35 @@
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * @author: ketao Date: 14/12/14 Time: 下午8:21</span>
+<span class="cm"> * @version: \$Id$</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">VolatileUnsafe</span> <span class="o">{</span>
+
+    <span class="kd">static</span> <span class="kd">volatile</span> <span class="kt">int</span> <span class="n">COUNT</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">new</span> <span class="nf">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nf">Runnable</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+
+                    <span class="n">stopSecond</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+                    <span class="n">COUNT</span> <span class="o">+=</span> <span class="mi">100</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="n">stopSecond</span><span class="o">(</span><span class="mi">1000</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;100 times increase sum is :&quot;</span> <span class="o">+</span> <span class="n">COUNT</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">stopSecond</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">10</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>

@@ -1,0 +1,20 @@
+<div class="highlight"><pre> 	<span class="cm">/**</span>
+<span class="cm">     * Method called to locate deserializer for the passed root-level value.</span>
+<span class="cm">     */</span>
+    <span class="kd">protected</span> <span class="n">JsonDeserializer</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="nf">_findRootDeserializer</span><span class="o">(</span><span class="n">DeserializationConfig</span> <span class="n">cfg</span><span class="o">,</span> <span class="n">JavaType</span> <span class="n">valueType</span><span class="o">)</span>
+        <span class="kd">throws</span> <span class="n">JsonMappingException</span>
+    <span class="o">{</span>
+        <span class="c1">// First: have we already seen it?</span>
+        <span class="n">JsonDeserializer</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">deser</span> <span class="o">=</span> <span class="n">_rootDeserializers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">valueType</span><span class="o">);</span><span class="c1">//从缓存中获取对应类型的反序列化实例</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">deser</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">deser</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// Nope: need to ask provider to resolve it</span>
+        <span class="n">deser</span> <span class="o">=</span> <span class="n">_deserializerProvider</span><span class="o">.</span><span class="na">findTypedValueDeserializer</span><span class="o">(</span><span class="n">cfg</span><span class="o">,</span> <span class="n">valueType</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span><span class="c1">//使用StdDeserializationContext默认的DeserializationContext实现。反序列化类实际上就是对某一类型进行详细描述，如下图。</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">deser</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// can this happen?</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">JsonMappingException</span><span class="o">(</span><span class="s">&quot;Can not find a deserializer for type &quot;</span><span class="o">+</span><span class="n">valueType</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">_rootDeserializers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">valueType</span><span class="o">,</span> <span class="n">deser</span><span class="o">);</span><span class="c1">//放入缓存中</span>
+        <span class="k">return</span> <span class="n">deser</span><span class="o">;</span>
+    <span class="o">}</span>
+</pre></div>

@@ -1,0 +1,55 @@
+<div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * A reference to a value.</span>
+<span class="cm">     */</span>
+    <span class="kd">interface</span> <span class="nc">ValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the value. Does not block or throw exceptions.</span>
+<span class="cm">         */</span>
+        <span class="nd">@Nullable</span>
+        <span class="n">V</span> <span class="nf">get</span><span class="o">();</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Waits for a value that may still be loading. Unlike get(), this method can block (in the case of</span>
+<span class="cm">         * FutureValueReference).</span>
+<span class="cm">         * </span>
+<span class="cm">         * @throws ExecutionException if the loading thread throws an exception</span>
+<span class="cm">         * @throws ExecutionError if the loading thread throws an error</span>
+<span class="cm">         */</span>
+        <span class="n">V</span> <span class="nf">waitForValue</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">ExecutionException</span><span class="o">;</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the weight of this entry. This is assumed to be static between calls to setValue.</span>
+<span class="cm">         */</span>
+        <span class="kt">int</span> <span class="nf">getWeight</span><span class="o">();</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the entry associated with this value reference, or {@code null} if this value reference is</span>
+<span class="cm">         * independent of any entry.</span>
+<span class="cm">         */</span>
+        <span class="nd">@Nullable</span>
+        <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="nf">getEntry</span><span class="o">();</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 为一个指定的entry创建一个该引用的副本</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * {@code value} may be null only for a loading reference.</span>
+<span class="cm">         */</span>
+        <span class="n">ValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="nf">copyFor</span><span class="o">(</span><span class="n">ReferenceQueue</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span> <span class="n">queue</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">V</span> <span class="n">value</span><span class="o">,</span> <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">entry</span><span class="o">);</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 告知一个新的值正在加载中。这个只会关联到加载值引用。</span>
+<span class="cm">         */</span>
+        <span class="kt">void</span> <span class="nf">notifyNewValue</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">V</span> <span class="n">newValue</span><span class="o">);</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 当一个新的value正在被加载的时候，返回true。不管是否已经有存在的值。这里加锁方法返回的值对于给定的ValueReference实例来说是常量。</span>
+<span class="cm">         * </span>
+<span class="cm">         */</span>
+        <span class="kt">boolean</span> <span class="nf">isLoading</span><span class="o">();</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * 返回true，如果该reference包含一个活跃的值,意味着在cache里仍然有一个值存在。活跃的值包含：cache查找返回的，等待被移除的要被驱赶的值； 非激活的包含：正在加载的值，</span>
+<span class="cm">         */</span>
+        <span class="kt">boolean</span> <span class="nf">isActive</span><span class="o">();</span>
+    <span class="o">}</span>
+</pre></div>

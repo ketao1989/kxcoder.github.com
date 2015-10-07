@@ -1,0 +1,74 @@
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm">         * 刷新和key关联的value值，除非另一个线程正在做这个。如果在内部刷新了，则返回和key关联的value，否则如果另一个线程正在</span>
+<span class="cm">         * 刷新或者出现error则返回null</span>
+<span class="cm">         */</span>
+        <span class="nd">@Nullable</span>
+        <span class="n">V</span> <span class="nf">refresh</span><span class="o">(</span><span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">,</span> <span class="n">CacheLoader</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?</span> <span class="kd">super</span> <span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">loader</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">checkTime</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>        <span class="c1">// loadingValueReference表明当前线程开始加载，获取key对于的value引用。</span>
+        <span class="kd">final</span> <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">loadingValueReference</span> <span class="o">=</span> <span class="n">insertLoadingValueReference</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">checkTime</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">loadingValueReference</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 如果说本线程启动加载，则开始异步调用，等待future返回get获取一个监听listenableFuture（见本文准备知识部分介绍），然后等待返回value值。loader相关方法随后介绍</span>
+        <span class="n">ListenableFuture</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">loadAsync</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">loadingValueReference</span><span class="o">,</span> <span class="n">loader</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="na">isDone</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">Uninterruptibles</span><span class="o">.</span><span class="na">getUninterruptibly</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// don&#39;t let refresh exceptions propagate; error was already logged</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 返回一个本线程新插入的LoadingValueReference对象，或者如果一个活跃的value引用已经被加载了，则返回null</span>
+<span class="cm">     */</span>
+    <span class="nd">@Nullable</span>
+    <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">insertLoadingValueReference</span><span class="o">(</span><span class="kd">final</span> <span class="n">K</span> <span class="n">key</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">checkTime</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="c1">// 加锁，保证只有一个线程对segment refresh操作</span>
+        <span class="n">lock</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">ticker</span><span class="o">.</span><span class="na">read</span><span class="o">();</span>
+            <span class="n">preWriteCleanup</span><span class="o">(</span><span class="n">now</span><span class="o">);</span>
+
+            <span class="c1">// 快照保证</span>
+            <span class="n">AtomicReferenceArray</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">table</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">table</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">hash</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(</span><span class="n">table</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="n">ReferenceEntry</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">first</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+
+            <span class="c1">// 查找一个存在的entry节点，和上面的getEntry方法基本一致。</span>
+            <span class="k">for</span> <span class="o">(</span><span class="n">e</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span> <span class="n">e</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getNext</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">K</span> <span class="n">entryKey</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getHash</span><span class="o">()</span> <span class="o">==</span> <span class="n">hash</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">entryKey</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">map</span><span class="o">.</span><span class="na">keyEquivalence</span><span class="o">.</span><span class="na">equivalent</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">entryKey</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="c1">// 如果存在我们想要的节点</span>
+                    <span class="n">ValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">valueReference</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getValueReference</span><span class="o">();</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">valueReference</span><span class="o">.</span><span class="na">isLoading</span><span class="o">()</span> <span class="o">||</span> <span class="o">(</span><span class="n">checkTime</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">e</span><span class="o">.</span><span class="na">getWriteTime</span><span class="o">()</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">map</span><span class="o">.</span><span class="na">refreshNanos</span><span class="o">)))</span> <span class="o">{</span>
+                        <span class="c1">// 如果loading正在处理，并且发现该节点引用的写时间未超期刷新周期，则返回null</span>
+                        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+                    <span class="o">}</span>
+
+                    <span class="c1">// continue returning old value while loading</span>
+                    <span class="o">++</span><span class="n">modCount</span><span class="o">;</span>
+                    <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">loadingValueReference</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;(</span>
+                            <span class="n">valueReference</span><span class="o">);</span><span class="c1">//使用老的值引用</span>
+                    <span class="n">e</span><span class="o">.</span><span class="na">setValueReference</span><span class="o">(</span><span class="n">loadingValueReference</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="n">loadingValueReference</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="o">++</span><span class="n">modCount</span><span class="o">;</span>
+            <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">loadingValueReference</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoadingValueReference</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;();</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">newEntry</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">hash</span><span class="o">,</span> <span class="n">first</span><span class="o">);</span><span class="c1">//一个新的节点，存放的hash链头部</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">setValueReference</span><span class="o">(</span><span class="n">loadingValueReference</span><span class="o">);</span>
+            <span class="n">table</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">index</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span><span class="c1">// 插入到列表中</span>
+            <span class="k">return</span> <span class="n">loadingValueReference</span><span class="o">;</span><span class="c1">//返回新的值引用</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">unlock</span><span class="o">();</span>
+            <span class="n">postWriteCleanup</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span> 
+</pre></div>

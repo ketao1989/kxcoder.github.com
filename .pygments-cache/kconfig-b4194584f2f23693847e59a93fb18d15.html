@@ -1,0 +1,34 @@
+<div class="highlight"><pre>&lt;/p&gt;
+
+&lt;p&gt;configure: Apache Portable Runtime <span class="p">(</span>APR) library configuration
+checking for APR… no
+configure: WARNING: APR not found
+The Apache Portable Runtime <span class="p">(</span>APR) library cannot be found.
+Please install APR on this system and supply the appropriate
+–with-apr <span class="k">option</span> to ‘configure’&lt;/p&gt;
+
+&lt;p&gt;or&lt;/p&gt;
+
+&lt;p&gt;get it with SVN and put it in a subdirectory of this <span class="k">source</span>:&lt;/p&gt;
+
+&lt;p&gt;svn co \
+    http://svn.apache.org/repos/asf/apr/apr/branches/1.3.x \
+    apr&lt;/p&gt;
+
+&lt;p&gt;Run that right here in the top level of the Subversion tree.
+Afterwards, run apr/buildconf in that subdirectory and
+then run configure again here.&lt;/p&gt;
+
+&lt;p&gt;Whichever of the above you do, you probably need to do
+something similar for apr-util, either providing both
+–with-apr and –with-apr-util to ‘configure’, or
+getting both from SVN with:&lt;/p&gt;
+
+&lt;p&gt;svn co \
+    http://svn.apache.org/repos/asf/apr/apr-util/branches/1.3.x \
+    apr-util&lt;/p&gt;
+
+&lt;p&gt;configure: error: no suitable apr found&lt;/p&gt;
+
+&lt;p&gt;
+</pre></div>

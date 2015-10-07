@@ -1,0 +1,23 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DubboNamespaceHandler</span> <span class="kd">extends</span> <span class="n">NamespaceHandlerSupport</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">static</span> <span class="o">{</span>
+	<span class="n">Version</span><span class="o">.</span><span class="na">checkDuplicate</span><span class="o">(</span><span class="n">DubboNamespaceHandler</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;application&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">ApplicationConfig</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;registry&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">RegistryConfig</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;provider&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">ProviderConfig</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;consumer&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">ConsumerConfig</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;protocol&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">ProtocolConfig</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;service&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">ServiceBean</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+    <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&quot;reference&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nf">DubboBeanDefinitionParser</span><span class="o">(</span><span class="n">ReferenceBean</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kc">false</span><span class="o">));</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>
