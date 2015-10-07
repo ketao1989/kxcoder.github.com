@@ -4,7 +4,7 @@
   <title><![CDATA[柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T10:46:17+08:00</updated>
+  <updated>2015-10-07T10:54:29+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -3275,21 +3275,21 @@ pool-1-thread-1
 </ol>
 
 <p><strong>ArrayBlockingQueue：</strong>	<br />
-Note: <code>ArrayBlockingQueue</code>队列是有界的队列，所以当队列满的时候，如果还向该队列插入元素，则会导致操作被阻塞住，当然，如果从空的队列中获取元素，该操作也会被阻塞。此外，构造<code>ArrayBlockingQueue</code>队列时，有一个参数为：<code> boolean fair</code> ：如果为 true，则按照 FIFO 顺序访问插入或移除时受阻塞线程的队列；如果为 false，则访问顺序是不确定的.</p>
+&gt; Note: <code>ArrayBlockingQueue</code>队列是有界的队列，所以当队列满的时候，如果还向该队列插入元素，则会导致操作被阻塞住，当然，如果从空的队列中获取元素，该操作也会被阻塞。此外，构造<code>ArrayBlockingQueue</code>队列时，有一个参数为：<code> boolean fair</code> ：如果为 true，则按照 FIFO 顺序访问插入或移除时受阻塞线程的队列；如果为 false，则访问顺序是不确定的.</p>
 
 <p><strong>LinkedBlockingQueue：</strong><br />
-Note: <code>LinkedBlockingQueue</code> 队列的吞吐量也要高于数组的阻塞队列，这主要是因为数组的特性和链表的特性决定的，链表在处理元素的offer队头元素和add队尾元素的速度要快于相应地数组操作。不过，显然这样会造成部分元素插入顺序的不确定性。</p>
+&gt; Note: <code>LinkedBlockingQueue</code> 队列的吞吐量也要高于数组的阻塞队列，这主要是因为数组的特性和链表的特性决定的，链表在处理元素的offer队头元素和add队尾元素的速度要快于相应地数组操作。不过，显然这样会造成部分元素插入顺序的不确定性。</p>
 
 <p><strong><code>DelayQueue&lt;E extends Delayed&gt;</code>：</strong><br />
-Note: <code>DelayQueue&lt;E extends Delayed&gt;</code>队列中的元素需要实现<code>Delayed</code>接口，该接口只有<code>long getDelay(TimeUnit unit);</code>方法即可使用延迟阻塞队列。此外，需要注意，可能存在的时间延时，即任务元素不一定会准时执行，会有一点点的延迟。</p>
+&gt; Note: <code>DelayQueue&lt;E extends Delayed&gt;</code>队列中的元素需要实现<code>Delayed</code>接口，该接口只有<code>long getDelay(TimeUnit unit);</code>方法即可使用延迟阻塞队列。此外，需要注意，可能存在的时间延时，即任务元素不一定会准时执行，会有一点点的延迟。</p>
 
 <p><strong>LinkedBlockingDeque：</strong><br />
-Note: <code>LinkedBlockingDeque</code>队列用的最多的地方，就是使用<code>工作窃取算法</code>的地方。工作窃取（work-stealing）算法是指某个线程从其他队列里窃取任务来执行。如下图（参考<a href="http://ifeve.com/talk-concurrency-forkjoin/">工作窃取运行说明</a>）：</p>
+&gt; Note: <code>LinkedBlockingDeque</code>队列用的最多的地方，就是使用<code>工作窃取算法</code>的地方。工作窃取（work-stealing）算法是指某个线程从其他队列里窃取任务来执行。如下图（参考<a href="http://ifeve.com/talk-concurrency-forkjoin/">工作窃取运行说明</a>）：</p>
 
 <p><img src="http://kxcoder.github.io/images/2014/05/work-stealing.png" /></p>
 
 <p><strong>PriorityBlockingQueue：</strong><br />
-Note: <code>PriorityBlockingQueue</code>队列，默认情况下元素采取自然顺序排列，也可以通过比较器comparator来指定元素的排序规则。比较器可使用修改键断开主优先级值之间的联系。元素默认按照升序排列。</p>
+&gt; Note: <code>PriorityBlockingQueue</code>队列，默认情况下元素采取自然顺序排列，也可以通过比较器comparator来指定元素的排序规则。比较器可使用修改键断开主优先级值之间的联系。元素默认按照升序排列。</p>
 
 <p>选择其中的<code>LinkedBlockingQueue</code>来简单分析下，其内部实现结构和细节：</p>
 
