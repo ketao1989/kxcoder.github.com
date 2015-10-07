@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Redis Cookbook 之 基于Redis 实现倒序索引全文搜索 - 柯小小西の小水滴</title>
+  <meta name="author" content="柯小小西">
+
+  
+  <meta name="description" content="目录 问题 解决方法 讨论 倒序索引介绍 1. 问题 倒序索引是一种索引数据结构，该索引存储单词（或者其他内容）到它们位于文件，档案或者数据库等位置之间的映射关系。这个通常被用来实现全文搜素服务，但是这要求在搜索之前这些文档的相关倒序索引就必须建立好。 因此， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://kxcoder.github.io/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="柯小小西の小水滴" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+   <script src="http://ajax.useso.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- 使用360 CDN 代理 解决google字体 GFW问题 -->
+<link href="//fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.useso.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <div style="float:left; width: 500px">
+    <h1><a href="/">柯小小西の小水滴</a></h1>
+    
+      <h2>聚合各路水滴，方可成为大海.</h2>
+    
+  </div>
+  
+    <div style="float:right">
+      <p style="font-family:cursive;font-size:80%;color:yellow;font-style:oblique">
+         始终坚信，好记忆不如烂笔头。 
+      </p>
+<ul id="social-links">
+  <!-- Sina Weibo -->
+  <li>
+    <a href="http://weibo.com/2265041632" target="_blank">
+      <svg width="40" height="40" class="sina-weibo" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M9.641,17.231c-3.799,0.374-7.079-1.343-7.326-3.838c-0.246-2.494,2.634-4.82,6.434-5.196 c3.798-0.377,7.079,1.34,7.326,3.835C16.32,14.529,13.44,16.855,9.641,17.231 M17.24,8.952c-0.322-0.098-0.544-0.163-0.375-0.587 c0.365-0.921,0.403-1.718,0.007-2.286c-0.745-1.063-2.783-1.005-5.12-0.027c0-0.002-0.734,0.321-0.546-0.261 c0.359-1.156,0.305-2.123-0.254-2.682c-1.267-1.271-4.639,0.047-7.53,2.936C1.257,8.209,0,10.504,0,12.488 c0,3.796,4.866,6.104,9.628,6.104c6.241,0,10.393-3.627,10.393-6.506C20.021,10.347,18.557,9.358,17.24,8.952" />
+        <path fill="#000000" d="M21.384,2.005c-1.507-1.671-3.73-2.308-5.782-1.872l0,0c-0.475,0.102-0.778,0.569-0.676,1.043 c0.101,0.473,0.567,0.777,1.043,0.674c1.459-0.31,3.039,0.145,4.111,1.332c1.069,1.188,1.362,2.806,0.902,4.225v0.001 c-0.149,0.462,0.104,0.957,0.566,1.106c0.461,0.149,0.956-0.104,1.105-0.565c0,0,0-0.002,0-0.004 C23.299,5.95,22.894,3.674,21.384,2.005" />
+        <path fill="#000000" d="M19.07,4.094c-0.734-0.814-1.817-1.123-2.817-0.912c-0.409,0.088-0.671,0.49-0.581,0.899 c0.088,0.407,0.489,0.67,0.896,0.58v0.001c0.488-0.104,1.019,0.047,1.379,0.445c0.359,0.398,0.455,0.941,0.301,1.416l0,0 c-0.127,0.398,0.09,0.825,0.488,0.954c0.396,0.127,0.824-0.091,0.952-0.488C20,6.017,19.805,4.908,19.07,4.094" />
+        <path fill="#000000" d="M9.85,12.713c-0.132,0.229-0.426,0.338-0.656,0.242c-0.227-0.094-0.297-0.348-0.169-0.572 c0.132-0.221,0.416-0.328,0.64-0.239C9.895,12.227,9.978,12.483,9.85,12.713 M8.64,14.268c-0.367,0.586-1.154,0.843-1.747,0.57 c-0.584-0.265-0.756-0.945-0.389-1.518c0.362-0.568,1.124-0.824,1.712-0.574C8.811,12.998,9.001,13.675,8.64,14.268 M10.021,10.118 c-1.808-0.47-3.852,0.431-4.637,2.023c-0.8,1.624-0.026,3.428,1.801,4.017c1.892,0.612,4.122-0.324,4.898-2.078 C12.848,12.367,11.891,10.602,10.021,10.118" />
+      </svg>
+    </a>
+  </li>
+
+  <!-- GitHub -->
+  <li>
+    <a href="https://github.com/ketao1989" target="_blank">
+      <svg width="40" height="40" class="github" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M28.436,15.099C27.235,14.897,25.985,14.764,24.97,14.728L24.791,14.722C24.832,14.632,24.863,14.571,24.873,14.562C24.895,14.543999999999999,24.913,14.468,24.915000000000003,14.394C24.915000000000003,14.353,24.933000000000003,14.22,24.961000000000002,14.044C25.236,14.054,25.601000000000003,14.062000000000001,25.999000000000002,14.065000000000001C27.536,14.077000000000002,29.144000000000002,14.201,30.247000000000003,14.396C30.904000000000003,14.512,31.121000000000002,14.508000000000001,30.636000000000003,14.39C30.145000000000003,14.271,28.689000000000004,14.096,27.529000000000003,14.020000000000001C26.750000000000004,13.967,25.633000000000003,13.947000000000001,24.975000000000005,13.958000000000002C24.994000000000003,13.844000000000001,25.016000000000005,13.717000000000002,25.039000000000005,13.587000000000002C25.132000000000005,13.084000000000001,25.163000000000004,12.578000000000001,25.165000000000006,11.571000000000002C25.167000000000005,10.009000000000002,25.083000000000006,9.579,24.574000000000005,8.546000000000001C24.367000000000004,8.124,24.133000000000006,7.766000000000001,23.850000000000005,7.442000000000001C24.097000000000005,6.713000000000001,24.091000000000005,5.584000000000001,23.835000000000004,4.594000000000001C23.624000000000006,3.782000000000001,23.550000000000004,3.7300000000000013,22.814000000000004,3.886000000000001C22.19,4.019,21.69,4.2,21.049,4.523C20.746,4.675999999999999,20.328,4.914,20.025,5.101C19.235,4.823,18.418,4.639,17.546,4.54C16.662,4.44,14.495,4.496,13.725999999999999,4.638C12.973999999999998,4.777,12.296999999999999,4.947,11.684,5.149C11.378,4.96,10.934,4.705,10.616999999999999,4.545C9.973,4.221,9.473,4.041,8.847,3.908C8.113,3.751,8.036999999999999,3.804,7.827,4.616C7.567,5.619,7.5649999999999995,6.7669999999999995,7.822,7.494C7.852,7.577,7.87,7.636,7.877,7.682C6.835,8.994,6.495,10.462,6.721,12.511C6.78,13.045,6.871,13.535,6.998,13.984C6.333,13.98,5.3870000000000005,14.004,4.704000000000001,14.048C3.5420000000000007,14.125,2.0860000000000007,14.298,1.5950000000000006,14.417C1.1110000000000007,14.535,1.3260000000000005,14.539,1.9840000000000007,14.424C3.0870000000000006,14.229999999999999,4.696000000000001,14.104,6.232000000000001,14.093C6.522000000000001,14.092,6.793000000000001,14.086,7.026000000000002,14.08C7.096000000000002,14.317,7.176000000000002,14.543,7.267000000000001,14.758000000000001L7.26,14.759C6.245,14.794,4.996,14.927,3.795,15.129C2.894,15.28,1.564,15.581999999999999,1.4089999999999998,15.669C1.2459999999999998,15.76,1.3789999999999998,15.74,2.077,15.563C3.3499999999999996,15.241000000000001,5.005,14.994,7.055,14.822000000000001L7.284,14.802000000000001C7.724,15.824000000000002,8.402,16.604000000000003,9.36,17.212000000000003C9.946,17.585000000000004,10.885,17.968000000000004,11.357999999999999,18.028000000000002C11.488,18.044,11.866,18.122000000000003,12.197999999999999,18.200000000000003C12.530999999999999,18.278000000000002,13.181999999999999,18.395000000000003,13.643999999999998,18.462000000000003H13.654999999999998C13.645999999999997,18.468000000000004,13.637999999999998,18.472000000000005,13.629999999999997,18.478C13.069999999999997,18.769000000000002,12.705999999999998,19.222,12.460999999999997,19.935000000000002C12.350999999999997,19.968000000000004,12.213999999999997,20.013,12.065999999999997,20.064000000000004C11.536999999999997,20.244000000000003,11.330999999999998,20.281000000000002,10.794999999999998,20.285000000000004C10.238999999999997,20.289000000000005,10.106999999999998,20.265000000000004,9.774999999999999,20.109000000000005C9.291999999999998,19.884000000000004,8.841999999999999,19.470000000000006,8.541999999999998,18.976000000000006C8.040999999999999,18.150000000000006,7.174999999999998,17.566000000000006,6.452999999999998,17.566000000000006C5.835999999999998,17.566000000000006,5.718999999999998,17.816000000000006,6.164999999999997,18.181000000000004C6.836999999999997,18.730000000000004,7.338999999999997,19.290000000000006,7.544999999999997,19.718000000000004C7.660999999999997,19.958000000000002,7.838999999999997,20.329000000000004,7.9419999999999975,20.542000000000005C8.050999999999998,20.769000000000005,8.283999999999997,21.077000000000005,8.505999999999997,21.290000000000006C9.027999999999997,21.788000000000007,9.531999999999996,22.026000000000007,10.283999999999997,22.138000000000005C10.787999999999997,22.212000000000007,10.911999999999997,22.212000000000007,11.506999999999998,22.136000000000006C11.793999999999999,22.101000000000006,12.035999999999998,22.060000000000006,12.252999999999998,22.009000000000007C12.252999999999998,22.253000000000007,12.252999999999998,22.534000000000006,12.252999999999998,22.864000000000008C12.252999999999998,24.63000000000001,12.231999999999998,25.198000000000008,12.161999999999999,25.364000000000008C12.03,25.680000000000007,11.733999999999998,26.00500000000001,11.446,26.151000000000007C11.158999999999999,26.297000000000008,11.07,26.458000000000006,11.190999999999999,26.606000000000005C11.258,26.686000000000003,11.386999999999999,26.700000000000006,11.819999999999999,26.672000000000004C12.641999999999998,26.621000000000006,13.222999999999999,26.317000000000004,13.518999999999998,25.781000000000006C13.613999999999999,25.609000000000005,13.636,25.263000000000005,13.665999999999999,23.463000000000005C13.697999999999999,21.510000000000005,13.711999999999998,21.322000000000003,13.838999999999999,21.043000000000006C13.915999999999999,20.877000000000006,14.027,20.697000000000006,14.088999999999999,20.648000000000007C14.192999999999998,20.56200000000001,14.2,20.732000000000006,14.2,23.068000000000005C14.199,25.646000000000004,14.173,25.957000000000004,13.915,26.453000000000003C13.857,26.566000000000003,13.747,26.713000000000005,13.67,26.783C13.535,26.906000000000002,13.478,27.221,13.572,27.316000000000003C13.726999999999999,27.470000000000002,14.504,27.228,14.927999999999999,26.894000000000002C15.649999999999999,26.322000000000003,15.735999999999999,25.849000000000004,15.741999999999999,22.433L15.745,20.429L15.963999999999999,20.45L16.183,20.47L16.219,23.090999999999998C16.26,26.041999999999998,16.266000000000002,26.084999999999997,16.768,26.654999999999998C17.053,26.976999999999997,17.34,27.154999999999998,17.807000000000002,27.293999999999997C18.432000000000002,27.481999999999996,18.62,27.191999999999997,18.200000000000003,26.688999999999997C17.743000000000002,26.141999999999996,17.721000000000004,25.932999999999996,17.746000000000002,22.694999999999997C17.763,20.618999999999996,17.763,20.618999999999996,17.897000000000002,20.739999999999995C18.179000000000002,20.995999999999995,18.233,21.415999999999993,18.233,23.362999999999996C18.233,25.780999999999995,18.302,26.010999999999996,19.156,26.432999999999996C19.555,26.627999999999997,19.666999999999998,26.651999999999997,20.177999999999997,26.653999999999996C20.721999999999998,26.655999999999995,20.754999999999995,26.647999999999996,20.775,26.505999999999997C20.791999999999998,26.391,20.724999999999998,26.312999999999995,20.471,26.157999999999998C20.138,25.953,19.907,25.691,19.762,25.360999999999997C19.707,25.233999999999998,19.67,24.401999999999997,19.645,22.688999999999997C19.608999999999998,20.295999999999996,19.601,20.186999999999998,19.451999999999998,19.811999999999998C19.250999999999998,19.307999999999996,18.944,18.909999999999997,18.555,18.645999999999997C18.454,18.58,18.352999999999998,18.525,18.222,18.483999999999998C18.383000000000003,18.468,18.539,18.450999999999997,18.69,18.429C20.262,18.22,21.093,18.046,21.76,17.787999999999997C23.171000000000003,17.244999999999997,24.125,16.342999999999996,24.642000000000003,15.063999999999997C24.688000000000002,14.949999999999996,24.734,14.841999999999997,24.773000000000003,14.754999999999997L25.171000000000003,14.787999999999997C27.222,14.960999999999997,28.877000000000002,15.207999999999997,30.150000000000002,15.530999999999997C30.848000000000003,15.707999999999997,30.981,15.728999999999997,30.818,15.635999999999997C30.666,15.551,29.336,15.25,28.436,15.099ZM22.422,15.068C22.189,15.58,21.539,16.238,21.014,16.496C20.496,16.752,19.683999999999997,16.947,18.764,17.04C18.134999999999998,17.104,14.626999999999999,17.122999999999998,14.047999999999998,17.066C12.130999999999998,16.878,11.056999999999999,16.509,10.264999999999999,15.77C9.514999999999999,15.068,9.165,14.115,9.225999999999999,12.942C9.264999999999999,12.208,9.441999999999998,11.747,9.905,11.187000000000001C10.325999999999999,10.677000000000001,10.769,10.362000000000002,11.290999999999999,10.202000000000002C11.727999999999998,10.068000000000001,13.068999999999999,10.056000000000001,14.871999999999998,10.172000000000002C15.668999999999999,10.223000000000003,16.328,10.223000000000003,17.124,10.172000000000002C19.009999999999998,10.053000000000003,20.269,10.066000000000003,20.733999999999998,10.210000000000003C21.465,10.436000000000003,22.130999999999997,11.044000000000002,22.531,11.854000000000003C22.711,12.216000000000003,22.746,12.370000000000003,22.772,12.929000000000002C22.808,13.699,22.675,14.517,22.422,15.068ZM12.912,11.762C11.839,11.574,11.226,13.411000000000001,12.049000000000001,14.349C12.440000000000001,14.794,12.787,14.867,13.221000000000002,14.597C13.623000000000001,14.346,13.841000000000001,13.876999999999999,13.841000000000001,13.269C13.841,12.458,13.472,11.862,12.912,11.762ZM19.425,11.872C18.352,11.684,17.738,13.519,18.561,14.458C18.953,14.903,19.299,14.977,19.734,14.705C20.135,14.455,20.354000000000003,13.985,20.354000000000003,13.377C20.354,12.569,19.985,11.971,19.425,11.872ZM16.539,15.484C16.516000000000002,15.558,16.404,15.668,16.291,15.727C16.005,15.874,15.799,15.823,15.497,15.548C15.31,15.379,15.225,15.29,15.168,15.467C15.114999999999998,15.631,15.447999999999999,15.96,15.705,16.061C15.941,16.155,16.11,16.158,16.366,16.051C16.62,15.944999999999999,16.842,15.659999999999998,16.842,15.474999999999998C16.842,15.303,16.595,15.311,16.539,15.484ZM16.222,14.909C16.385,14.765,16.422,14.469000000000001,16.266000000000002,14.312000000000001S15.793000000000001,14.179000000000002,15.669000000000002,14.355C15.525000000000002,14.561,15.602000000000002,14.718,15.705000000000002,14.885C15.865,15.009,16.08,15.034,16.222,14.909Z" />
+      </svg>
+    </a>
+  </li>
+  
+</ul>
+    </div>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="kxcoder.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">归档</a></li>
+  <li><a href="/about">关于我</a></li>
+  <li><a href="/todo">TODO</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Redis Cookbook 之 基于Redis 实现倒序索引全文搜索</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-12-28T22:21:35+08:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+  <li><a href="#InvertedIndex">倒序索引介绍</a></li>
+</ol>
+
+<h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
+
+<p>倒序索引是一种索引数据结构，该索引存储单词（或者其他内容）到它们位于文件，档案或者数据库等位置之间的映射关系。这个通常被用来实现全文搜素服务，但是这要求在搜索之前这些文档的相关倒序索引就必须建立好。</p>
+
+<p>因此，我们想要事业Redis来作为背后的存储系统来实现全文搜索服务。</p>
+
+<h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
+
+<p>我们的实现，将为每一个单词，准备一个set集合，这些集合包含对应的文档的ID。为了允许快速搜索，我们将在开始之前为所有的文档建立索引。</p>
+
+<p>搜索服务本身先分割请求为各个单词，然后获取每个单词匹配的集合set的交集，最后就可以返回包含所有我们搜索的单词的文档ID集。</p>
+
+<h2 id="a-iddiscussiona">3. <a id="Discussion">讨论</a></h2>
+
+<h3 id="section-1">3.1 建立索引</h3>
+
+<p>首先，让我们假设我们有一百个允许我们搜索的文档或者网页，因此需要对它们建立倒序索引。为了建立索引，我们必须分割文本为分开的单词（分词操作），在此过程中，可能需要排除<code>stop word</code>以及长度小于3的单词。使用Ruby脚本，如下所示：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>建立索引 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">id_for_document</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line">    <span class="n">doc_id</span> <span class="o">=</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="s2">&quot;documents&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">doc_id</span><span class="o">.</span><span class="n">nil?</span>
+</span><span class="line">        <span class="n">doc_id</span> <span class="o">=</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s2">&quot;next_document_id&quot;</span><span class="p">)</span>
+</span><span class="line">        <span class="vg">$redis</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="s2">&quot;documents&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class="line">        <span class="vg">$redis</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="s2">&quot;filenames&quot;</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">    <span class="n">doc_id</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="no">STOP_WORDS</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;the&quot;</span><span class="p">,</span> <span class="s2">&quot;of&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;and&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;it&quot;</span><span class="p">,</span> <span class="s2">&quot;you&quot;</span><span class="p">,</span> <span class="s2">&quot;that&quot;</span><span class="o">]</span> <span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line"><span class="n">doc_id</span> <span class="o">=</span> <span class="n">id_for_document</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</span><span class="line"><span class="n">f</span><span class="o">.</span><span class="n">each_line</span> <span class="k">do</span> <span class="o">|</span><span class="n">l</span><span class="o">|</span>
+</span><span class="line">    <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/ |,|\)|\(|\;|\./</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">word</span><span class="o">|</span>
+</span><span class="line">        <span class="n">continue</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">3</span> <span class="o">||</span> <span class="no">STOP_WORDS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</span><span class="line">        <span class="n">add_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>所以，我们将过滤掉这些已经被加入到索引的单词，然后为我们的文档生成唯一的ID。此外，我们仍然需要完成上面的索引方法：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>建立索引 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">add_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class="line">    <span class="vg">$redis</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="s2">&quot;word:</span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>因此，对于每一个我们在文档中发现的单词，我们都已经创建了一个新的集合set，该set包含被发现单词的文档ID集。</p>
+
+<h3 id="section-2">3.2 搜索</h3>
+
+<p>倒序索引的优势是查找的时候真的非常的快，因为绝大部分的工作在文档建索引的时候就已经完成了。为了搜索，我们仅仅需要，找到我们搜索查询里面单词对应的集合set的交集。下面的代码使用<code>redis-rb</code>接口完成查询redis服务器命令。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>搜索 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="o">*</span><span class="n">terms</span><span class="p">)</span>
+</span><span class="line">    <span class="c1"># 对每一查询单词求对应的id集合，然后求集合的交集</span>
+</span><span class="line">    <span class="n">document_ids</span> <span class="o">=</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">sinter</span><span class="p">(</span><span class="o">*</span><span class="n">terms</span><span class="o">.</span><span class="n">map</span><span class="p">{</span><span class="o">|</span><span class="n">t</span><span class="o">|</span> <span class="s2">&quot;word:</span><span class="si">#{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
+</span><span class="line">    <span class="c1"># 根据id集合，查找对应文件名集合</span>
+</span><span class="line">    <span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span><span class="p">(</span><span class="s2">&quot;filenames&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">document_ids</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <blockquote>
+    <p>Notes: <code>sinter方法</code>：求指定多个集合的交集</p>
+  </blockquote>
+</blockquote>
+
+<h3 id="section-3">3.3 排序计分</h3>
+
+<p>虽然前面的方法某种程度上是有限制的，并且非常简单；但是也是很容易扩展的。其中一件我们可以做的事情就是，当返回搜索结果的时候排序我们的文档，我们可以考虑计算一种分数：高分表示和我们搜索的查询更相关（比如查询单词位于文档的主题或者标题中）或者只是单纯地以为出现更高的次数。因此，我们将该索引方法如下所示：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>排序计分 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">add_word</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class="line">    <span class="vg">$redis</span><span class="o">.</span><span class="n">zincrby</span><span class="p">(</span><span class="s2">&quot;word:</span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>搜索的结构会变得更加复杂一点点：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>排序计分 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="o">*</span><span class="n">terms</span><span class="p">)</span>
+</span><span class="line">    <span class="n">document_ids</span> <span class="o">=</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">multi</span> <span class="k">do</span>
+</span><span class="line">        <span class="vg">$redis</span><span class="o">.</span><span class="n">zinterstore</span><span class="p">(</span><span class="s2">&quot;temp_set&quot;</span><span class="p">,</span> <span class="n">terms</span><span class="o">.</span><span class="n">map</span><span class="p">{</span><span class="o">|</span><span class="n">t</span><span class="o">|</span> <span class="s2">&quot;word:</span><span class="si">#{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
+</span><span class="line">        <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="s2">&quot;temp_set&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span><span class="o">.</span><span class="n">last</span>
+</span><span class="line">    <span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span><span class="p">(</span><span class="s2">&quot;filenames&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">document_ids</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <blockquote>
+    <p>Notes: 这里使用了前面代码中多个方法，这是因为我们在有序的<code>temp_set</code>集合中有一个潜在的竞争条件。当你必须在任务其他人也尝试访问他们改变的数据之前，都使用这两个或者更多命令（在<code>ZREVRANGE</code>命令之前完成<code>ZINTERSTORE</code>命令），就会有潜在的竞争条件存在。</p>
+  </blockquote>
+</blockquote>
+
+<p>为了避免在运行的时候出现竞争条件，当我们执行并发的搜索查询的时候，我们必须要么使用Redis的<code>MULTI/EXEC</code>命令，要么可能为每一个查询搜索产生一个唯一键。（在上例中，我们必须在我们自己之后清除并且删除临时的排序set集合）。</p>
+
+<p><code>MULTI 和 EXEC</code>命令运行Redis中得事务行为。在<code>MULTI/EXEC</code>块中得命令保证运行的时候序列化串行，这意味着在块长度期间，没有其他的Redis客户端获取服务。在先前的例子里，它排除了在<code>temp_set</code>中的竞争条件，因为其他客户端不可能在<code>ZINTERSTORE</code>和<code>ZREVRANGE</code>操作之间修改值。在事务内部使用<code>DISCARD</code>就会放弃事务，丢弃所有的命令，然后返回一个正常状态。</p>
+
+<p>由于命令只会在<code>EXEC</code>之后才会被调用执行，因此只有在那个时刻你才会接收事务内部所有命令做出的回答响应。因此，不可能会使用同一个事务的事务内部一个命令运行的响应结果。为了达到这点，你将需要使用<code>WATCH</code>.</p>
+
+<p><code>redis-rb</code>没有直接的<code>EXEC</code>调用。换句话说，在提交给你的<code>multi方法</code>的块的开始和结束，表明也是事务的开始和结束。在你块结束的时候，<code>redis-rb</code>内部会调用<code>EXEC</code>。</p>
+
+<blockquote>
+  <blockquote>
+    <p><em>Redis 命令</em>:</p>
+
+    <ul>
+      <li>
+        <p><code>ZINCRBY zset-name increment element</code></p>
+
+        <p>添加或者增长在有序集合中元素的分数。而使用ZADD和SADD，则如果集合不存在则将会被创建。</p>
+      </li>
+      <li>
+        <p><code>ZINTERSTORE destination-zset number-of-zsets-to-intersect zset1 [zset2 ...] [WEIGHTS weight1 [weight2 ...]] [AGGREGATE SUM | MIN | MAX]</code></p>
+
+        <p>计算给定的一些ZSETS集合的交集，然后把结果存储在新的ZSET中。此外，也可以使用增长因子或者聚合方法来获取新的集合。默认情况下，它是所有集合中分数的和，但是它也可以是最大或者最小值。</p>
+      </li>
+      <li>
+        <p><code>ZREVRANGE zset-name start-index stop-index [WITHSCORES]</code></p>
+
+        <p>返回在有序集合中给定范围内的元素，以递减的顺序。这个命令也可以选择在返回结果中包含元素的分数。ZRANGE命令执行相同的操作，但是是以递增的顺序。</p>
+      </li>
+    </ul>
+  </blockquote>
+</blockquote>
+
+<h3 id="section-4">3.4 其他优化</h3>
+
+<p>对于搜索，还有许多地方可以被优化：</p>
+
+<ul>
+  <li>
+    <p><em>大小写敏感</em></p>
+
+    <p>我们可以在建立索引之前单词和查询之前的搜索项，使用单词的大小写敏感。</p>
+  </li>
+  <li>
+    <p><em>模糊搜索</em></p>
+
+    <p>可能你也感兴趣实现模糊搜索作为你的搜索应用的一部分。它考虑基于通常错误的拼写单词。例如，在我们的例子中，在建立索引的时候也一起考虑为拼写错误单词的项建立索引，要么从一个列表中查找，要么为这个目标使用专门的算法（例如语音学上的算法）</p>
+  </li>
+  <li>
+    <p><em>部分单词匹配</em></p>
+
+    <p>虽然这个非常有用，但是将会增加索引内存的使用，并且给出一些你不想要的搜索结果。为了达到这个目的，你不得不分解你的单词为子串，然后为它们建索引。例如，为单词<code>matching</code>建索引，你不得不增加下面这些：</p>
+
+    <pre><code>  matching
+  mat 
+  matc 
+  match 
+  matchi 
+  matchin
+</code></pre>
+
+    <p>假设设置的最小长度为3个字符，并且也假设我们只匹配单词的前缀。如果我们有兴趣建立所有可能的组合，你需要为这个单词其他的子串也建立索引。</p>
+
+    <p>使用有序集合对于这个和前面的模糊查找增强技术都是很有用的。你可以根据部分单词匹配和错误拼写单词而让它们<em>获取更低的分数来提高你的搜索结果质量</em>。</p>
+  </li>
+</ul>
+
+<h2 id="a-idinvertedindexa">4. <a id="InvertedIndex">倒序索引介绍</a></h2>
+
+<p>如果不使用倒序索引技术，在每次进行检索时，搜索引擎必须遍历每一个网页，查找网页中是否包含你指定的关键词。这个工作量是十分巨大的，主要原因有二：</p>
+
+<ul>
+  <li>
+    <p>互联网的网页基数非常大；</p>
+  </li>
+  <li>
+    <p>在每一个网页中检索是否含有指定的关键词不是一件简单的事情，它需要遍历网页的每个字符。
+为了更好的建立被搜索的关键字和含有这些关键字的页面之间的映射关系，倒序索引产生了。简单的说，倒序索引的倒序，指的是这个索引是从关键词中查找对应的源的，而不是从源中检索对应的关键词。</p>
+  </li>
+</ul>
+
+<p><em>举例如下</em>：为了检索关键词 A，首先从倒序索引的索引表中，找到关键词 A，然后查找 A 所在的页。由于倒序索引表排序后，在其中查找一个关键词可以使用二分查找，特别是在采用分布式数据、服务器集群、多线程技术等条件下，效率极高，所以，查找含有某个关键词的页变得非常简单。</p>
+
+<p>假设数据库中含有1000000条记录，其中有 10 条记录符合搜寻条件，如果使用倒序索引，可以很快找到这些关键词，并且定位到含有这些关键词的十条记录；否则，需要遍历1000000条记录，效率的差异可想而知。</p>
+
+<p>所以，倒序索引相当于一本出处大字典，查阅其中的每个词汇，都可以告诉你它的所有出处。</p>
+
+<p>倒序索引中的关键词，一般是 <em>蜘蛛（Spider）</em>在网页爬行时对网页进行分词的结果。中文分词也是一件比较麻烦的事情。关于 <em>分词技术</em>，请查阅其他相关文章。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">柯小小西</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-12-28T22:21:35+08:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/redis/'>redis</a>, <a class='category' href='/blog/categories/redis-cookbook/'>redis cookbook</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a class="jiathis_button_digg">Digg</a>
+	<a class="jiathis_button_fav">收藏夹</a>
+	<a href="http://www.jiathis.com/share?uid=1933358" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1395248101949397" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script> -->
+<!-- UY END -->
+ 
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/12/20/Redis-Cookbook-Chat-System/" title="Previous Post: Redis Cookbook 之 基于Redis 实现一个聊天系统">&laquo; Redis Cookbook 之 基于Redis 实现一个聊天系统</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/" title="Next Post: Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析">Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>评论</h1>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END --> 
+ </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>本人</h1>
+  <p>技术还处于半吊子的开发攻城狮。爱好各种技术，崇拜各种技术大牛达人。始终觉得，好记忆不如烂笔头。<a href="/about/">更多介绍...</a></p>
+  <p>声明：本站使用的图片等，甚至部分文章都来自网络，原作者享有对著作的一切权利。</p>
+  <p>欢迎在新浪微博上关注我：<wb:follow-button uid="2265041632" type="gray_3" width="100%" height="24" ></wb:follow-button></p>
+</section><section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/09/05/zookeeper-programmer-guide/">Zookeeper 编程指南</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">Nginx 反向代理配置和工作原理</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/">Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search/">Redis Cookbook 之 基于Redis 实现倒序索引全文搜索</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/20/Redis-Cookbook-Chat-System/">Redis Cookbook 之 基于Redis 实现一个聊天系统</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section> 
+  <h1>文章分类</h1> 
+  <ul id="categories"> 
+    <li class='category'><a href='/blog/categories/gc/'>gc (1)</a></li>
+<li class='category'><a href='/blog/categories/ide/'>ide (2)</a></li>
+<li class='category'><a href='/blog/categories/java/'>java (11)</a></li>
+<li class='category'><a href='/blog/categories/json/'>json (1)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>linux (5)</a></li>
+<li class='category'><a href='/blog/categories/log/'>log (1)</a></li>
+<li class='category'><a href='/blog/categories/mysql/'>mysql (3)</a></li>
+<li class='category'><a href='/blog/categories/nginx/'>nginx (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>python (1)</a></li>
+<li class='category'><a href='/blog/categories/redis/'>redis (6)</a></li>
+<li class='category'><a href='/blog/categories/redis-cookbook/'>redis cookbook (6)</a></li>
+<li class='category'><a href='/blog/categories/script/'>script (3)</a></li>
+<li class='category'><a href='/blog/categories/spring/'>spring (1)</a></li>
+<li class='category'><a href='/blog/categories/thread/'>thread (2)</a></li>
+<li class='category'><a href='/blog/categories/tools/'>tools (2)</a></li>
+<li class='category'><a href='/blog/categories/translation/'>translation (1)</a></li>
+<li class='category'><a href='/blog/categories/zookeeper/'>zookeeper (1)</a></li>
+ 
+  </ul> 
+</section><section id="tag-clouds" style="text-decoration:none">
+<h1>最新评论</h1>
+  <!-- UYAN NEW COMMENT BEGIN -->
+<div id="uyan_newcmt_unit"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=1933358"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+<!-- UYAN NEW COMMENT END -->
+</section>
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 柯小小西 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>-感谢<a href="https://github.com"> Github </a> 提供Page功能</span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+</body>
+</html>

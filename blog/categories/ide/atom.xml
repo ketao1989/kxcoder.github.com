@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ide | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/ide/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T10:57:00+08:00</updated>
+  <updated>2015-10-07T12:19:26+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -12,6 +12,100 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[常用快捷键（备用）]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/06/27/Intelij-IDEA-Keymap/"/>
+    <updated>2014-06-27T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/06/27/Intelij-IDEA-Keymap</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Keymap">Idea 快捷键</a></li>
+  <li><a href="#Sublime">Sublime 快捷键</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>Intelij IDEA一些快捷键和 Eclipse不同，所以对一些快捷键进行记录，备查。</p>
+
+<h2 id="a-idkeymapidea-a"><a id="Keymap">Idea 快捷键</a></h2>
+
+<h3 id="section-1">视图快捷键</h3>
+
+<p><figure class='code'><figcaption><span>idea keymap </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='kconfig'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;快速查看方法注释文档          Ctrl + Q&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;快速查询类名                   Ctrl + N&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;快速查询文件名                Ctrl + Shift + N&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3 id="section-2">编辑快捷键</h3>
+
+<p><figure class='code'><figcaption><span>idea keymap </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='kconfig'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;代码生成快捷键                Alt + Insert&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;自动跳转测试Test类            Alt + T&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2 id="a-idsublimesublime-a"><a id="Sublime">Sublime 快捷键</a></h2>
+
+<p><figure class='code'><figcaption><span>sublime keymap </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='kconfig'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;选择多行操作                          Ctrl + Shift + L&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;选择单词操作，多次往下移              Ctrl + D&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;选择一行操作，重复选择下一行          Ctrl + L&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;注释当前行                            Ctrl + /&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;从当前位置开始注释                    Ctrl + Shift + /&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Intelij IDEA 远程调试Tomcat服务]]></title>

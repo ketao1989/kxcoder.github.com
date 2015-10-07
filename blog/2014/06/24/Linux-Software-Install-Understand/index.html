@@ -1,0 +1,982 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解软件包的配置、编译与安装 - 柯小小西の小水滴</title>
+  <meta name="author" content="柯小小西">
+
+  
+  <meta name="description" content="说明：来自互联网，如有版权问题，请告知本人将其撤下。 来源：http://works.jinbuguo.com/linux/understand_package_install.html 目录 前言 概述 Makefile 与 make configure 前言 从源代码安装过软件的朋友一定对 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://kxcoder.github.io/blog/2014/06/24/Linux-Software-Install-Understand/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="柯小小西の小水滴" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+   <script src="http://ajax.useso.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- 使用360 CDN 代理 解决google字体 GFW问题 -->
+<link href="//fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.useso.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <div style="float:left; width: 500px">
+    <h1><a href="/">柯小小西の小水滴</a></h1>
+    
+      <h2>聚合各路水滴，方可成为大海.</h2>
+    
+  </div>
+  
+    <div style="float:right">
+      <p style="font-family:cursive;font-size:80%;color:yellow;font-style:oblique">
+         始终坚信，好记忆不如烂笔头。 
+      </p>
+<ul id="social-links">
+  <!-- Sina Weibo -->
+  <li>
+    <a href="http://weibo.com/2265041632" target="_blank">
+      <svg width="40" height="40" class="sina-weibo" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M9.641,17.231c-3.799,0.374-7.079-1.343-7.326-3.838c-0.246-2.494,2.634-4.82,6.434-5.196 c3.798-0.377,7.079,1.34,7.326,3.835C16.32,14.529,13.44,16.855,9.641,17.231 M17.24,8.952c-0.322-0.098-0.544-0.163-0.375-0.587 c0.365-0.921,0.403-1.718,0.007-2.286c-0.745-1.063-2.783-1.005-5.12-0.027c0-0.002-0.734,0.321-0.546-0.261 c0.359-1.156,0.305-2.123-0.254-2.682c-1.267-1.271-4.639,0.047-7.53,2.936C1.257,8.209,0,10.504,0,12.488 c0,3.796,4.866,6.104,9.628,6.104c6.241,0,10.393-3.627,10.393-6.506C20.021,10.347,18.557,9.358,17.24,8.952" />
+        <path fill="#000000" d="M21.384,2.005c-1.507-1.671-3.73-2.308-5.782-1.872l0,0c-0.475,0.102-0.778,0.569-0.676,1.043 c0.101,0.473,0.567,0.777,1.043,0.674c1.459-0.31,3.039,0.145,4.111,1.332c1.069,1.188,1.362,2.806,0.902,4.225v0.001 c-0.149,0.462,0.104,0.957,0.566,1.106c0.461,0.149,0.956-0.104,1.105-0.565c0,0,0-0.002,0-0.004 C23.299,5.95,22.894,3.674,21.384,2.005" />
+        <path fill="#000000" d="M19.07,4.094c-0.734-0.814-1.817-1.123-2.817-0.912c-0.409,0.088-0.671,0.49-0.581,0.899 c0.088,0.407,0.489,0.67,0.896,0.58v0.001c0.488-0.104,1.019,0.047,1.379,0.445c0.359,0.398,0.455,0.941,0.301,1.416l0,0 c-0.127,0.398,0.09,0.825,0.488,0.954c0.396,0.127,0.824-0.091,0.952-0.488C20,6.017,19.805,4.908,19.07,4.094" />
+        <path fill="#000000" d="M9.85,12.713c-0.132,0.229-0.426,0.338-0.656,0.242c-0.227-0.094-0.297-0.348-0.169-0.572 c0.132-0.221,0.416-0.328,0.64-0.239C9.895,12.227,9.978,12.483,9.85,12.713 M8.64,14.268c-0.367,0.586-1.154,0.843-1.747,0.57 c-0.584-0.265-0.756-0.945-0.389-1.518c0.362-0.568,1.124-0.824,1.712-0.574C8.811,12.998,9.001,13.675,8.64,14.268 M10.021,10.118 c-1.808-0.47-3.852,0.431-4.637,2.023c-0.8,1.624-0.026,3.428,1.801,4.017c1.892,0.612,4.122-0.324,4.898-2.078 C12.848,12.367,11.891,10.602,10.021,10.118" />
+      </svg>
+    </a>
+  </li>
+
+  <!-- GitHub -->
+  <li>
+    <a href="https://github.com/ketao1989" target="_blank">
+      <svg width="40" height="40" class="github" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M28.436,15.099C27.235,14.897,25.985,14.764,24.97,14.728L24.791,14.722C24.832,14.632,24.863,14.571,24.873,14.562C24.895,14.543999999999999,24.913,14.468,24.915000000000003,14.394C24.915000000000003,14.353,24.933000000000003,14.22,24.961000000000002,14.044C25.236,14.054,25.601000000000003,14.062000000000001,25.999000000000002,14.065000000000001C27.536,14.077000000000002,29.144000000000002,14.201,30.247000000000003,14.396C30.904000000000003,14.512,31.121000000000002,14.508000000000001,30.636000000000003,14.39C30.145000000000003,14.271,28.689000000000004,14.096,27.529000000000003,14.020000000000001C26.750000000000004,13.967,25.633000000000003,13.947000000000001,24.975000000000005,13.958000000000002C24.994000000000003,13.844000000000001,25.016000000000005,13.717000000000002,25.039000000000005,13.587000000000002C25.132000000000005,13.084000000000001,25.163000000000004,12.578000000000001,25.165000000000006,11.571000000000002C25.167000000000005,10.009000000000002,25.083000000000006,9.579,24.574000000000005,8.546000000000001C24.367000000000004,8.124,24.133000000000006,7.766000000000001,23.850000000000005,7.442000000000001C24.097000000000005,6.713000000000001,24.091000000000005,5.584000000000001,23.835000000000004,4.594000000000001C23.624000000000006,3.782000000000001,23.550000000000004,3.7300000000000013,22.814000000000004,3.886000000000001C22.19,4.019,21.69,4.2,21.049,4.523C20.746,4.675999999999999,20.328,4.914,20.025,5.101C19.235,4.823,18.418,4.639,17.546,4.54C16.662,4.44,14.495,4.496,13.725999999999999,4.638C12.973999999999998,4.777,12.296999999999999,4.947,11.684,5.149C11.378,4.96,10.934,4.705,10.616999999999999,4.545C9.973,4.221,9.473,4.041,8.847,3.908C8.113,3.751,8.036999999999999,3.804,7.827,4.616C7.567,5.619,7.5649999999999995,6.7669999999999995,7.822,7.494C7.852,7.577,7.87,7.636,7.877,7.682C6.835,8.994,6.495,10.462,6.721,12.511C6.78,13.045,6.871,13.535,6.998,13.984C6.333,13.98,5.3870000000000005,14.004,4.704000000000001,14.048C3.5420000000000007,14.125,2.0860000000000007,14.298,1.5950000000000006,14.417C1.1110000000000007,14.535,1.3260000000000005,14.539,1.9840000000000007,14.424C3.0870000000000006,14.229999999999999,4.696000000000001,14.104,6.232000000000001,14.093C6.522000000000001,14.092,6.793000000000001,14.086,7.026000000000002,14.08C7.096000000000002,14.317,7.176000000000002,14.543,7.267000000000001,14.758000000000001L7.26,14.759C6.245,14.794,4.996,14.927,3.795,15.129C2.894,15.28,1.564,15.581999999999999,1.4089999999999998,15.669C1.2459999999999998,15.76,1.3789999999999998,15.74,2.077,15.563C3.3499999999999996,15.241000000000001,5.005,14.994,7.055,14.822000000000001L7.284,14.802000000000001C7.724,15.824000000000002,8.402,16.604000000000003,9.36,17.212000000000003C9.946,17.585000000000004,10.885,17.968000000000004,11.357999999999999,18.028000000000002C11.488,18.044,11.866,18.122000000000003,12.197999999999999,18.200000000000003C12.530999999999999,18.278000000000002,13.181999999999999,18.395000000000003,13.643999999999998,18.462000000000003H13.654999999999998C13.645999999999997,18.468000000000004,13.637999999999998,18.472000000000005,13.629999999999997,18.478C13.069999999999997,18.769000000000002,12.705999999999998,19.222,12.460999999999997,19.935000000000002C12.350999999999997,19.968000000000004,12.213999999999997,20.013,12.065999999999997,20.064000000000004C11.536999999999997,20.244000000000003,11.330999999999998,20.281000000000002,10.794999999999998,20.285000000000004C10.238999999999997,20.289000000000005,10.106999999999998,20.265000000000004,9.774999999999999,20.109000000000005C9.291999999999998,19.884000000000004,8.841999999999999,19.470000000000006,8.541999999999998,18.976000000000006C8.040999999999999,18.150000000000006,7.174999999999998,17.566000000000006,6.452999999999998,17.566000000000006C5.835999999999998,17.566000000000006,5.718999999999998,17.816000000000006,6.164999999999997,18.181000000000004C6.836999999999997,18.730000000000004,7.338999999999997,19.290000000000006,7.544999999999997,19.718000000000004C7.660999999999997,19.958000000000002,7.838999999999997,20.329000000000004,7.9419999999999975,20.542000000000005C8.050999999999998,20.769000000000005,8.283999999999997,21.077000000000005,8.505999999999997,21.290000000000006C9.027999999999997,21.788000000000007,9.531999999999996,22.026000000000007,10.283999999999997,22.138000000000005C10.787999999999997,22.212000000000007,10.911999999999997,22.212000000000007,11.506999999999998,22.136000000000006C11.793999999999999,22.101000000000006,12.035999999999998,22.060000000000006,12.252999999999998,22.009000000000007C12.252999999999998,22.253000000000007,12.252999999999998,22.534000000000006,12.252999999999998,22.864000000000008C12.252999999999998,24.63000000000001,12.231999999999998,25.198000000000008,12.161999999999999,25.364000000000008C12.03,25.680000000000007,11.733999999999998,26.00500000000001,11.446,26.151000000000007C11.158999999999999,26.297000000000008,11.07,26.458000000000006,11.190999999999999,26.606000000000005C11.258,26.686000000000003,11.386999999999999,26.700000000000006,11.819999999999999,26.672000000000004C12.641999999999998,26.621000000000006,13.222999999999999,26.317000000000004,13.518999999999998,25.781000000000006C13.613999999999999,25.609000000000005,13.636,25.263000000000005,13.665999999999999,23.463000000000005C13.697999999999999,21.510000000000005,13.711999999999998,21.322000000000003,13.838999999999999,21.043000000000006C13.915999999999999,20.877000000000006,14.027,20.697000000000006,14.088999999999999,20.648000000000007C14.192999999999998,20.56200000000001,14.2,20.732000000000006,14.2,23.068000000000005C14.199,25.646000000000004,14.173,25.957000000000004,13.915,26.453000000000003C13.857,26.566000000000003,13.747,26.713000000000005,13.67,26.783C13.535,26.906000000000002,13.478,27.221,13.572,27.316000000000003C13.726999999999999,27.470000000000002,14.504,27.228,14.927999999999999,26.894000000000002C15.649999999999999,26.322000000000003,15.735999999999999,25.849000000000004,15.741999999999999,22.433L15.745,20.429L15.963999999999999,20.45L16.183,20.47L16.219,23.090999999999998C16.26,26.041999999999998,16.266000000000002,26.084999999999997,16.768,26.654999999999998C17.053,26.976999999999997,17.34,27.154999999999998,17.807000000000002,27.293999999999997C18.432000000000002,27.481999999999996,18.62,27.191999999999997,18.200000000000003,26.688999999999997C17.743000000000002,26.141999999999996,17.721000000000004,25.932999999999996,17.746000000000002,22.694999999999997C17.763,20.618999999999996,17.763,20.618999999999996,17.897000000000002,20.739999999999995C18.179000000000002,20.995999999999995,18.233,21.415999999999993,18.233,23.362999999999996C18.233,25.780999999999995,18.302,26.010999999999996,19.156,26.432999999999996C19.555,26.627999999999997,19.666999999999998,26.651999999999997,20.177999999999997,26.653999999999996C20.721999999999998,26.655999999999995,20.754999999999995,26.647999999999996,20.775,26.505999999999997C20.791999999999998,26.391,20.724999999999998,26.312999999999995,20.471,26.157999999999998C20.138,25.953,19.907,25.691,19.762,25.360999999999997C19.707,25.233999999999998,19.67,24.401999999999997,19.645,22.688999999999997C19.608999999999998,20.295999999999996,19.601,20.186999999999998,19.451999999999998,19.811999999999998C19.250999999999998,19.307999999999996,18.944,18.909999999999997,18.555,18.645999999999997C18.454,18.58,18.352999999999998,18.525,18.222,18.483999999999998C18.383000000000003,18.468,18.539,18.450999999999997,18.69,18.429C20.262,18.22,21.093,18.046,21.76,17.787999999999997C23.171000000000003,17.244999999999997,24.125,16.342999999999996,24.642000000000003,15.063999999999997C24.688000000000002,14.949999999999996,24.734,14.841999999999997,24.773000000000003,14.754999999999997L25.171000000000003,14.787999999999997C27.222,14.960999999999997,28.877000000000002,15.207999999999997,30.150000000000002,15.530999999999997C30.848000000000003,15.707999999999997,30.981,15.728999999999997,30.818,15.635999999999997C30.666,15.551,29.336,15.25,28.436,15.099ZM22.422,15.068C22.189,15.58,21.539,16.238,21.014,16.496C20.496,16.752,19.683999999999997,16.947,18.764,17.04C18.134999999999998,17.104,14.626999999999999,17.122999999999998,14.047999999999998,17.066C12.130999999999998,16.878,11.056999999999999,16.509,10.264999999999999,15.77C9.514999999999999,15.068,9.165,14.115,9.225999999999999,12.942C9.264999999999999,12.208,9.441999999999998,11.747,9.905,11.187000000000001C10.325999999999999,10.677000000000001,10.769,10.362000000000002,11.290999999999999,10.202000000000002C11.727999999999998,10.068000000000001,13.068999999999999,10.056000000000001,14.871999999999998,10.172000000000002C15.668999999999999,10.223000000000003,16.328,10.223000000000003,17.124,10.172000000000002C19.009999999999998,10.053000000000003,20.269,10.066000000000003,20.733999999999998,10.210000000000003C21.465,10.436000000000003,22.130999999999997,11.044000000000002,22.531,11.854000000000003C22.711,12.216000000000003,22.746,12.370000000000003,22.772,12.929000000000002C22.808,13.699,22.675,14.517,22.422,15.068ZM12.912,11.762C11.839,11.574,11.226,13.411000000000001,12.049000000000001,14.349C12.440000000000001,14.794,12.787,14.867,13.221000000000002,14.597C13.623000000000001,14.346,13.841000000000001,13.876999999999999,13.841000000000001,13.269C13.841,12.458,13.472,11.862,12.912,11.762ZM19.425,11.872C18.352,11.684,17.738,13.519,18.561,14.458C18.953,14.903,19.299,14.977,19.734,14.705C20.135,14.455,20.354000000000003,13.985,20.354000000000003,13.377C20.354,12.569,19.985,11.971,19.425,11.872ZM16.539,15.484C16.516000000000002,15.558,16.404,15.668,16.291,15.727C16.005,15.874,15.799,15.823,15.497,15.548C15.31,15.379,15.225,15.29,15.168,15.467C15.114999999999998,15.631,15.447999999999999,15.96,15.705,16.061C15.941,16.155,16.11,16.158,16.366,16.051C16.62,15.944999999999999,16.842,15.659999999999998,16.842,15.474999999999998C16.842,15.303,16.595,15.311,16.539,15.484ZM16.222,14.909C16.385,14.765,16.422,14.469000000000001,16.266000000000002,14.312000000000001S15.793000000000001,14.179000000000002,15.669000000000002,14.355C15.525000000000002,14.561,15.602000000000002,14.718,15.705000000000002,14.885C15.865,15.009,16.08,15.034,16.222,14.909Z" />
+      </svg>
+    </a>
+  </li>
+  
+</ul>
+    </div>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="kxcoder.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">归档</a></li>
+  <li><a href="/about">关于我</a></li>
+  <li><a href="/todo">TODO</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">深入理解软件包的配置、编译与安装</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-06-24T22:21:35+08:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>说明：来自互联网，如有版权问题，请告知本人将其撤下。</p>
+
+<p>来源：<a href="http://works.jinbuguo.com/linux/understand_package_install.htm">http://works.jinbuguo.com/linux/understand_package_install.htm</a>l</p>
+
+<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#About">概述</a></li>
+  <li><a href="#Make">Makefile 与 make</a></li>
+  <li><a href="#Configure">configure</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>从源代码安装过软件的朋友一定对 <code>./configure &amp;&amp; make &amp;&amp; make install</code> 安装三步曲非常熟悉了。然而究竟这个过程中的每一步幕后都发生了些什么呢？本文将带领你一探究竟。深入理解这个过程将有助于你在LFS的基础上玩出自己的花样来。不过需要说明的是本文对 <code>Makefile</code> 和 <code>make</code> 的讲解是相当近视和粗浅的，但是对于理解安装过程来说足够了。</p>
+
+<h2 id="a-idabouta"><a id="About">概述</a></h2>
+
+<p>用一句话来解释这个过程就是：</p>
+
+<p>根据源码包中 Makefile.in 文件的指示，configure 脚本检查当前的系统环境和配置选项，在当前目录中生成 <code>Makefile</code> 文件(还有其它本文无需关心的文件)，然后 <code>make</code> 程序就按照当前目录中的 Makefile 文件的指示将源代码编译为二进制文件，最后将这些二进制文件移动(即安装)到指定的地方(仍然按照 <code>Makefile</code> 文件的指示)。</p>
+
+<p>由此可见 Makefile 文件是幕后的核心。要深入理解安装过程，必须首先对 <code>Makefile</code> 文件有充分的了解。本文将首先讲述 <code>Makefile</code> 与 <code>make</code> ，然后再讲述 <code>configure</code> 脚本。并且在讲述这两部分内容时，提供了尽可能详细的、可以运用于实践的参考资料。</p>
+
+<h2 id="a-idmakemakefile--makea"><a id="Make">Makefile 与 make</a></h2>
+
+<p>用一句话来概括<code>Makefile</code> 与 <code>make</code> 的关系就是：</p>
+
+<p><code>Makefile</code> 包含了所有的规则和目标，而 <code>make</code> 则是为了完成目标而去解释 <code>Makefiel</code> 规则的工具。</p>
+
+<h3 id="make-">make 语法</h3>
+
+<p>首先看看 <code>make</code> 的命令行语法：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux make </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">make <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>targets<span class="o">]</span> <span class="o">[</span><span class="nv">VAR</span><span class="o">=</span>VALUE<span class="o">]</span>...
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><code>[options]</code>是命令行选项，可以用 <code>make --help</code> 命令查看全部，<code>[VAR=VALUE]</code>是在命令行上指定环境变量，这两个大家都很熟悉，将在稍后详细讲解。而<code>[targets]</code>是什么呢？字面的意思是”目标”，也就是希望本次 make 命令所完成的任务。凭经验猜测，这个<code>[targets]</code>大概可以用”check”,”install”之类(也就是常见的测试和安装命令)。但是它到底是个啥玩意儿？不带任何”目标”的 <code>make</code> 命令是什么意思？为什么在安装 LFS 工具链中的 Perl-5.8.8 软件包时会出现”make perl utilities”这样怪异的命令？要回答这些问题必须首先理解 <code>Makefile</code> 文件中的”规则”。</p>
+
+<h3 id="makefile-">Makefile 规则</h3>
+
+<p>Makefile 规则包含了文件之间的依赖关系和更新此规则目标所需要的命令。</p>
+
+<p>一个简单的 Makefile 规则是这样写的：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux makefile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">TARGET : PREREQUISITES
+</span><span class="line">	COMMAND
+</span><span class="line">TARGET
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>规则的目标。也就是可以被 make 使用的”目标”。有些目标可以没有依赖而只有动作(命令行)，比如”clean”，通常仅仅定义一系列删除中间文件的命令。同样，有些目标可以没有动作而只有依赖，比如”all”，通常仅仅用作”终极目标”。</p>
+
+<p><code>PREREQUISITES</code><br />
+规则的依赖。通常一个目标依赖于一个或者多个文件。</p>
+
+<p><code>COMMAND</code><br />
+规则的命令行。一个规则可以有零个或多个命令行。</p>
+
+<p>OK! 现在你明白[targets]是什么了，原来它们来自于 <code>Makefile</code> 文件中一条条规则的目标(TARGET)。另外，<code>Makefile</code>文件中第一条规则的目标被称为”终极目标”，也就是你省略[targets]参数时的目标(通常为”all”)。</p>
+
+<p>当你查看一个实际的 <code>Makefile</code> 文件时，你会发现有些规则非常复杂，但是它都符合规则的基本格式。此外，<code>Makefile</code> 文件中通常还包含了除规则以外的其它很多东西，不过本文只关心其中的变量。</p>
+
+<h3 id="makefile--1">Makefile 实例</h3>
+
+<p>下面看一个简单的、实际的 <code>Makefile</code>文件：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux makefile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">CC</span><span class="o">=</span>gcc
+</span><span class="line"><span class="nv">CPPFLAGS</span><span class="o">=</span>
+</span><span class="line"><span class="nv">CFLAGS</span><span class="o">=</span>-O2 -pipe
+</span><span class="line"><span class="nv">LDFLAGS</span><span class="o">=</span>-s
+</span><span class="line"><span class="nv">PREFIX</span><span class="o">=</span>/usr
+</span><span class="line">
+</span><span class="line">all : prog1 prog2
+</span><span class="line">
+</span><span class="line">prog1 : prog1.o
+</span><span class="line">	<span class="k">$(</span>CC<span class="k">)</span> <span class="k">$(</span>LDFLAGS<span class="k">)</span> -o prog1 prog1.o
+</span><span class="line">
+</span><span class="line">prog1.o : prog1.c
+</span><span class="line">	<span class="k">$(</span>CC<span class="k">)</span> -c <span class="k">$(</span>CFLAGS<span class="k">)</span> prog1.c
+</span><span class="line">
+</span><span class="line">prog2 : prog2.o
+</span><span class="line">	<span class="k">$(</span>CC<span class="k">)</span> <span class="k">$(</span>CFLAGS<span class="k">)</span> <span class="k">$(</span>LDFLAGS<span class="k">)</span> -o prog2 prog2.o
+</span><span class="line">
+</span><span class="line">prog2.o : prog2.c
+</span><span class="line">	<span class="k">$(</span>CC<span class="k">)</span> -c <span class="k">$(</span>CPPFLAGS<span class="k">)</span> <span class="k">$(</span>CFLAGS<span class="k">)</span> prog2.c
+</span><span class="line">
+</span><span class="line">clean :
+</span><span class="line">	rm -f *.<span class="o">{</span>o,a<span class="o">}</span> prog<span class="o">{</span>1,2<span class="o">}</span>
+</span><span class="line">
+</span><span class="line">install : prog1 prog2
+</span><span class="line">	<span class="k">if</span> <span class="o">(</span> <span class="nb">test</span> ! -d <span class="k">$(</span>PREFIX<span class="k">)</span>/bin <span class="o">)</span> <span class="p">;</span> <span class="k">then</span> mkdir -p <span class="k">$(</span>PREFIX<span class="k">)</span>/bin <span class="p">;</span> <span class="k">fi</span>
+</span><span class="line">	cp -f prog1 <span class="k">$(</span>PREFIX<span class="k">)</span>/bin/prog1
+</span><span class="line">	cp -f prog2 <span class="k">$(</span>PREFIX<span class="k">)</span>/bin/prog2
+</span><span class="line">
+</span><span class="line">check <span class="nb">test</span> : prog1 prog2
+</span><span class="line">	prog1 &lt; sample1.ref &gt; sample1.rz
+</span><span class="line">	prog1 &lt; sample2.ref &gt; sample3.rz
+</span><span class="line">	cmp sample1.ok sample1.rz
+</span><span class="line">	cmp sample2.ok sample2.rz
+</span><span class="line">	
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>从中可以看出，<code>make</code> 与 <code>make all</code> 以及 <code>make prog1 prog2</code> 三条命令其实是等价的。而常用的 <code>make check</code> 和 <code>make install</code> 也找到了归属。同时我们也看到了 Makefile 中的各种变量是如何影响编译的。针对这个特定的 Makefile ，你甚至可以省略安装三步曲中的 make 命令而直接使用<code> make install</code> 进行安装。</p>
+
+<p>同样，为了使用自定义的编译参数编译 prog2 ，我们可以使用 <code>make prog2 CFLAGS="-O3 -march=athlon64"</code> 或 <code>CFLAGS="-O3 -march=athlon64" &amp;&amp; make -e prog2</code> 命令达到此目的。</p>
+
+<h3 id="makefile--2">Makefile 惯例</h3>
+
+<p>下面是Makefile中一些约定俗成的目标名称及其含义：</p>
+
+<p><code>all</code><br />
+编译整个软件包，但不重建任何文档。一般此目标作为默认的终极目标。此目标一般对所有源程序的编译和连接使用”-g”选项，以使最终的可执行程序中包含调试信息。可使用 strip 程序去掉这些调试符号。</p>
+
+<p><code>clean</code><br />
+清除当前目录下在 make 过程中产生的文件。它不能删除软件包的配置文件，也不能删除 build 时创建的那些文件。</p>
+
+<p><code>distclean</code><br />
+类似于”clean”，但增加删除当前目录下的的配置文件、build 过程产生的文件。</p>
+
+<p><code>info</code><br />
+产生必要的 Info 文档。</p>
+
+<p><code>check 或 test</code> <br />
+完成所有的自检功能。在执行检查之前，应确保所有程序已经被创建(但可以尚未安装)。为了进行测试，需要实现在程序没有安装的情况下被执行的测试命令。</p>
+
+<p><code>install</code><br />
+完成程序的编译并将最终的可执行程序、库文件等拷贝到指定的目录。此种安装一般不对可执行程序进行 strip 操作。</p>
+
+<p><code>install-strip</code><br />
+和”install”类似，但是会对复制到安装目录下的可执行文件进行 strip 操作。</p>
+
+<p><code>uninstall</code><br />
+删除所有由”install”安装的文件。</p>
+
+<p><code>installcheck</code><br />
+执行安装检查。在执行安装检查之前，需要确保所有程序已经被创建并且被安装。</p>
+
+<p><code>installdirs</code> <br />
+创建安装目录及其子目录。它不能更改软件的编译目录，而仅仅是创建程序的安装目录。</p>
+
+<p>下面是 Makefile 中一些约定俗成的变量名称及其含义：</p>
+
+<p>这些约定俗成的变量分为三类。第一类代表可执行程序的名字，例如 CC 代表编译器这个可执行程序；第二类代表程序使用的参数(多个参数使用空格分开)，例如 CFLAGS 代表编译器执行时使用的参数(一种怪异的做法是直接在 CC 中包含参数)；第三类代表安装目录，例如 prefix 等等，含义简单，下面只列出它们的默认值。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux makefile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">AR   函数库打包程序，可创建静态库.a文档。默认是<span class="s2">&quot;ar&quot;</span>。
+</span><span class="line">AS   汇编程序。默认是<span class="s2">&quot;as&quot;</span>。
+</span><span class="line">CC   C编译程序。默认是<span class="s2">&quot;cc&quot;</span>。
+</span><span class="line">CXX  C++编译程序。默认是<span class="s2">&quot;g++&quot;</span>。
+</span><span class="line">CPP  C/C++预处理器。默认是<span class="s2">&quot;$(CC) -E&quot;</span>。
+</span><span class="line">FC   Fortran编译器。默认是<span class="s2">&quot;f77&quot;</span>。
+</span><span class="line">PC   Pascal语言编译器。默认是<span class="s2">&quot;pc&quot;</span>。
+</span><span class="line">YACC Yacc文法分析器。默认是<span class="s2">&quot;yacc&quot;</span>。
+</span><span class="line">
+</span><span class="line">ARFLAGS     函数库打包程序的命令行参数。默认值是<span class="s2">&quot;rv&quot;</span>。
+</span><span class="line">ASFLAGS     汇编程序的命令行参数。
+</span><span class="line">CFLAGS      C编译程序的命令行参数。
+</span><span class="line">CXXFLAGS    C++编译程序的命令行参数。
+</span><span class="line">CPPFLAGS    C/C++预处理器的命令行参数。
+</span><span class="line">FFLAGS      Fortran编译器的命令行参数。
+</span><span class="line">PFLAGS      Pascal编译器的命令行参数。
+</span><span class="line">YFLAGS      Yacc文法分析器的命令行参数。
+</span><span class="line">LDFLAGS     链接器的命令行参数。
+</span><span class="line">
+</span><span class="line">prefix      /usr/local
+</span><span class="line">exec_prefix <span class="k">$(</span>prefix<span class="k">)</span>
+</span><span class="line">bindir      <span class="k">$(</span>exec_prefix<span class="k">)</span>/bin
+</span><span class="line">sbindir     <span class="k">$(</span>exec_prefix<span class="k">)</span>/sbin
+</span><span class="line">libexecdir  <span class="k">$(</span>exec_prefix<span class="k">)</span>/libexec
+</span><span class="line">datadir     <span class="k">$(</span>prefix<span class="k">)</span>/share
+</span><span class="line">sysconfdir  <span class="k">$(</span>prefix<span class="k">)</span>/etc
+</span><span class="line">sharedstatedir <span class="k">$(</span>prefix<span class="k">)</span>/com
+</span><span class="line">localstatedir  <span class="k">$(</span>prefix<span class="k">)</span>/var
+</span><span class="line">libdir      <span class="k">$(</span>exec_prefix<span class="k">)</span>/lib
+</span><span class="line">infodir     <span class="k">$(</span>prefix<span class="k">)</span>/info
+</span><span class="line">includedir  <span class="k">$(</span>prefix<span class="k">)</span>/include
+</span><span class="line">oldincludedir  <span class="k">$(</span>prefix<span class="k">)</span>/include
+</span><span class="line">mandir      <span class="k">$(</span>prefix<span class="k">)</span>/man
+</span><span class="line">srcdir      需要编译的源文件所在的目录，无默认值
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="make--1">make 选项</h3>
+
+<p>最后说说 make 的命令行选项(以Make-3.81版本为准)：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux makefile </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+<span class="line-number">76</span>
+<span class="line-number">77</span>
+<span class="line-number">78</span>
+<span class="line-number">79</span>
+<span class="line-number">80</span>
+<span class="line-number">81</span>
+<span class="line-number">82</span>
+<span class="line-number">83</span>
+<span class="line-number">84</span>
+<span class="line-number">85</span>
+<span class="line-number">86</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="sb">`</span>-B, --always-make<span class="sb">`</span>
+</span><span class="line">无条件的重建所有规则的目标，而不是根据规则的依赖关系决定是否重建某些目标文件。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-C DIR, --directory<span class="o">=</span>DIR<span class="sb">`</span>
+</span><span class="line">在做任何动作之前先切换工作目录到 DIR ，然后再执行 make 程序。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-d<span class="sb">`</span>
+</span><span class="line">在 make 执行过程中打印出所有的调试信息。包括：make 认为那些文件需要重建；那些文件需要比较它们的最后修改时间、比较的结果；重建目标所要执行的命令；使用的隐含规则等。使用该选项我们可以看到 make 构造依赖关系链、重建目标过程的所有信息，它等效于<span class="s2">&quot;-debug=a&quot;</span>。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>--debug<span class="o">=</span>FLAGS<span class="sb">`</span>
+</span><span class="line">    在 make 执行过程中打印出调试信息。FLAGS 用于控制调试信息级别：
+</span><span class="line">    a 输出所有类型的调试信息
+</span><span class="line">    b 输出基本调试信息。包括：那些目标过期、是否重建成功过期目标文件。
+</span><span class="line">    v 除 b 级别以外还包括：解析的 makefile 文件名，不需要重建文件等。
+</span><span class="line">    i 除 b 级别以外还包括：所有使用到的隐含规则描述。
+</span><span class="line">    j 输出所有执行命令的子进程，包括命令执行的 PID 等。
+</span><span class="line">    m 输出 make 读取、更新、执行 makefile 的信息。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-e, --environment-overrides<span class="sb">`</span>
+</span><span class="line">使用系统环境变量的定义覆盖 Makefile 中的同名变量定义。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-f FILE, --file<span class="o">=</span>FILE, --makefile<span class="o">=</span>FILE<span class="sb">`</span>
+</span><span class="line">将 FILE 指定为 Makefile 文件。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-h, --help<span class="sb">`</span>
+</span><span class="line">打印帮助信息。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-i, --ignore-errors<span class="sb">`</span>
+</span><span class="line">忽略规则命令执行过程中的错误。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-I DIR, --include-dir<span class="o">=</span>DIR<span class="sb">`</span>
+</span><span class="line">指定包含 Makefile 文件的搜索目录。使用多个<span class="s2">&quot;-I&quot;</span>指定目录时，搜索目录按照指定顺序进行。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-j <span class="o">[</span>N<span class="o">]</span>, --jobs<span class="o">[=</span>N<span class="o">]</span><span class="sb">`</span>
+</span><span class="line">指定并行执行的命令数目。在没有指定<span class="s2">&quot;-j&quot;</span>参数的情况下，执行的命令数目将是系统允许的最大可能数目。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-k, --keep-going<span class="sb">`</span>
+</span><span class="line">遇见命令执行错误时不终止 make 的执行，也就是尽可能执行所有的命令，直到出现致命错误才终止。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-l <span class="o">[</span>N<span class="o">]</span>, --load-average<span class="o">[=</span>N<span class="o">]</span>, --max-load<span class="o">[=</span>N<span class="o">]</span><span class="sb">`</span>
+</span><span class="line">如果系统负荷超过 LOAD<span class="o">(</span>浮点数<span class="o">)</span>，不再启动新任务。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-L, --check-symlink-times<span class="sb">`</span>
+</span><span class="line">同时考察符号连接的时间戳和它所指向的目标文件的时间戳，以两者中较晚的时间戳为准。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-n, --just-print, --dry-run, --recon<span class="sb">`</span>
+</span><span class="line">  只打印出所要执行的命令，但并不实际执行命令。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-o FILE, --old-file<span class="o">=</span>FILE, --assume-old<span class="o">=</span>FILE<span class="sb">`</span>
+</span><span class="line">即使相对于它的依赖已经过期也不重建 FILE 文件；同时也不重建依赖于此文件任何文件。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-p, --print-data-base<span class="sb">`</span>
+</span><span class="line">命令执行之前，打印出 make 读取的 Makefile 的所有数据（包括规则和变量的值），同时打印出 make 的版本信息。如果只需要打印这些数据信息，可以使用 make -qp 命令。查看 make 执行前的预设规则和变量，可使用命令 make -p -f /dev/null 。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-q, --question<span class="sb">`</span>
+</span><span class="line"><span class="s2">&quot;询问模式&quot;</span>。不运行任何命令，并且无输出，只是返回一个查询状态。返回状态为 <span class="m">0</span> 表示没有目标需要重建，1 表示存在需要重建的目标，2 表示有错误发生。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-r, --no-builtin-rules<span class="sb">`</span>
+</span><span class="line">取消所有内嵌的隐含规则，不过你可以在 Makefile 中使用模式规则来定义规则。同时还会取消所有支持后追规则的隐含后缀列表，同样我们也可以在 Makefile 中使用<span class="s2">&quot;.SUFFIXES&quot;</span>定义我们自己的后缀规则。此选项不会取消 make 内嵌的隐含变量。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-R, --no-builtin-variables<span class="sb">`</span>
+</span><span class="line">取消 make 内嵌的隐含变量，不过我们可以在 Makefile 中明确定义某些变量。注意，此选项同时打开了<span class="s2">&quot;-r&quot;</span>选项。因为隐含规则是以内嵌的隐含变量为基础的。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-s, --silent, --quiet<span class="sb">`</span>
+</span><span class="line">不显示所执行的命令。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-S, --no-keep-going, --stop<span class="sb">`</span>
+</span><span class="line">取消<span class="s2">&quot;-k&quot;</span>选项。在递归的 make 过程中子 make 通过 MAKEFLAGS 变量继承了上层的命令行选项。我们可以在子 make 中使用<span class="s2">&quot;-S&quot;</span>选项取消上层传递的<span class="s2">&quot;-k&quot;</span>选项，或者取消系统环境变量 MAKEFLAGS 中的<span class="s2">&quot;-k&quot;</span>选项。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-t, --touch<span class="sb">`</span>
+</span><span class="line">更新所有目标文件的时间戳到当前系统时间。防止 make 对所有过时目标文件的重建。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-v, --version<span class="sb">`</span>
+</span><span class="line">打印版本信息。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-w, --print-directory<span class="sb">`</span>
+</span><span class="line">在 make 进入一个目录之前打印工作目录。使用<span class="s2">&quot;-C&quot;</span>选项时默认打开这个选项。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>--no-print-directory <span class="sb">`</span>
+</span><span class="line">取消<span class="s2">&quot;-w&quot;</span>选项。可以是用在递归的 make 调用过程中，取消<span class="s2">&quot;-C&quot;</span>参数将默认打开<span class="s2">&quot;-w&quot;</span>。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>-W FILE, --what-if<span class="o">=</span>FILE, --new-file<span class="o">=</span>FILE, --assume-new<span class="o">=</span>FILE<span class="sb">`</span>
+</span><span class="line">设定 FILE 文件的时间戳为当前时间，但不改变文件实际的最后修改时间。此选项主要是为实现了对所有依赖于 FILE 文件的目标的强制重建。
+</span><span class="line">
+</span><span class="line"><span class="sb">`</span>--warn-undefined-variables <span class="sb">`</span>
+</span><span class="line">在发现 Makefile 中存在对未定义的变量进行引用时给出告警信息。此功能可以帮助我们调试一个存在多级套嵌变量引用的复杂 Makefile 。但是：我们建议在书写 Makefile 时尽量避免超过三级以上的变量套嵌引用。
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="a-idconfigureconfigurea"><a id="Configure">configure</a></h2>
+
+<p>此阶段的主要目的是生成 Makefile 文件，是最关键的运筹帷幄阶段，基本上所有可以对安装过程进行的个性化调整都集中在这一步。</p>
+
+<p>configure 脚本能够对 Makefile 中的哪些内容产生影响呢？基本上可以这么说：所有内容，包括本文最关心的 Makefile 规则与 Makefile 变量。那么又是哪些因素影响着最终生成的 Makefile 文件呢？答曰：系统环境和配置选项。</p>
+
+<p>配置选项的影响是显而易见的。但是”系统环境”的概念却很宽泛，包含很多方面内容，不过我们这里只关心环境变量，具体说来就是将来会在 Makefile 中使用到的环境变量以及与 Makefile 中的变量同名的环境变量。</p>
+
+<h3 id="configure-">通用 configure 语法</h3>
+
+<p>在进一步讲述之前，先看看 configure 脚本的语法，一般有两种：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">configure <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span><span class="nv">VAR</span><span class="o">=</span>VALUE<span class="o">]</span>...
+</span><span class="line">
+</span><span class="line">configure <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>HOST<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>不管是哪种语法，我们都可以用 <code>configure --help</code> 查看所有可用的<code>[OPTIONS]</code>，并且通常在结尾部分还能看到这个脚本所关心的环境变量有哪些。在本文中将对这两种语法进行合并，使用下面这种简化的语法：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">configure <span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这种语法能够被所有的 <code>configure</code> 脚本所识别，同时也能通过设置环境变量和使用特定的<code>[OPTIONS]</code>完成上述两种语法的一切功能。</p>
+
+<h3 id="configure--1">通用 configure 选项</h3>
+
+<p>虽然每个软件包的 configure 脚本千差万别，但是它们却都有一些共同的选项，也基本上都遵守相同的选项语法。</p>
+
+<p><strong>脚本自身选项</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">--help
+</span><span class="line">显示帮助信息。
+</span><span class="line">
+</span><span class="line">--version
+</span><span class="line">显示版本信息。
+</span><span class="line">
+</span><span class="line">--cache-file<span class="o">=</span>FILE
+</span><span class="line">在FILE文件中缓存测试结果<span class="o">(</span>默认禁用<span class="o">)</span>。
+</span><span class="line">
+</span><span class="line">--no-create
+</span><span class="line">configure脚本运行结束后不输出结果文件，常用于正式编译前的测试。
+</span><span class="line">
+</span><span class="line">--quiet, --silent
+</span><span class="line">不显示脚本工作期间输出的<span class="s2">&quot;checking ...&quot;</span>消息。
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>目录选项</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">--srcdir<span class="o">=</span>DIR
+</span><span class="line">源代码文件所在目录，默认为configure脚本所在目录或其父目录。
+</span><span class="line">
+</span><span class="line">--prefix<span class="o">=</span>PREFIX
+</span><span class="line">体系无关文件的顶级安装目录PREFIX ，默认值一般是 /usr/local 或 /usr/local/pkgName
+</span><span class="line">
+</span><span class="line">--exec-prefix<span class="o">=</span>EPREFIX
+</span><span class="line">体系相关文件的顶级安装目录EPREFIX ，默认值一般是 PREFIX
+</span><span class="line">
+</span><span class="line">--bindir<span class="o">=</span>DIR
+</span><span class="line">用户可执行文件的存放目录DIR ，默认值一般是 EPREFIX/bin
+</span><span class="line">
+</span><span class="line">--sbindir<span class="o">=</span>DIR
+</span><span class="line">系统管理员可执行目录DIR ，默认值一般是 EPREFIX/sbin
+</span><span class="line">
+</span><span class="line">--libexecdir<span class="o">=</span>DIR
+</span><span class="line">程序可执行目录DIR ，默认值一般是 EPREFIX/libexec
+</span><span class="line">
+</span><span class="line">--datadir<span class="o">=</span>DIR
+</span><span class="line">通用数据文件的安装目录DIR ，默认值一般是 PREFIX/share
+</span><span class="line">
+</span><span class="line">--sysconfdir<span class="o">=</span>DIR
+</span><span class="line">只读的单一机器数据目录DIR ，默认值一般是 PREFIX/etc
+</span><span class="line">
+</span><span class="line">--sharedstatedir<span class="o">=</span>DIR
+</span><span class="line">可写的体系无关数据目录DIR ，默认值一般是 PREFIX/com
+</span><span class="line">
+</span><span class="line">--localstatedir<span class="o">=</span>DIR
+</span><span class="line">可写的单一机器数据目录DIR ，默认值一般是 PREFIX/var
+</span><span class="line">
+</span><span class="line">--libdir<span class="o">=</span>DIR
+</span><span class="line">库文件的安装目录DIR ，默认值一般是 EPREFIX/lib
+</span><span class="line">
+</span><span class="line">--includedir<span class="o">=</span>DIR
+</span><span class="line">C头文件目录DIR ，默认值一般是 PREFIX/include
+</span><span class="line">
+</span><span class="line">--oldincludedir<span class="o">=</span>DIR
+</span><span class="line">非gcc的C头文件目录DIR ，默认值一般是 /usr/include
+</span><span class="line">
+</span><span class="line">--infodir<span class="o">=</span>DIR
+</span><span class="line">Info文档的安装目录DIR ，默认值一般是 PREFIX/info
+</span><span class="line">
+</span><span class="line">--mandir<span class="o">=</span>DIR
+</span><span class="line">Man文档的安装目录DIR ，默认值一般是 PREFIX/man
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>体系结构选项</strong></p>
+
+<p>玩交叉编译的朋友对这些选项已经很熟悉了，对于不使用交叉编译的朋友也不必担心，不要理它们就可以了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">--build<span class="o">=</span>BUILD
+</span><span class="line">工具链当前的运行环境，默认是 config.guess 脚本的输出结果。
+</span><span class="line">
+</span><span class="line">--host<span class="o">=</span>HOST
+</span><span class="line">编译出的二进制代码将要运行在HOST上，默认值是BUILD。
+</span><span class="line">
+</span><span class="line">--target<span class="o">=</span>TARGET
+</span><span class="line">编译出的工具链所将来生成的二进制代码要在TARGET上运行，这个选项仅对工具链<span class="o">(</span>也就是GCC和Binutils两者<span class="o">)</span>有意义。
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>特性选项</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">--enable-FEATURE
+</span><span class="line">启用FEATURE特性
+</span><span class="line">
+</span><span class="line">--disable-FEATURE
+</span><span class="line">禁用FEATURE特性
+</span><span class="line">
+</span><span class="line">--with-PACKAGE<span class="o">[=</span>DIR<span class="o">]</span>
+</span><span class="line">启用附加软件包PACKAGE，亦可同时指定PACKAGE所在目录DIR
+</span><span class="line">
+</span><span class="line">--without-PACKAGE
+</span><span class="line">禁用附加软件包PACKAGE
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>通用环境变量</strong></p>
+
+<p>除了上述通用的选项外，下列环境变量影响着最终生成的 Makefile 文件：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Linux configure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">CPP
+</span><span class="line">C预处理器命令
+</span><span class="line">
+</span><span class="line">CXXCPP
+</span><span class="line">C++预处理器命令
+</span><span class="line">
+</span><span class="line">CPPFLAGS
+</span><span class="line">C/C++预处理器命令行参数
+</span><span class="line">
+</span><span class="line">CC
+</span><span class="line">C编译器命令
+</span><span class="line">
+</span><span class="line">CFLAGS
+</span><span class="line">C编译器命令行参数
+</span><span class="line">
+</span><span class="line">CXX
+</span><span class="line">C++编译器命令
+</span><span class="line">
+</span><span class="line">CXXFLAGS
+</span><span class="line">C++编译器命令行参数
+</span><span class="line">
+</span><span class="line">LDFLAGS
+</span><span class="line">连接器命令行参数
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>至于设置这些环境变量的方法，你可以将它们 <code>export</code> 为全局变量在全局范围内使用，也可以在命令行上使用 <code>[VAR=VALUE]... configure [OPTIONS]</code> 的语法局部使用。此处就不详细描述了。</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">柯小小西</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-06-24T22:21:35+08:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>linux</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a class="jiathis_button_digg">Digg</a>
+	<a class="jiathis_button_fav">收藏夹</a>
+	<a href="http://www.jiathis.com/share?uid=1933358" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1395248101949397" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script> -->
+<!-- UY END -->
+ 
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/06/10/Ubuntu-Chrome-Start-Fail-Resolve/" title="Previous Post: Ubuntu Chrome启动失败解决方法">&laquo; Ubuntu Chrome启动失败解决方法</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/06/27/Intelij-IDEA-Keymap/" title="Next Post: 常用快捷键（备用）">常用快捷键（备用） &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>评论</h1>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END --> 
+ </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>本人</h1>
+  <p>技术还处于半吊子的开发攻城狮。爱好各种技术，崇拜各种技术大牛达人。始终觉得，好记忆不如烂笔头。<a href="/about/">更多介绍...</a></p>
+  <p>声明：本站使用的图片等，甚至部分文章都来自网络，原作者享有对著作的一切权利。</p>
+  <p>欢迎在新浪微博上关注我：<wb:follow-button uid="2265041632" type="gray_3" width="100%" height="24" ></wb:follow-button></p>
+</section><section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/09/05/zookeeper-programmer-guide/">Zookeeper 编程指南</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">Nginx 反向代理配置和工作原理</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/">Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search/">Redis Cookbook 之 基于Redis 实现倒序索引全文搜索</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/20/Redis-Cookbook-Chat-System/">Redis Cookbook 之 基于Redis 实现一个聊天系统</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section> 
+  <h1>文章分类</h1> 
+  <ul id="categories"> 
+    <li class='category'><a href='/blog/categories/gc/'>gc (1)</a></li>
+<li class='category'><a href='/blog/categories/ide/'>ide (2)</a></li>
+<li class='category'><a href='/blog/categories/java/'>java (11)</a></li>
+<li class='category'><a href='/blog/categories/json/'>json (1)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>linux (5)</a></li>
+<li class='category'><a href='/blog/categories/log/'>log (1)</a></li>
+<li class='category'><a href='/blog/categories/mysql/'>mysql (3)</a></li>
+<li class='category'><a href='/blog/categories/nginx/'>nginx (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>python (1)</a></li>
+<li class='category'><a href='/blog/categories/redis/'>redis (6)</a></li>
+<li class='category'><a href='/blog/categories/redis-cookbook/'>redis cookbook (6)</a></li>
+<li class='category'><a href='/blog/categories/script/'>script (3)</a></li>
+<li class='category'><a href='/blog/categories/spring/'>spring (1)</a></li>
+<li class='category'><a href='/blog/categories/thread/'>thread (2)</a></li>
+<li class='category'><a href='/blog/categories/tools/'>tools (2)</a></li>
+<li class='category'><a href='/blog/categories/translation/'>translation (1)</a></li>
+<li class='category'><a href='/blog/categories/zookeeper/'>zookeeper (1)</a></li>
+ 
+  </ul> 
+</section><section id="tag-clouds" style="text-decoration:none">
+<h1>最新评论</h1>
+  <!-- UYAN NEW COMMENT BEGIN -->
+<div id="uyan_newcmt_unit"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=1933358"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+<!-- UYAN NEW COMMENT END -->
+</section>
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 柯小小西 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>-感谢<a href="https://github.com"> Github </a> 提供Page功能</span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+</body>
+</html>

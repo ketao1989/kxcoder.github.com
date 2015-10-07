@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Script | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/script/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T10:57:00+08:00</updated>
+  <updated>2015-10-07T12:19:26+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -416,6 +416,91 @@
   <li><a href="http://nginx.org/en/docs/">http://nginx.org/en/docs/</a></li>
   <li><a href="http://kxcoder.github.io/images/2015/08/nginx_stream.png">http://kxcoder.github.io/images/2015/08/nginx_stream.png</a></li>
 </ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用Python操作线上数据库脚本]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/07/03/Query-DB-Python-Shell/"/>
+    <updated>2014-07-03T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/07/03/Query-DB-Python-Shell</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Script">Python脚本</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>最近对于线上一些数据需要进行过滤导到本地来，或者对一些运营人员给的文本数据，需要在线上数据库跑出对应的结果出来，因此，需要通过一个脚本来执行。因为，现在服务器基本上会默认安装python，所以这里存一份脚本备用。</p>
+
+<h2 id="a-idscriptpythona"><a id="Script">Python脚本</a></h2>
+
+<p><figure class='code'><figcaption><span>Python脚本 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;usrbinpython&quot;</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">#coding=utf-8</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span><span class="p">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">MySQLdb</span><span class="p">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">sys</span><span class="p">;</span>
+</span><span class='line'><span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="err">‘</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="nb">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="err">“</span><span class="n">hotelseq</span><span class="o">.</span><span class="n">txt</span><span class="err">”</span><span class="p">)</span>
+</span><span class='line'><span class="n">outfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="err">“</span><span class="n">customer</span><span class="o">.</span><span class="n">txt</span><span class="err">”</span><span class="p">,</span><span class="err">’</span><span class="n">w</span><span class="o">+</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="n">conn</span><span class="o">=</span><span class="n">MySQLdb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="err">’</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="err">’</span><span class="p">,</span><span class="n">user</span><span class="o">=</span><span class="err">’</span><span class="n">root</span><span class="err">’</span><span class="p">,</span><span class="n">passwd</span><span class="o">=</span><span class="err">’</span><span class="mi">123456</span><span class="err">’</span><span class="p">,</span><span class="n">db</span><span class="o">=</span><span class="err">’</span><span class="n">test</span><span class="err">’</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">3306</span><span class="p">,</span><span class="n">charset</span><span class="o">=</span><span class="err">”</span><span class="n">utf8</span><span class="err">”</span><span class="p">)</span>
+</span><span class='line'><span class="n">cur</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span><span class='line'><span class="n">order_cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">line</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">line</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">break</span>
+</span><span class='line'>    <span class="n">count</span><span class="o">=</span><span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="err">“</span><span class="n">select</span> <span class="n">cus</span><span class="o">.</span><span class="n">customer_state</span><span class="p">,</span><span class="n">cus</span><span class="o">.</span><span class="n">name</span> <span class="kn">from</span> <span class="nn">crm_customer_hotel</span> <span class="nn">as</span> <span class="nn">hotel</span> <span class="nn">join</span> <span class="nn">crm_customer</span> <span class="nn">as</span> <span class="nn">cus</span> <span class="nn">on</span> <span class="nn">hotel.customer_serial_number</span><span class="o">=</span><span class="n">cus</span><span class="o">.</span><span class="n">serial_number</span> <span class="n">where</span> <span class="n">hotel</span><span class="o">.</span><span class="n">hotel_seq</span><span class="o">=</span><span class="err">’</span><span class="o">%</span><span class="n">s</span><span class="err">’”</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">result</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="err">”</span>  <span class="err">“</span><span class="o">+</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span><span class='line'>        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="err">‘</span>\<span class="n">n</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'><span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'><span class="n">outfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
 ]]></content>
   </entry>
   
