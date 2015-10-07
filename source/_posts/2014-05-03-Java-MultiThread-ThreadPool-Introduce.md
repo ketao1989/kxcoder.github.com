@@ -238,21 +238,26 @@ public ThreadPoolExecutor(int corePoolSize,
 6. PriorityBlockingQueue，一个无界的阻塞队列，它的使用和类 PriorityQueue 相同的顺序规则，并且提供了阻塞获取操作。虽然此队列逻辑上是无界的，但是资源被耗尽时试图执行 add 操作也将失败（导致 OutOfMemoryError）。iterator() 方法中提供的迭代器并不 保证以特定的顺序遍历 PriorityBlockingQueue 的元素。如果需要有序地进行遍历，则应考虑使用 Arrays.sort(pq.toArray())。此外，可以使用方法 drainTo 按优先级顺序移除 全部或部分元素，并将它们放在另一个 collection 中。
 		
 **ArrayBlockingQueue：**	  
-Note: `ArrayBlockingQueue`队列是有界的队列，所以当队列满的时候，如果还向该队列插入元素，则会导致操作被阻塞住，当然，如果从空的队列中获取元素，该操作也会被阻塞。此外，构造`ArrayBlockingQueue`队列时，有一个参数为：` boolean fair` ：如果为 true，则按照 FIFO 顺序访问插入或移除时受阻塞线程的队列；如果为 false，则访问顺序是不确定的. 
+
+>> Note: `ArrayBlockingQueue`队列是有界的队列，所以当队列满的时候，如果还向该队列插入元素，则会导致操作被阻塞住，当然，如果从空的队列中获取元素，该操作也会被阻塞。此外，构造`ArrayBlockingQueue`队列时，有一个参数为：` boolean fair` ：如果为 true，则按照 FIFO 顺序访问插入或移除时受阻塞线程的队列；如果为 false，则访问顺序是不确定的. 
 
 **LinkedBlockingQueue：**  
-Note: `LinkedBlockingQueue` 队列的吞吐量也要高于数组的阻塞队列，这主要是因为数组的特性和链表的特性决定的，链表在处理元素的offer队头元素和add队尾元素的速度要快于相应地数组操作。不过，显然这样会造成部分元素插入顺序的不确定性。
 
-**`DelayQueue<E extends Delayed>`：**  
-Note: `DelayQueue<E extends Delayed>`队列中的元素需要实现`Delayed`接口，该接口只有`long getDelay(TimeUnit unit);`方法即可使用延迟阻塞队列。此外，需要注意，可能存在的时间延时，即任务元素不一定会准时执行，会有一点点的延迟。
+>> Note: `LinkedBlockingQueue` 队列的吞吐量也要高于数组的阻塞队列，这主要是因为数组的特性和链表的特性决定的，链表在处理元素的offer队头元素和add队尾元素的速度要快于相应地数组操作。不过，显然这样会造成部分元素插入顺序的不确定性。
+
+**`DelayQueue<E extends Delayed>`：** 
+
+>> Note: `DelayQueue<E extends Delayed>`队列中的元素需要实现`Delayed`接口，该接口只有`long getDelay(TimeUnit unit);`方法即可使用延迟阻塞队列。此外，需要注意，可能存在的时间延时，即任务元素不一定会准时执行，会有一点点的延迟。
 
 **LinkedBlockingDeque：**  
-Note: `LinkedBlockingDeque`队列用的最多的地方，就是使用`工作窃取算法`的地方。工作窃取（work-stealing）算法是指某个线程从其他队列里窃取任务来执行。如下图（参考[工作窃取运行说明](http://ifeve.com/talk-concurrency-forkjoin/)）：
+
+>> Note: `LinkedBlockingDeque`队列用的最多的地方，就是使用`工作窃取算法`的地方。工作窃取（work-stealing）算法是指某个线程从其他队列里窃取任务来执行。如下图（参考[工作窃取运行说明](http://ifeve.com/talk-concurrency-forkjoin/)）：
 
 <img src="/images/2014/05/work-stealing.png" />
 
-**PriorityBlockingQueue：**  
-Note: `PriorityBlockingQueue`队列，默认情况下元素采取自然顺序排列，也可以通过比较器comparator来指定元素的排序规则。比较器可使用修改键断开主优先级值之间的联系。元素默认按照升序排列。
+**PriorityBlockingQueue：** 
+
+>> Note: `PriorityBlockingQueue`队列，默认情况下元素采取自然顺序排列，也可以通过比较器comparator来指定元素的排序规则。比较器可使用修改键断开主优先级值之间的联系。元素默认按照升序排列。
 
 选择其中的`LinkedBlockingQueue`来简单分析下，其内部实现结构和细节：
 
