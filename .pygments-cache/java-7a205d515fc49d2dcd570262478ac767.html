@@ -1,0 +1,43 @@
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomizeJsonSerializer</span> <span class="kd">extends</span> <span class="n">JsonSerializer</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">List</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span> <span class="o">{</span>
+        <span class="n">jgen</span><span class="o">.</span><span class="na">writeStartArray</span><span class="o">();</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">va</span> <span class="o">:</span><span class="n">value</span><span class="o">){</span>
+            <span class="n">jgen</span><span class="o">.</span><span class="na">writeString</span><span class="o">(</span><span class="n">va</span><span class="o">.</span><span class="na">toString</span><span class="o">()+</span><span class="s">&quot;TestSerialize&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="c1">//jgen.writeString(Joiner.on(&quot;;&quot;).join(value));</span>
+        <span class="n">jgen</span><span class="o">.</span><span class="na">writeEndArray</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomizeJsonSerializerBaser</span> <span class="kd">extends</span> <span class="n">SerializerBase</span><span class="o">&lt;</span><span class="n">TypeB</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="c1">// 注解必须有默认构造韩式</span>
+    <span class="kd">public</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(){</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">TypeB</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">TypeB</span><span class="o">&gt;</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="kd">super</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(</span><span class="n">JavaType</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">type</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">t</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">dummy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">dummy</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">TypeB</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonGenerationException</span> <span class="o">{</span>
+
+        <span class="n">jgen</span><span class="o">.</span><span class="na">writeString</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+       <span class="c1">// System.out.println(&quot;======================&quot;);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>

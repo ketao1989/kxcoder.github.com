@@ -1,0 +1,40 @@
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OutputStreamAppender</span><span class="o">&lt;</span><span class="n">e</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">UnsynchronizedAppenderBase</span><span class="o">&lt;</span><span class="n">e</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">append</span><span class="o">(</span><span class="n">E</span> <span class="n">eventObject</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">isStarted</span><span class="o">())</span> <span class="o">{</span>
+      <span class="k">return</span><span class="o">;</span>
+    <span class="o">}&lt;/</span><span class="n">e</span><span class="o">&gt;&lt;/</span><span class="n">e</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">subAppend</span><span class="o">(</span><span class="n">eventObject</span><span class="o">);</span>   <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// 这里就是日志输出实际的操作，一般如果有需要，可以重写这个方法。</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">subAppend</span><span class="o">(</span><span class="n">E</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">isStarted</span><span class="o">())</span> <span class="o">{</span>
+      <span class="k">return</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">try</span> <span class="o">{</span>
+      <span class="c1">// this step avoids LBCLASSIC-139</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">event</span> <span class="k">instanceof</span> <span class="n">DeferredProcessingAware</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 这里虽然是为输出准备，在检查的同时，把把必要的信息解析出来放到变量中</span>
+        <span class="o">((</span><span class="n">DeferredProcessingAware</span><span class="o">)</span> <span class="n">event</span><span class="o">).</span><span class="na">prepareForDeferredProcessing</span><span class="o">();</span>
+      <span class="o">}</span>
+      <span class="c1">// the synchronization prevents the OutputStream from being closed while we</span>
+      <span class="c1">// are writing. It also prevents multiple threads from entering the same</span>
+      <span class="c1">// converter. Converters assume that they are in a synchronized block.</span>
+      <span class="kd">synchronized</span> <span class="o">(</span><span class="n">lock</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 避免多线程的问题，这里加了锁。而写日志的核心也是在这里</span>
+        <span class="n">writeOut</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+      <span class="o">}</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">ioe</span><span class="o">)</span> <span class="o">{</span>
+      <span class="c1">// as soon as an exception occurs, move to non-started state</span>
+      <span class="c1">// and add a single ErrorStatus to the SM.</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">started</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+      <span class="n">addStatus</span><span class="o">(</span><span class="k">new</span> <span class="nf">ErrorStatus</span><span class="o">(</span><span class="err">“</span><span class="n">IO</span> <span class="n">failure</span> <span class="n">in</span> <span class="n">appender</span><span class="err">”</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="n">ioe</span><span class="o">));</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="c1">// 这里将会调用前面我们提到过的模板类，有该类对解析出来的模板按照当前环境进行输出</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">writeOut</span><span class="o">(</span><span class="n">E</span> <span class="n">event</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">encoder</span><span class="o">.</span><span class="na">doEncode</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>

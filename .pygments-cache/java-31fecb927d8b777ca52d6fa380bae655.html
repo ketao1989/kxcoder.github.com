@@ -1,0 +1,43 @@
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Annotation used for configuring serialization aspects, by attaching</span>
+<span class="cm"> * to &quot;getter&quot; methods or fields, or to value classes.</span>
+<span class="cm"> * When annotating value classes, configuration is used for instances</span>
+<span class="cm"> * of the value class but can be overridden by more specific annotations</span>
+<span class="cm"> * (ones that attach to methods or fields).</span>
+<span class="cm"> *&lt;p&gt;</span>
+<span class="cm"> * An example annotation would be:</span>
+<span class="cm"> *&lt;pre&gt;</span>
+<span class="cm"> *  &amp;#64;JsonSerialize(using=MySerializer.class,</span>
+<span class="cm"> *    as=MySubClass.class,</span>
+<span class="cm"> *    include=JsonSerialize.Inclusion.NON_NULL,</span>
+<span class="cm"> *    typing=JsonSerialize.Typing.STATIC</span>
+<span class="cm"> *  )</span>
+<span class="cm"> *&lt;/pre&gt;</span>
+<span class="cm"> * (which would be redundant, since some properties block others:</span>
+<span class="cm"> * specifically, &#39;using&#39; has precedence over &#39;as&#39;, which has precedence</span>
+<span class="cm"> * over &#39;typing&#39; setting)</span>
+<span class="cm"> *&lt;p&gt;</span>
+<span class="cm"> * NOTE: since version 1.2, annotation has also been applicable</span>
+<span class="cm"> * to (constructor) parameters</span>
+<span class="cm"> *</span>
+<span class="cm"> * @since 1.1</span>
+<span class="cm"> */</span>
+<span class="nd">@Target</span><span class="o">({</span><span class="n">ElementType</span><span class="o">.</span><span class="na">METHOD</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">FIELD</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">PARAMETER</span><span class="o">})</span>
+<span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="nd">@JacksonAnnotation</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">JsonSerialize</span>
+<span class="o">{</span>
+    <span class="c1">// // // Annotations for explicitly specifying deserializer</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Serializer class to use for</span>
+<span class="cm">     * serializing associated value. Depending on what is annotated,</span>
+<span class="cm">     * value is either an instance of annotated class (used globablly</span>
+<span class="cm">     * anywhere where class serializer is needed); or only used for</span>
+<span class="cm">     * serializing property access via a getter method.</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">JsonSerializer</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">using</span><span class="o">()</span> <span class="k">default</span> <span class="n">JsonSerializer</span><span class="o">.</span><span class="na">None</span><span class="o">.</span><span class="na">class</span><span class="o">;</span>
+
+    <span class="c1">// .......</span>
+<span class="o">}</span>
+</pre></div>

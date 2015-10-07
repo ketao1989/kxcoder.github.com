@@ -1,0 +1,52 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Abstract class that defines API used by {@link ObjectMapper} (and</span>
+<span class="cm"> * other chained {@link JsonDeserializer}s too) to deserialize Objects of</span>
+<span class="cm"> * arbitrary types from JSON, using provided {@link JsonParser}.</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">JsonDeserializer</span><span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span>
+<span class="o">{&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * 当请求将JSON内容反序列成java类型对象的时候，该方法将会被调用。然后，会返回一个</span>
+<span class="cm"> * 由方法自己构造的对象实例。</span>
+<span class="cm"> *</span>
+<span class="cm"> * 需要注意的是，当JSON为null的时候，该方法该不会被调用，因此，方法不需要去</span>
+<span class="cm"> * check 该值是否为null。</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="n">T</span> <span class="nf">deserialize</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">,</span> <span class="n">DeserializationContext</span> <span class="n">ctxt</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span><span class="o">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * 和上面常用的方法不同，这个方法带有一个初始化的对象实例，该实例由反序列类配置的。</span>
+<span class="cm"> * </span>
+<span class="cm"> * 当然，这个方法是不必须实现的。一般的，我们转换一个JSON为集合或者Map的时候，可以把</span>
+<span class="cm"> * 通用的元素put到集合中，这样返回的时候，就不需要再操作了。</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="n">T</span> <span class="nf">deserialize</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">,</span> <span class="n">DeserializationContext</span> <span class="n">ctxt</span><span class="o">,</span>
+                     <span class="n">T</span> <span class="n">intoValue</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span>
+<span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">UnsupportedOperationException</span><span class="o">(</span><span class="s">&quot;Can not update object of type &quot;</span>
+            <span class="o">+</span><span class="n">intoValue</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">()+</span><span class="s">&quot; (by deserializer of type &quot;</span><span class="o">+</span><span class="n">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">()+</span><span class="s">&quot;)&quot;</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * 这个方法主要是用来支持兼容老的代码，编码编译错误。</span>
+<span class="cm"> *</span>
+<span class="cm"> * 也就是说，当我们使用新的代码和反序列化工具的时候，可能还需要去兼容老的代码数据</span>
+<span class="cm"> * 反序列化，这样子就可以尝试使用老的反序列化类进行解析工作。</span>
+<span class="cm"> *</span>
+<span class="cm"> */</span>
+<span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">&quot;unchecked&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="n">Object</span> <span class="nf">deserializeWithType</span><span class="o">(</span><span class="n">JsonParser</span> <span class="n">jp</span><span class="o">,</span> <span class="n">DeserializationContext</span> <span class="n">ctxt</span><span class="o">,</span>
+        <span class="n">TypeDeserializer</span> <span class="n">typeDeserializer</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span>
+<span class="o">{</span>
+    <span class="c1">// We could try calling </span>
+    <span class="k">return</span> <span class="o">(</span><span class="n">T</span><span class="o">)</span> <span class="n">typeDeserializer</span><span class="o">.</span><span class="na">deserializeTypedFromAny</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">ctxt</span><span class="o">);</span>
+<span class="o">}</span>
+
+   <span class="c1">// ........ } </span>
+</pre></div>

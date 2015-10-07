@@ -1,0 +1,61 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InheritableThreadLocal</span><span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Computes the child&#39;s initial value for this inheritable thread-local</span>
+<span class="cm">     * variable as a function of the parent&#39;s value at the time the child</span>
+<span class="cm">     * thread is created.  This method is called from within the parent</span>
+<span class="cm">     * thread before the child is started.</span>
+<span class="cm">     * &amp;lt;p&amp;gt;</span>
+<span class="cm">     * This method merely returns its input argument, and should be overridden</span>
+<span class="cm">     * if a different behavior is desired.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param parentValue the parent thread&#39;s value</span>
+<span class="cm">     * @return the child thread&#39;s initial value</span>
+<span class="cm">     */</span>
+    <span class="kd">protected</span> <span class="n">T</span> <span class="nf">childValue</span><span class="o">(</span><span class="n">T</span> <span class="n">parentValue</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">parentValue</span><span class="o">;</span>
+    <span class="o">}&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Get the map associated with a ThreadLocal.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param t the current thread</span>
+<span class="cm"> */</span>
+<span class="n">ThreadLocalMap</span> <span class="nf">getMap</span><span class="o">(</span><span class="n">Thread</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+   <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="na">inheritableThreadLocals</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Create the map associated with a ThreadLocal.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param t the current thread</span>
+<span class="cm"> * @param firstValue value for the initial entry of the table.</span>
+<span class="cm"> * @param map the map to store.</span>
+<span class="cm"> */</span>
+<span class="kt">void</span> <span class="nf">createMap</span><span class="o">(</span><span class="n">Thread</span> <span class="n">t</span><span class="o">,</span> <span class="n">T</span> <span class="n">firstValue</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">t</span><span class="o">.</span><span class="na">inheritableThreadLocals</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ThreadLocalMap</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">firstValue</span><span class="o">);</span>
+<span class="o">}</span> <span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// 这个是开发时一般使用的类，直接copy父线程的变量</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CopyOnInheritThreadLocal</span> <span class="kd">extends</span>
+    <span class="n">InheritableThreadLocal</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">HashMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="err">»</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm">   * Child threads should get a copy of the parent’s hashmap.</span>
+<span class="cm">   */</span>
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="n">HashMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">childValue</span><span class="o">(</span>
+      <span class="n">HashMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">parentValue</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">parentValue</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;(</span><span class="n">parentValue</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,34 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Female</span><span class="p">(</span><span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">&quot;&quot;&quot;docstring for Female&quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">log_construct</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">class_parent</span><span class="p">,</span> <span class="n">class_attr</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;==----==---contruct---===---&#39;</span><span class="p">)</span>
+    <span class="n">upper_attr</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">class_attr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">):</span>  <span class="c"># 不能改变class自带的属性</span>
+            <span class="n">upper_attr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper_attr</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">class_parent</span><span class="p">,</span> <span class="n">upper_attr</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">married</span><span class="p">):</span>
+    <span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__married</span> <span class="o">=</span> <span class="n">married</span>
+
+<span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">log_construct</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span> <span class="o">==</span> <span class="err">‘</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">main</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">’</span><span class="p">:</span>
+    <span class="n">felame</span> <span class="o">=</span> <span class="n">Female</span><span class="p">(</span><span class="err">‘</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">felame</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="k">print</span> <span class="n">felame</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Female</span><span class="p">,</span> <span class="s">&#39;MARRIED&#39;</span><span class="p">)</span> <span class="c"># 返回Ture</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

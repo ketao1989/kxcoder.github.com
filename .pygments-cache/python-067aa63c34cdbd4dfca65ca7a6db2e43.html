@@ -1,0 +1,20 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;azc-abc-zfc&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">sl</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">sl</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">revertSortCmp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">y</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;zfc-abc-azc&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">rsl</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">],</span> <span class="n">revertSortCmp</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">rsl</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

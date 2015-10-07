@@ -1,0 +1,86 @@
+<div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="s">&#39;utf8&#39;</span><span class="p">)</span>
+
+<span class="c"># 100</span>
+<span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+<span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">a</span>
+<span class="k">elif</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span> <span class="mi">0</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span> <span class="o">-</span><span class="n">a</span>
+
+<span class="c"># 中文</span>
+<span class="k">print</span> <span class="s">u&#39;中文&#39;</span>
+
+<span class="c"># 4</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;zhang&#39;</span><span class="p">,</span> <span class="s">&#39;li&#39;</span><span class="p">,</span> <span class="s">&#39;wang&#39;</span><span class="p">,</span> <span class="s">&#39;er&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+<span class="c"># 5</span>
+<span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;ma&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+<span class="c"># [&#39;zhang&#39;, &#39;li&#39;, &#39;wang&#39;, &#39;zi&#39;, &#39;er&#39;, &#39;ma&#39;]</span>
+<span class="n">names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;zi&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">names</span>
+
+<span class="c"># [&#39;zhang&#39;, &#39;li&#39;, &#39;wang&#39;, &#39;zi&#39;, &#39;er&#39;]</span>
+<span class="n">names</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">names</span>
+
+<span class="c"># [&#39;ma&#39;, &#39;li&#39;, &#39;wang&#39;, &#39;zi&#39;, &#39;er&#39;]</span>
+<span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;ma&#39;</span>
+<span class="k">print</span> <span class="n">names</span>
+
+<span class="c"># [&#39;ma&#39;, &#39;li&#39;, &#39;wang&#39;, &#39;zi&#39;, &#39;er&#39;, [&#39;subzhang&#39;, &#39;subwang&#39;]]</span>
+<span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s">&#39;subzhang&#39;</span><span class="p">,</span> <span class="s">&#39;subwang&#39;</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">names</span>
+
+<span class="c"># (&#39;ma&#39;, &#39;li&#39;, &#39;wang&#39;, &#39;zi&#39;, &#39;er&#39;, [&#39;subzhang&#39;, &#39;subwang&#39;])</span>
+<span class="n">tumples</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">tumples</span>
+
+<span class="c"># [&#39;ma&#39;, &#39;li&#39;, &#39;wang&#39;, &#39;zi&#39;, &#39;er&#39;, [&#39;subzhang&#39;, &#39;subwang&#39;]]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tumples</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">names</span>
+
+<span class="c"># 分别打印元素，[&#39;subzhang&#39;, &#39;subwang&#39;]是一体的</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tumples</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">x</span>
+<span class="c"># dict字典，ketao</span>
+<span class="n">maps</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;ketao&#39;</span><span class="p">,</span> <span class="s">&#39;age&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s">&#39;job&#39;</span><span class="p">:</span> <span class="s">&#39;dev&#39;</span><span class="p">}</span>
+<span class="k">print</span> <span class="n">maps</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+
+<span class="c"># {&#39;job&#39;: &#39;dev&#39;, &#39;age&#39;: 25, &#39;program&#39;: &#39;python&#39;, &#39;name&#39;: &#39;ketao&#39;}</span>
+<span class="n">maps</span><span class="p">[</span><span class="s">&#39;program&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;python&#39;</span>
+<span class="k">print</span> <span class="n">maps</span>
+
+<span class="c"># {&#39;job&#39;: &#39;dev&#39;, &#39;gender&#39;: &#39;male&#39;, &#39;age&#39;: 25, &#39;program&#39;: &#39;python&#39;, &#39;name&#39;: &#39;ketao&#39;}</span>
+<span class="k">if</span> <span class="s">&#39;gender&#39;</span> <span class="ow">in</span> <span class="n">maps</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">maps</span><span class="p">[</span><span class="s">&#39;gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;male&#39;</span>
+
+<span class="k">if</span> <span class="n">maps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;gender&#39;</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">maps</span>
+
+<span class="c"># set([&#39;wang&#39;, 14, &#39;zhang&#39;])</span>
+<span class="n">sets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;zhang&#39;</span><span class="p">,</span> <span class="s">&quot;wang&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">sets</span>
+
+<span class="c"># set([&#39;li&#39;, &#39;wang&#39;, 14, &#39;zhang&#39;])</span>
+<span class="n">sets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;li&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">sets</span>
+
+<span class="c"># set([14, &#39;zhang&#39;]); set([&#39;ma&#39;, &#39;wang&#39;, &#39;zhang&#39;, 14, &#39;li&#39;])</span>
+<span class="n">setss</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;zhang&#39;</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="s">&#39;ma&#39;</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">setss</span> <span class="o">&amp;</span> <span class="n">sets</span>
+<span class="k">print</span> <span class="n">setss</span> <span class="o">|</span> <span class="n">sets</span>
+</pre></div>

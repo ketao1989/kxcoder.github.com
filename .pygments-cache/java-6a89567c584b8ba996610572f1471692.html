@@ -1,0 +1,21 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadLocal</span><span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span> <span class="o">{&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Method childValue is visibly defined in subclass</span>
+<span class="cm"> * InheritableThreadLocal, but is internally defined here for the</span>
+<span class="cm"> * sake of providing createInheritedMap factory method without</span>
+<span class="cm"> * needing to subclass the map class in InheritableThreadLocal.</span>
+<span class="cm"> * This technique is preferable to the alternative of embedding</span>
+<span class="cm"> * instanceof tests in methods.</span>
+<span class="cm"> */</span>
+<span class="n">T</span> <span class="nf">childValue</span><span class="o">(</span><span class="n">T</span> <span class="n">parentValue</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">UnsupportedOperationException</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

@@ -1,0 +1,30 @@
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleModule</span> <span class="kd">extends</span> <span class="n">Module</span>
+<span class="o">{</span>
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">_name</span><span class="o">;</span>
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">Version</span> <span class="n">_version</span><span class="o">;</span>
+    
+    <span class="kd">protected</span> <span class="n">SimpleSerializers</span> <span class="n">_serializers</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="kd">protected</span> <span class="n">SimpleDeserializers</span> <span class="n">_deserializers</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">SimpleModule</span> <span class="nf">addDeserializer</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">type</span><span class="o">,</span> <span class="n">JsonDeserializer</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">deser</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">_deserializers</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">_deserializers</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">SimpleDeserializers</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">_deserializers</span><span class="o">.</span><span class="na">addDeserializer</span><span class="o">(</span><span class="n">type</span><span class="o">,</span> <span class="n">deser</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">SimpleModule</span> <span class="nf">addKeyDeserializer</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">type</span><span class="o">,</span> <span class="n">KeyDeserializer</span> <span class="n">deser</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">_keyDeserializers</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">_keyDeserializers</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">SimpleKeyDeserializers</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">_keyDeserializers</span><span class="o">.</span><span class="na">addDeserializer</span><span class="o">(</span><span class="n">type</span><span class="o">,</span> <span class="n">deser</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// ......</span>
+
+<span class="o">}</span>
+</pre></div>

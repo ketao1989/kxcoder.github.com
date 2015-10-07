@@ -1,0 +1,15 @@
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MDC</span> <span class="o">{</span>
+  <span class="c1">//Put a context value as identified by key</span>
+  <span class="c1">//into the current thread&#39;s context map.</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">put</span><span class="o">(</span><span class="n">String</span> <span class="n">key</span><span class="o">,</span> <span class="n">String</span> <span class="n">val</span><span class="o">);</span>
+
+  <span class="c1">//Get the context identified by the key parameter.</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">get</span><span class="o">(</span><span class="n">String</span> <span class="n">key</span><span class="o">);</span>
+
+  <span class="c1">//Remove the context identified by the key parameter.</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">remove</span><span class="o">(</span><span class="n">String</span> <span class="n">key</span><span class="o">);</span>
+
+  <span class="c1">//Clear all entries in the MDC.</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">clear</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>

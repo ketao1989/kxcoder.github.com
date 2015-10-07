@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Redis | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/redis/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:19:26+08:00</updated>
+  <updated>2015-10-07T12:48:59+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -12,316 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析]]></title>
-    <link href="http://kxcoder.github.io/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/"/>
-    <updated>2014-12-29T00:00:00+08:00</updated>
-    <id>http://kxcoder.github.io/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data</id>
-    <content type="html"><![CDATA[<h2 id="section">目录</h2>
-
-<ol>
-  <li><a href="#Problem">问题</a></li>
-  <li><a href="#Solution">解决方法</a></li>
-  <li><a href="#Discussion">讨论</a></li>
-</ol>
-
-<h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
-
-<p>存储分析或者其他基于时间序列的数据，对于传统的存储系统（比如RDBMS）来说，是有一点挑战的。可能你想要对输入流量的速率进行限制（要求快速和高并发更新）或者简单地追踪网站访问者（或者其他更复杂的度量指标），然后以图表的形式画出来。</p>
-
-<p>虽然当前在其他系统中，有很多的方式存储这类数据；但是，Redis是一个非常优秀的候选者，由于它强大的数据结构。</p>
-
-<h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
-
-<p>Redis 理念上非常适合存储这类数据，以及跟踪某种特定的事件。具有原子性的，并且非常快的（O(1)时间复杂度）<code>HINCR</code>和<code>HINCRBY</code>命令，结合快速数据查找，使得它非常适合这类场景。</p>
-
-<p>在Redis中一种好的高效内存存储这类数据的方式是使用hash来存储统计值，使用<code>HINCRBY</code>增加它们，然后使用<code>HGET</code>和<code>HMGET</code>来获取这些数据。查找位于top位置的元素通过<code>SORT</code>命令也是很容易做到的。</p>
-
-<h2 id="a-iddiscussiona">3. <a id="Discussion">讨论</a></h2>
-
-<p>为了简单起见，在这个实例中，我们将只追踪网页点击率数据。这也可以很简单地扩展到其他任务类型的事件。</p>
-
-<p><figure class='code'><figcaption><span>网页点击率数据 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;require ‘rubygems’</span>
-</span><span class='line'><span class="sr">require ‘active_support/</span><span class="n">time</span><span class="err">’</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;iddatefield&quot;&gt;增加访问者的点击数，id表，date键，field数值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">add_hit</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="err">“</span><span class="n">clients</span><span class="err">”</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, “total”, 1) </span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, Date.today.to_s(:number), 1)</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>我们在这里把用户（如果我们追踪网站的访问者，那么可以只简单地根据IP地址来区分用户）的ID添加到访问者列表中，然后记录在两个不同时间空挡中的点击数：”total”总数和日常的数。因此，这就允许我们追踪每天的网页点击数和一段时间内的全局总数。</p>
-
-<p><figure class='code'><figcaption><span>网页点击率数据 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;idkey&quot;&gt;获取某id的key对应的值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">hits</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">today</span><span class="p">)</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, day.to_s(:number)).to_i</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;section-1&quot;&gt;判断是否超过阈值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">over_limit?</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">hits</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">limit</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>这允许我们通过简单地检查访问者访问，是否超过了我们设置的在一段时间区间内的阈值，来执行速率限制功能。</p>
-
-<p>获取一个给定时间区间内的数据，也是一项琐碎但是高效的操作，我们可以用来画图表或者以其他方式展示这些数据：</p>
-
-<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;key&quot;&gt;计算给定开始时间和结束时间对应的key值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">keys</span> <span class="o">=</span> <span class="o">[]</span>
-</span><span class='line'>    <span class="k">while</span> <span class="n">beg_p</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="n">end_p</span>
-</span><span class='line'>        <span class="n">keys</span> <span class="err">« </span><span class="k">if</span> <span class="nb">block_given?</span>
-</span><span class='line'>            <span class="k">yield</span><span class="p">(</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">))</span>
-</span><span class='line'>        <span class="k">else</span>
-</span><span class='line'>            <span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'>        <span class="n">beg_p</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">.</span><span class="n">day</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="n">keys</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;def stats_for_period(id, beginning_of_period, end_of_period) </span>
-</span><span class='line'><span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
-</span><span class='line'><span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1"># 获取id表中key对应的数据集</span>
-</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span> <span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>  <span class="k">end</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>我们也可以获取我们存储数据中在任何时间空挡的位于top的用户，可以使用<code>SORT</code>命令完成。SORT允许我们排序一个集合set，有序的集合sorted set,，或者本例中得列表list，访问者可以选择使用外键-我们时间片，然后指定order，offset，limit等参数：</p>
-
-<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># 按照key为period进行排序，默认DESC，前0-limit个元素</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">top_clients</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="err">“</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
-</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="err">“</span><span class="n">clients</span><span class="err">”</span><span class="p">,</span> <span class="ss">:by</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="c1">#{period}”, :order =&amp;gt; “DESC”,:get =&amp;gt; [”#”, “stats/client:&lt;/em&gt;-&amp;gt;#{period}”], :limit =&amp;gt; [0, limit])</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>使用hash的实现方式，对于存储，检索和更新都是高度优化的（所有都是O(1)操作），但是对于计算top用户而言则不是（尤其是一个时间区间内）。你需要要求这些操作-比如当你显示一个高分值表格，你可以重新使用有序集合sorted set来完成排序，这样可以保证你拿到的数据是有序的：</p>
-
-<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;def add_hit(id)</span>
-</span><span class='line'><span class="sr">    $redis.zincrby(“stats/</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="c1">#{Date.today.to_s(:number)}”, 1, id)</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;def hits(id, day = Date.today) </span>
-</span><span class='line'><span class="sr">    $redis.zrank(“stats/</span><span class="c1">#{day.to_s(:number)}”, id)</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;def over_limit?(id, limit) </span>
-</span><span class='line'><span class="sr">    hits(id) &amp;gt; limit</span>
-</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">stats_for_period</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">beginning_of_period</span><span class="p">,</span> <span class="n">end_of_period</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">beg_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">beginning_of_period</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">end_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">end_of_period</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;keys(beg_p, end_p) { |k| $redis.zrank(&quot;stats/</span><span class="c1">#{k}&quot;, id) }  end</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">top_clients</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="err">“</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="c1">#{period}”, 0, limit, :withscores =&amp;gt; true)</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;def top_for_period(beginning_of_period, end_of_period, limit = 5) </span>
-</span><span class='line'><span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
-</span><span class='line'><span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">result_key</span> <span class="o">=</span> <span class="s2">&quot;top/</span><span class="si">#{</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">end_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'><span class="k">return</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="n">result_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="ss">:withscores</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kp">true</span><span class="p">)</span> <span class="k">if</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">exists</span> <span class="n">result_key</span>
-</span><span class='line'>
-</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">multi</span> <span class="k">do</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zunionstore</span> <span class="n">result_key</span><span class="p">,</span> <span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">){</span><span class="o">|</span><span class="n">k</span><span class="o">|</span> <span class="s2">&quot;stats/</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">expire</span> <span class="n">result_key</span><span class="p">,</span> <span class="mi">10</span><span class="o">.</span><span class="n">minutes</span>
-</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span> <span class="n">result_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="ss">:withscores</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kp">true</span>
-</span><span class='line'><span class="k">end</span><span class="o">.</span><span class="n">last</span>  <span class="k">end</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<blockquote>
-  <blockquote>
-    <p>Notes：我们保持了<code>ZUNIONSTORE</code>的结果，然后在它上面设置一个超时时间戳。这是一个通用的Redis模式：缓存一个计算昂贵的操作结果，然后每次有请求过来，都会在重新操作之前先检查缓存情况。
-在上面的例子中，我们使用hash的地方，我们也可以存储SORT操作的结果，然后使用和EXISTS相似的方式检查它的缓存对象的存在性。</p>
-
-  </blockquote>
-</blockquote>
-
-<p>当我们使用有序集合sorted sets时，这些top操作会更高效率的多（因为数据已经是排好序了），但是我们的内存使用率也会更高。</p>
-
-<blockquote>
-  <blockquote>
-    <p>Warns：这个特定的例子有一个竞争条件：如果缓存不存在，我们可能在结束之前会进行多次<code>ZUNIONSTORE</code>操作。因为我们最后期待的输出显然是相同或者更新的数值结果，因此存在竞争条件比使用<code>WATCH</code>，然后在我们在做客户端的计算时锁定其他访问者，效果可能会更好。</p>
-  </blockquote>
-</blockquote>
-
-<p>-</p>
-
-<blockquote>
-  <blockquote>
-    <p><em>Redis 命令</em>:</p>
-
-    <ul>
-      <li>
-        <p><code>HINCRBY hash-name field increment-value</code></p>
-
-        <p>按照给定的increment-value值增加hash表中存储的对应整数。这个命令和INCRBY很相似，但是和增加字符串不一样，这个使用在hash表中。而且increment-value的值也允许为负数。</p>
-      </li>
-      <li>
-        <p><code>HMGET hash-name field1 [field2 ...]</code></p>
-
-        <p>从给定的hash表中获取一些field值。这个命令和HGET很相似，但是这个允许你在一个单操作中获取一些field值。</p>
-      </li>
-      <li>
-        <p><code>SORT key [BY pattern] [LIMIT offset count] [GET pattern1 [GET pattern2 ...]] [ASC| DESC] [ALPHA] [STORE destination]</code></p>
-
-        <p>允许你排序一个list,set,或者sorted set，比较他们的值。排序也可以是使用外键完成，使用来自字符串或者hashes的模式匹配查询，就像我们在上面的例子中那样：<code>SORT clients BY stats/client:*-&gt;20110407</code>。其中，通配符*可以被set中成员所替换，所以在这些hash表中排序是基于匹配field 为20110407的值来完成的。如果我们把分析数据存储在strings中而不是hash表，则我们可以提交命令：<code>SORT clients BY stats/client:*/20110407</code>。
-   使用相同的模式，你除了排好序的list也可以获取更多地数据（比如你用来排序的值）.可选择地，在list里SORT的输出也可以被排序。</p>
-      </li>
-      <li>
-        <p><code>ZRANK set-name member</code></p>
-
-        <p>返回在给定的有序集合中给定成员的排名。</p>
-      </li>
-      <li>
-        <p><code>ZUNIONSTORE destination number-of-keys sorted-set1 [sorted-set2 ...] [WEIGHTS weight1 [weight2 ...]] [AGGREGATE SUM|MIN|MAX]</code></p>
-
-        <p>聚合sorted sets集合，然后作为一个新的sorted set存储。可选择地，你可以为每一个set指定 weight，并且只需聚合函数：sum（默认）,maximum scores, 或者 minimum scores。</p>
-      </li>
-      <li>
-        <p><code>EXISTS key</code></p>
-
-        <p>检查key是否存在。如果key存在则返回1；否则返回0.</p>
-      </li>
-    </ul>
-
-  </blockquote>
-</blockquote>
-
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Redis Cookbook 之 基于Redis 实现倒序索引全文搜索]]></title>
@@ -871,6 +561,316 @@
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p>当一个用户写东西到<code>form</code>中，然后点击<code>Send</code>，jQuery将会使用我们的socket变量emit发送一个消息事件到服务器端，服务器然后会广播这条消息给其他所有人。最后返回false表示消息事件真的被发送提交出去了。提交的这个动作是由<code>Socket.IO</code>完成的。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析]]></title>
+    <link href="http://kxcoder.github.io/blog/2014/11/29/Redis-Cookbook-Analytics-Time-Based-Data/"/>
+    <updated>2014-11-29T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2014/11/29/Redis-Cookbook-Analytics-Time-Based-Data</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Problem">问题</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+  <li><a href="#Discussion">讨论</a></li>
+</ol>
+
+<h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
+
+<p>存储分析或者其他基于时间序列的数据，对于传统的存储系统（比如RDBMS）来说，是有一点挑战的。可能你想要对输入流量的速率进行限制（要求快速和高并发更新）或者简单地追踪网站访问者（或者其他更复杂的度量指标），然后以图表的形式画出来。</p>
+
+<p>虽然当前在其他系统中，有很多的方式存储这类数据；但是，Redis是一个非常优秀的候选者，由于它强大的数据结构。</p>
+
+<h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
+
+<p>Redis 理念上非常适合存储这类数据，以及跟踪某种特定的事件。具有原子性的，并且非常快的（O(1)时间复杂度）<code>HINCR</code>和<code>HINCRBY</code>命令，结合快速数据查找，使得它非常适合这类场景。</p>
+
+<p>在Redis中一种好的高效内存存储这类数据的方式是使用hash来存储统计值，使用<code>HINCRBY</code>增加它们，然后使用<code>HGET</code>和<code>HMGET</code>来获取这些数据。查找位于top位置的元素通过<code>SORT</code>命令也是很容易做到的。</p>
+
+<h2 id="a-iddiscussiona">3. <a id="Discussion">讨论</a></h2>
+
+<p>为了简单起见，在这个实例中，我们将只追踪网页点击率数据。这也可以很简单地扩展到其他任务类型的事件。</p>
+
+<p><figure class='code'><figcaption><span>网页点击率数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;require ‘rubygems’</span>
+</span><span class='line'><span class="sr">require ‘active_support/</span><span class="n">time</span><span class="err">’</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;iddatefield&quot;&gt;增加访问者的点击数，id表，date键，field数值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">add_hit</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="err">“</span><span class="n">clients</span><span class="err">”</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, “total”, 1) </span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, Date.today.to_s(:number), 1)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>我们在这里把用户（如果我们追踪网站的访问者，那么可以只简单地根据IP地址来区分用户）的ID添加到访问者列表中，然后记录在两个不同时间空挡中的点击数：”total”总数和日常的数。因此，这就允许我们追踪每天的网页点击数和一段时间内的全局总数。</p>
+
+<p><figure class='code'><figcaption><span>网页点击率数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;idkey&quot;&gt;获取某id的key对应的值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">hits</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">today</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="c1">#{id}”, day.to_s(:number)).to_i</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;section-1&quot;&gt;判断是否超过阈值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">over_limit?</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">hits</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">limit</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>这允许我们通过简单地检查访问者访问，是否超过了我们设置的在一段时间区间内的阈值，来执行速率限制功能。</p>
+
+<p>获取一个给定时间区间内的数据，也是一项琐碎但是高效的操作，我们可以用来画图表或者以其他方式展示这些数据：</p>
+
+<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;key&quot;&gt;计算给定开始时间和结束时间对应的key值&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">keys</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'>    <span class="k">while</span> <span class="n">beg_p</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="n">end_p</span>
+</span><span class='line'>        <span class="n">keys</span> <span class="err">« </span><span class="k">if</span> <span class="nb">block_given?</span>
+</span><span class='line'>            <span class="k">yield</span><span class="p">(</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">))</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>        <span class="n">beg_p</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">.</span><span class="n">day</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="n">keys</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def stats_for_period(id, beginning_of_period, end_of_period) </span>
+</span><span class='line'><span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
+</span><span class='line'><span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1"># 获取id表中key对应的数据集</span>
+</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">hmget</span> <span class="s2">&quot;stats/client:</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">)</span>  <span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>我们也可以获取我们存储数据中在任何时间空挡的位于top的用户，可以使用<code>SORT</code>命令完成。SORT允许我们排序一个集合set，有序的集合sorted set,，或者本例中得列表list，访问者可以选择使用外键-我们时间片，然后指定order，offset，limit等参数：</p>
+
+<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># 按照key为period进行排序，默认DESC，前0-limit个元素</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">top_clients</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="err">“</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="err">“</span><span class="n">clients</span><span class="err">”</span><span class="p">,</span> <span class="ss">:by</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="ss">client</span><span class="p">:</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="c1">#{period}”, :order =&amp;gt; “DESC”,:get =&amp;gt; [”#”, “stats/client:&lt;/em&gt;-&amp;gt;#{period}”], :limit =&amp;gt; [0, limit])</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>使用hash的实现方式，对于存储，检索和更新都是高度优化的（所有都是O(1)操作），但是对于计算top用户而言则不是（尤其是一个时间区间内）。你需要要求这些操作-比如当你显示一个高分值表格，你可以重新使用有序集合sorted set来完成排序，这样可以保证你拿到的数据是有序的：</p>
+
+<p><figure class='code'><figcaption><span>展示数据 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def add_hit(id)</span>
+</span><span class='line'><span class="sr">    $redis.zincrby(“stats/</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zincrby</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="c1">#{Date.today.to_s(:number)}”, 1, id)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def hits(id, day = Date.today) </span>
+</span><span class='line'><span class="sr">    $redis.zrank(“stats/</span><span class="c1">#{day.to_s(:number)}”, id)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def over_limit?(id, limit) </span>
+</span><span class='line'><span class="sr">    hits(id) &amp;gt; limit</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">stats_for_period</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">beginning_of_period</span><span class="p">,</span> <span class="n">end_of_period</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">beg_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">beginning_of_period</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">end_p</span> <span class="o">=</span> <span class="no">Date</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">end_of_period</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;keys(beg_p, end_p) { |k| $redis.zrank(&quot;stats/</span><span class="c1">#{k}&quot;, id) }  end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">top_clients</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="err">“</span><span class="n">total</span><span class="err">”</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="err">“</span><span class="n">stats</span><span class="o">/</span><span class="c1">#{period}”, 0, limit, :withscores =&amp;gt; true)</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;def top_for_period(beginning_of_period, end_of_period, limit = 5) </span>
+</span><span class='line'><span class="sr">    beg_p = Date.parse(beginning_of_period)</span>
+</span><span class='line'><span class="sr">    end_p = Date.parse(end_of_period)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">result_key</span> <span class="o">=</span> <span class="s2">&quot;top/</span><span class="si">#{</span><span class="n">beg_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">end_p</span><span class="o">.</span><span class="n">to_s</span><span class="p">(</span><span class="ss">:number</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="k">return</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span><span class="p">(</span><span class="n">result_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="ss">:withscores</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kp">true</span><span class="p">)</span> <span class="k">if</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">exists</span> <span class="n">result_key</span>
+</span><span class='line'>
+</span><span class='line'><span class="vg">$redis</span><span class="o">.</span><span class="n">multi</span> <span class="k">do</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zunionstore</span> <span class="n">result_key</span><span class="p">,</span> <span class="n">keys</span><span class="p">(</span><span class="n">beg_p</span><span class="p">,</span> <span class="n">end_p</span><span class="p">){</span><span class="o">|</span><span class="n">k</span><span class="o">|</span> <span class="s2">&quot;stats/</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span> <span class="vg">$redis</span><span class="o">.</span><span class="n">expire</span> <span class="n">result_key</span><span class="p">,</span> <span class="mi">10</span><span class="o">.</span><span class="n">minutes</span>
+</span><span class='line'>    <span class="vg">$redis</span><span class="o">.</span><span class="n">zrevrange</span> <span class="n">result_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="ss">:withscores</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span><span class="o">.</span><span class="n">last</span>  <span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：我们保持了<code>ZUNIONSTORE</code>的结果，然后在它上面设置一个超时时间戳。这是一个通用的Redis模式：缓存一个计算昂贵的操作结果，然后每次有请求过来，都会在重新操作之前先检查缓存情况。
+在上面的例子中，我们使用hash的地方，我们也可以存储SORT操作的结果，然后使用和EXISTS相似的方式检查它的缓存对象的存在性。</p>
+
+  </blockquote>
+</blockquote>
+
+<p>当我们使用有序集合sorted sets时，这些top操作会更高效率的多（因为数据已经是排好序了），但是我们的内存使用率也会更高。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Warns：这个特定的例子有一个竞争条件：如果缓存不存在，我们可能在结束之前会进行多次<code>ZUNIONSTORE</code>操作。因为我们最后期待的输出显然是相同或者更新的数值结果，因此存在竞争条件比使用<code>WATCH</code>，然后在我们在做客户端的计算时锁定其他访问者，效果可能会更好。</p>
+  </blockquote>
+</blockquote>
+
+<p>-</p>
+
+<blockquote>
+  <blockquote>
+    <p><em>Redis 命令</em>:</p>
+
+    <ul>
+      <li>
+        <p><code>HINCRBY hash-name field increment-value</code></p>
+
+        <p>按照给定的increment-value值增加hash表中存储的对应整数。这个命令和INCRBY很相似，但是和增加字符串不一样，这个使用在hash表中。而且increment-value的值也允许为负数。</p>
+      </li>
+      <li>
+        <p><code>HMGET hash-name field1 [field2 ...]</code></p>
+
+        <p>从给定的hash表中获取一些field值。这个命令和HGET很相似，但是这个允许你在一个单操作中获取一些field值。</p>
+      </li>
+      <li>
+        <p><code>SORT key [BY pattern] [LIMIT offset count] [GET pattern1 [GET pattern2 ...]] [ASC| DESC] [ALPHA] [STORE destination]</code></p>
+
+        <p>允许你排序一个list,set,或者sorted set，比较他们的值。排序也可以是使用外键完成，使用来自字符串或者hashes的模式匹配查询，就像我们在上面的例子中那样：<code>SORT clients BY stats/client:*-&gt;20110407</code>。其中，通配符*可以被set中成员所替换，所以在这些hash表中排序是基于匹配field 为20110407的值来完成的。如果我们把分析数据存储在strings中而不是hash表，则我们可以提交命令：<code>SORT clients BY stats/client:*/20110407</code>。
+   使用相同的模式，你除了排好序的list也可以获取更多地数据（比如你用来排序的值）.可选择地，在list里SORT的输出也可以被排序。</p>
+      </li>
+      <li>
+        <p><code>ZRANK set-name member</code></p>
+
+        <p>返回在给定的有序集合中给定成员的排名。</p>
+      </li>
+      <li>
+        <p><code>ZUNIONSTORE destination number-of-keys sorted-set1 [sorted-set2 ...] [WEIGHTS weight1 [weight2 ...]] [AGGREGATE SUM|MIN|MAX]</code></p>
+
+        <p>聚合sorted sets集合，然后作为一个新的sorted set存储。可选择地，你可以为每一个set指定 weight，并且只需聚合函数：sum（默认）,maximum scores, 或者 minimum scores。</p>
+      </li>
+      <li>
+        <p><code>EXISTS key</code></p>
+
+        <p>检查key是否存在。如果key存在则返回1；否则返回0.</p>
+      </li>
+    </ul>
+
+  </blockquote>
+</blockquote>
 
 ]]></content>
   </entry>

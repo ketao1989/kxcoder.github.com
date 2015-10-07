@@ -1,0 +1,30 @@
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="n">user_name</span><span class="o">=</span><span class="s">&#39;ketao1989&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&#39;Welcome,&#39;</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;Goodbye,&#39;</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">return</span> <span class="n">log</span>
+
+
+<span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">logger</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;Welcome,&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;Goodbye,&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="c">#@log(&#39;ketao1989&#39;)</span>
+<span class="nd">@log</span>
+<span class="k">def</span> <span class="nf">logger_test</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;execute core function (</span><span class="si">%s</span><span class="s">) ......&#39;</span> <span class="o">%</span> <span class="n">params</span>
+
+<span class="n">logger_test</span><span class="p">([</span><span class="s">&#39;test_param1&#39;</span><span class="p">,</span> <span class="s">&#39;test_param2&#39;</span><span class="p">])</span>
+</pre></div>

@@ -1,0 +1,28 @@
+<div class="highlight"><pre>&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;git checkout the_branch&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;git pull&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;git branch the_branch_backup <span class="c"># 备份一下这个分支当前的情况&lt;/p&gt;</span>
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;git reset –hard the_commit_id <span class="c"># 把the_branch本地回滚到the_commit_id&lt;/p&gt;</span>
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;git push origin :the_branch <span class="c"># 删除远程 the_branch&lt;/p&gt;</span>
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;git push origin the_branch <span class="c"># 用回滚后的本地分支重新建立远程分支&lt;/p&gt;</span>
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;git push origin :the_branch_backup <span class="c"># 如果前面都成功了，删除这个备份分支&lt;/p&gt;</span>
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+</pre></div>

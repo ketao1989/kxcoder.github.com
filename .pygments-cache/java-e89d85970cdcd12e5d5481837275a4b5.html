@@ -1,0 +1,31 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// 这里的逻辑就是按照模板获取值然后转换成字节流输出到后台</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doEncode</span><span class="o">(</span><span class="n">E</span> <span class="n">event</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">txt</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="na">doLayout</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+    <span class="n">outputStream</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">convertToBytes</span><span class="o">(</span><span class="n">txt</span><span class="o">));</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">immediateFlush</span><span class="o">)</span>
+      <span class="n">outputStream</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="n">String</span> <span class="nf">doLayout</span><span class="o">(</span><span class="n">ILoggingEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">isStarted</span><span class="o">())</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">CoreConstants</span><span class="o">.</span><span class="na">EMPTY_STRING</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="nf">writeLoopOnConverters</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+  <span class="o">}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// 初始化的时候，就介绍过最后会构建一个head链表，</span>
+  <span class="c1">// 这里输出就是按照解析后的链表进行分析输出的。然后根据c类型不同，获取字符串方法也不同</span>
+  <span class="kd">protected</span> <span class="n">String</span> <span class="nf">writeLoopOnConverters</span><span class="o">(</span><span class="n">E</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">StringBuilder</span> <span class="n">buf</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">StringBuilder</span><span class="o">(</span><span class="mi">128</span><span class="o">);</span>
+    <span class="n">Converter</span><span class="o">&lt;</span><span class="n">e</span><span class="o">&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">head</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">c</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">c</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">buf</span><span class="o">,</span> <span class="n">event</span><span class="o">);</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">getNext</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">buf</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+  <span class="o">}&lt;/</span><span class="n">e</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

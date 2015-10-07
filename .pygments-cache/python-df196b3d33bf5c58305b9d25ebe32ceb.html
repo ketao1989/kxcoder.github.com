@@ -1,0 +1,33 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="n">user_name</span><span class="o">=</span><span class="err">’</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">):</span>
+            <span class="k">print</span> <span class="err">‘</span><span class="n">Welcome</span><span class="p">,</span><span class="err">’</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">func</span><span class="o">.&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">)</span>
+            <span class="k">print</span> <span class="err">‘</span><span class="n">Goodbye</span><span class="p">,</span><span class="err">’</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">func</span><span class="o">.&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">return</span> <span class="n">log</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">logger</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;Welcome,&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;Goodbye,&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+<span class="k">return</span> <span class="n">wrapper</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;logketao1989&quot;</span><span class="o">&gt;</span><span class="nd">@log</span><span class="p">(</span><span class="err">‘</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@log</span>
+<span class="k">def</span> <span class="nf">logger_test</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">print</span> <span class="err">‘</span><span class="n">execute</span> <span class="n">core</span> <span class="n">function</span> <span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">)</span> <span class="err">……’</span> <span class="o">%</span> <span class="n">params</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">logger_test</span><span class="p">([</span><span class="err">‘</span><span class="n">test_param1</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">test_param2</span><span class="err">’</span><span class="p">])</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

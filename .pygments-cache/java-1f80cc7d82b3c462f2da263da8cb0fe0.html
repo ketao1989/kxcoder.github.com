@@ -1,0 +1,37 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * Simple {@link Module} implementation that allows registration</span>
+<span class="cm"> * of serializers and deserializers, and bean serializer</span>
+<span class="cm"> * and deserializer modifiers.</span>
+<span class="cm"> * </span>
+<span class="cm"> * @since 1.7</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleModule</span> <span class="kd">extends</span> <span class="n">Module</span>
+<span class="o">{</span>
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">_name</span><span class="o">;</span>
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">Version</span> <span class="n">_version</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// ……..&lt;/p&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="nf">SimpleModule</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">Version</span> <span class="n">version</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="n">_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="n">_version</span> <span class="o">=</span> <span class="n">version</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// …….&lt;/p&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="kd">public</span> <span class="n">SimpleModule</span> <span class="nf">addSerializer</span><span class="o">(</span><span class="n">JsonSerializer</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;?&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">ser</span><span class="o">)</span>
+<span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">_serializers</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">_serializers</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">SimpleSerializers</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="n">_serializers</span><span class="o">.</span><span class="na">addSerializer</span><span class="o">(</span><span class="n">ser</span><span class="o">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+<span class="o">}</span> <span class="c1">// ....... }</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

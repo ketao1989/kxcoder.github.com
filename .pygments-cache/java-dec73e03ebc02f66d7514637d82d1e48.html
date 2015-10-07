@@ -1,0 +1,10 @@
+<div class="highlight"><pre><span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="nd">@Target</span><span class="o">(</span><span class="n">ElementType</span><span class="o">.</span><span class="na">METHOD</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">DBSource</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 指定数据源使用哪个配置</span>
+<span class="cm">     */</span>
+    <span class="n">String</span> <span class="nf">value</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>

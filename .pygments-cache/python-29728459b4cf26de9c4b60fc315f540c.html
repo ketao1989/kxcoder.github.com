@@ -1,0 +1,20 @@
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">lazy_tranform</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+    <span class="n">resTotal</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">tranform</span><span class="p">():</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+            <span class="n">xf</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="s">&#39;-tranform&#39;</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+            <span class="n">resTotal</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">resTotal</span>
+    <span class="k">return</span> <span class="n">tranform</span>
+
+<span class="n">lf</span> <span class="o">=</span> <span class="n">lazy_tranform</span><span class="p">([</span><span class="s">&#39;abc&#39;</span><span class="p">,</span> <span class="s">&#39;zfc&#39;</span><span class="p">,</span> <span class="s">&#39;Azc&#39;</span><span class="p">])</span>
+<span class="c">#&lt;function tranform at 0x1006309b0&gt;</span>
+<span class="k">print</span> <span class="n">lf</span>
+<span class="c">#([&#39;abc-tranform&#39;, &#39;zfc-tranform&#39;, &#39;Azc-tranform&#39;], [&#39;abc-tranform&#39;, &#39;zfc-tranform&#39;, &#39;Azc-tranform&#39;])</span>
+<span class="k">print</span> <span class="n">lf</span><span class="p">()</span>
+<span class="c">#([&#39;abc-tranform&#39;, &#39;zfc-tranform&#39;, &#39;Azc-tranform&#39;], [&#39;abc-tranform&#39;, &#39;zfc-tranform&#39;, &#39;Azc-tranform&#39;, &#39;abc-tranform&#39;, &#39;zfc-tranform&#39;, &#39;Azc-tranform&#39;])</span>
+<span class="k">print</span> <span class="n">lf</span><span class="p">()</span>
+</pre></div>

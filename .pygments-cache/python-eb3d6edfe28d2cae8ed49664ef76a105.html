@@ -1,0 +1,33 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">closure_tranform</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">tranform</span><span class="p">():</span>
+            <span class="n">xf</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="err">‘</span><span class="o">-</span><span class="n">tranform</span><span class="err">’</span>
+            <span class="k">return</span> <span class="n">xf</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tranform</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;function-tranform-at-0x100630aa0-function-tranform-at-0x100630b18-function-tranform-at-0x100630b90&quot;</span><span class="o">&gt;&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">function</span> <span class="n">tranform</span> <span class="n">at</span> <span class="mh">0x100630aa0</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">function</span> <span class="n">tranform</span> <span class="n">at</span> <span class="mh">0x100630b18</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">function</span> <span class="n">tranform</span> <span class="n">at</span> <span class="mh">0x100630b90</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># Azc-tranform Azc-tranform Azc-tranform</span>
+<span class="n">lf1</span><span class="p">,</span> <span class="n">lf2</span><span class="p">,</span> <span class="n">lf3</span> <span class="o">=</span> <span class="n">closure_tranform</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">lf1</span><span class="p">,</span> <span class="n">lf2</span><span class="p">,</span> <span class="n">lf3</span>
+<span class="k">print</span> <span class="n">lf1</span><span class="p">(),</span> <span class="n">lf2</span><span class="p">(),</span> <span class="n">lf3</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">closure_tranform_opz</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">tranform</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">tranform_closure</span><span class="p">():</span>
+                <span class="n">xf</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="err">‘</span><span class="o">-</span><span class="n">tranform</span><span class="err">’</span>
+                <span class="k">return</span> <span class="n">xf</span>
+            <span class="k">return</span> <span class="n">tranform_closure</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tranform</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span>
+<span class="c"># &amp;lt;function tranform_closure at 0x100630cf8&amp;gt; &amp;lt;function tranform_closure at 0x100630c80&amp;gt; &amp;lt;function tranform_closure at 0x100630d70&amp;gt;</span>
+<span class="c"># abc-tranform zfc-tranform Azc-tranform</span>
+<span class="n">lfo1</span><span class="p">,</span> <span class="n">lfo2</span><span class="p">,</span> <span class="n">lfo3</span> <span class="o">=</span> <span class="n">closure_tranform_opz</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">lfo1</span><span class="p">,</span> <span class="n">lfo2</span><span class="p">,</span> <span class="n">lfo3</span>
+<span class="k">print</span> <span class="n">lfo1</span><span class="p">(),</span> <span class="n">lfo2</span><span class="p">(),</span> <span class="n">lfo3</span><span class="p">()</span>
+</pre></div>

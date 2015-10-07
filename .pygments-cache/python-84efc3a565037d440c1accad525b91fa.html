@@ -1,0 +1,14 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">generateFun</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+<span class="c"># &amp;lt;generator object generateFun at 0x102f5a5a0&amp;gt;</span>
+<span class="n">gf</span> <span class="o">=</span> <span class="n">generateFun</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">gf</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gf</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">x</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>

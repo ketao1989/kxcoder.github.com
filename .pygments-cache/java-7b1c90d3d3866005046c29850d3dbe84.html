@@ -1,0 +1,41 @@
+<div class="highlight"><pre><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/**</span>
+<span class="cm"> * ObjectMapper类定义的抽象API类来给JsonGenerator类完成序列化任意对象到JSON功能。</span>
+<span class="cm"> *&amp;lt;p&amp;gt;</span>
+<span class="cm"> * 需要说明的是，官方推荐使用继承SerializerBase类完成自定义序列化工作，替代使用本类。</span>
+<span class="cm"> * 主要是因为，SerializerBase类提供了更多的可选择的方法给开发者去定制会。</span>
+<span class="cm"> * 当然，如果你只需要简单的序列化功能，则继承这个类足够了。</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">JsonSerializer</span><span class="o">&lt;</span><span class="n">t</span><span class="o">&gt;</span>
+<span class="o">{&lt;/</span><span class="n">t</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span><span class="o">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Method that can be called to ask implementation to serialize</span>
+<span class="cm"> * values of type this serializer handles, using specified type serializer</span>
+<span class="cm"> * for embedding necessary type information.</span>
+<span class="cm"> *&amp;lt;p&amp;gt;</span>
+<span class="cm"> * Default implementation will ignore serialization of type information,</span>
+<span class="cm"> * and just calls {@link #serialize}: serializers that can embed</span>
+<span class="cm"> * type information should override this to implement actual handling.</span>
+<span class="cm"> * Most common such handling is done by something like:</span>
+<span class="cm"> *&amp;lt;pre&amp;gt;</span>
+<span class="cm"> *  // note: method to call depends on whether this type is serialized as JSON scalar, object or Array!</span>
+<span class="cm"> *  typeSer.writeTypePrefixForScalar(value, jgen);</span>
+<span class="cm"> *  serialize(value, jgen, provider);</span>
+<span class="cm"> *  typeSer.writeTypeSuffixForScalar(value, jgen);</span>
+<span class="cm"> *&amp;lt;/pre&amp;gt;</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">serializeWithType</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">,</span>
+        <span class="n">TypeSerializer</span> <span class="n">typeSer</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span>
+<span class="o">{</span>
+    <span class="n">serialize</span><span class="o">(</span><span class="n">value</span><span class="o">,</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">provider</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>
