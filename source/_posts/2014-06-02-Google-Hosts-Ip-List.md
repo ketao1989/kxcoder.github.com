@@ -19,6 +19,8 @@ comments: true
 
 从网上搜罗了一些 IP表，发现有用的真心不多，最后终于发现访问google正常的IP List了，赶紧贴在这里，留着以后其他电脑备用。
 
+<!--more-->
+
 ##<a id="Ips">Hosts IP列表</a>
 
 >> Note: 下面的`google hosts	`已经被封，请将`61.219.131.99` 替换为`173.194.64.84`.---2014.6.15 update

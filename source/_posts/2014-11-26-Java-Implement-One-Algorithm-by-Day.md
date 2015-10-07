@@ -20,6 +20,8 @@ comments: true
 
 最近看博客，发现一些有趣的算法，很久没接触，都不清楚了。这里，把上述的github中一些算法用java实现。
 
+<!--more-->
+
 ## <a id="RotateString">旋转字符串</a>
 
 ### 背景

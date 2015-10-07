@@ -18,6 +18,8 @@ Intelij IDEA一些快捷键和 Eclipse不同，所以对一些快捷键进行记
 
 ## <a id="Keymap">Idea 快捷键</a>
 
+<!--more-->
+
 ### 视图快捷键
 
 {% codeblock lang:kconfig idea keymap %}

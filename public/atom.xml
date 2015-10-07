@@ -4,7 +4,7 @@
   <title><![CDATA[柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -675,6 +675,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <p>关于 <code>Slf4j</code> 的介绍，请参考本博客<a href="http://ketao1989.github.io/posts/Java-slf4j-Introduce.html">http://ketao1989.github.io/posts/Java-slf4j-Introduce.html</a></p>
 
 <p>有了日志之后，我们就可以追踪各种线上问题。但是，在分布式系统中，各种无关日志穿行其中，导致我们可能无法直接定位整个操作流程。因此，我们可能需要对一个用户的操作流程进行归类标记，比如使用<code>线程+时间戳</code>，或者用户身份标识等；如此，我们可以从大量日志信息中grep出某个用户的操作流程，或者某个时间的流转记录。</p>
+
+<!--more-->
 
 <p>因此，这就有了 <code>Slf4j MDC</code> 方法。</p>
 
@@ -2257,7 +2259,7 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
   </blockquote>
 </blockquote>
 
-<h2 id="a-idenda">&lt;a id=End”&gt;后记&lt;/a&gt;</h2>
+<h2 id="a-idenda"><a id="End">后记</a></h2>
 
 <p>其实，本身的 MDC 使用很简单，实现原理也很简单。但是，这里为了分析从将 key:value put 进MDC，然后怎么获取，怎么打印到后台的逻辑，对整个从 SLF4J 到 logback 的运行流程进场了大体解析。而对不影响理解的一些枝节，进行了删减。因此，如果需要完全弄清楚整个逻辑，还需要进行详细分析源码。</p>
 
@@ -2287,6 +2289,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <p>在之前的学习中，基本上都是使用类似于面对过程的方式来写代码，学习各种 Python 的基础知识，接下来，我们需要继续学习面向对象的Python，也就是类对象继承等概念。</p>
 
 <p>对象和属性，这些概念在任务编程语言中，其定义都是一致的。我们通过一个对象来表示一个物体，而这个物体的一些特征，就是对象中的属性。比如，一个人，作为一个对象 Person，则会有<code>姓名，身高，体重，性别，出生日期</code>等属性，这些属性就是这个人的对外特性了。</p>
+
+<!--more-->
 
 <h2 id="a-idbasicguidepython-a"><a id="BasicGuide">Python 面向对象编程介绍</a></h2>
 
@@ -2770,6 +2774,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 
 <p>Python 作为一个动态脚本语言，其很早就支持了函数式编程范式。</p>
 
+<!--more-->
+
 <h2 id="a-idfunctionalprogrampython-a"><a id="FunctionalProgram">Python 函数式编程</a></h2>
 
 <p>Python 函数式编程，涉及太多的内容。简单介绍几个点。</p>
@@ -3156,6 +3162,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 
 <p>同样，也是为了开发的简洁，Python 还为提供了 Slice切片等高级特性。切片可让我们更方便的操作列表数据结构，也使得代码更易开发和阅读。</p>
 
+<!--more-->
+
 <h2 id="a-idfunctionpython-a"><a id="Function">Python 函数</a></h2>
 
 <p>Python 函数和数学中函数的概念是一致的，都是对逻辑的一种抽象表示。在 Python 中，我们通过def来定义一个函数方法。</p>
@@ -3504,6 +3512,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 
 <p>Python 在日常工作中，主要是脚本语言的开发，由于开发快捷容易，并且在所有 Linux 版本都会安装 Python 的语言环境，不需要额外的配置工作。</p>
 
+<!--more-->
+
 <h2 id="a-idsublimesublime-python-a"><a id="Sublime">Sublime Python 插件安装</a></h2>
 
 <p>对于 Python 的基础知识的学习，已经工作中脚本语言的开发，使用 Sublime 编辑器可以非常好的满足我们的需求，并且 Sublime 提供了丰富的插件供使用，非常便捷。</p>
@@ -3784,6 +3794,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <p>上一篇博客，介绍了关于<a href="http://ketao1989.github.io/posts/Jackson-Serialize-Java-Object-Implementation.html">Jackson 自定义序列化</a>，本文将介绍关于 Jackson 自定义反序列化。</p>
 
 <p>反序列化，Jackson 工具包中已经支持了开发中常用的 Java 类型的解析功能；但是还是会遇到一些我们需要自定义的解析转换工作。比如外部的一些非主流时间格式转换，再比如说对于一些类型转换，做一些额外数据校验和默认容错处理工作，再比如说前端的某种格式的字符串，我们想直接使用自定义反序列化类来完成到 Java Object 的转换工作等等，都需要我们去自己实现 Jackson 反序列化类。</p>
+
+<!--more-->
 
 <p>和<code>Jackson 自定义序列化</code>相似，Jackson 为自定义的反序列化扩展，也提供了简单易用的接口。</p>
 
@@ -4147,6 +4159,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>关于Jackson工具类的相关学习和研究，先前已经写过一篇博文；但是，后来由于工作事情就草草结尾。此外，虽然对Jackson序列化和反序列化的实现机制进行了初步学习，但是现在看看，那时候的博客经验和技术水平决定了整篇博文结构并不是清晰明了，并且反序列化的整个简单的解析，对日常开发并没有直接帮助。对于Jackson这种模块化设计，轻巧灵活的扩展方法，多维度的性能效率优化，导致了最后博文的质量非常不好。因此，接下来几篇博文，将会以日常开发使用的一些API为入口，来分别介绍其使用方式和内部实现，然后在此基础上，对此博文进行分拆。</p>
+
+<!--more-->
 
 <p>在开发中，前后端交互的项目，现在一般都是基于JSON文本格式给出API接口，因此对于java对象的序列化就是十分重要的了。基于Spring MVC的配置中，我们配置<code>org.springframework.http.converter.json.MappingJacksonHttpMessageConverter</code> bean时，就是需要配置<code>messageConverters</code>转换器。而针对json的转换器，就可以使用Jackson的<code>objectMapper</code>对象了。</p>
 
@@ -4958,6 +4972,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 
 <p>操作步骤：</p>
 
+<!--more-->
+
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>git命令 </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -5016,6 +5032,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <p>最近，有其他业务的数据查询也需要切换到从库上，因此对上述简单的配置实现进行了思考。</p>
 
 <p>动态数据源，其实就是根据我们的代码实现和配置来选择不同的数据源进行sql操作。一般地，我们会把读操作移到从库中，从而减轻主库的压力，也就是所谓的读写分离。</p>
+
+<!--more-->
 
 <p>当然，对于一些使用数据库中间件来完成读写分离，而不需要业务层来做。这种方式，在大互联网公司中大量使用，比如360基于mysql-proxy的Atlas，阿里的DRDS(基于淘宝之前开源的TDDL）以及网易的分布式数据库中间件DDB等等。</p>
 
@@ -5566,6 +5584,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 
 <p>因此，我们想要事业Redis来作为背后的存储系统来实现全文搜索服务。</p>
 
+<!--more-->
+
 <h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
 
 <p>我们的实现，将为每一个单词，准备一个set集合，这些集合包含对应的文档的ID。为了允许快速搜索，我们将在开始之前为所有的文档建立索引。</p>
@@ -5800,6 +5820,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 
 <p>想要借助 <code>Redis</code>的<code>PUB/SUB</code>功能，使用node.js和Socket.io实现一个轻量级的实时聊天系统。</p>
 
+<!--more-->
+
 <h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
 
 <p>由于Redis 天生就支持发布订阅(pub/sub)模式，所以我们可以很容易就使用<code>Node.js</code> 和 <code>Socket.IO</code>来快速创建一个实时的聊天系统。</p>
@@ -6026,6 +6048,8 @@ getChildren。下面的列表展示了一个watch 触发和调用激活的方式
 <p>在平常开发过程中，很多情况需要使用缓存来避免频繁SQL查询或者其他耗时操作，会采取缓存这些操作结果给下一次请求使用。如果我们的操作结果是一直不改变的，其实我们可以使用<code>ConcurrentHashMap</code>来存储这些数据；但是如果这些结果在随后时间内会改变或者我们希望存放的数据所占用的内存空间可控，这样就需要自己来实现这种数据结构了。</p>
 
 <p>显然，对于这种十分常见的需求，<code>Guava</code>提供了自己的工具类实现。<code>Guava Cache</code>提供了一般我们使用缓存所需要的几乎所有的功能，主要有：</p>
+
+<!--more-->
 
 <pre><code>* 自动将entry节点加载进缓存结构中；
     
@@ -9289,6 +9313,8 @@ notifiyNewValue只用于LoadingValueReference，它的存在是为了对LoadingV
 
 <p>虽然当前在其他系统中，有很多的方式存储这类数据；但是，Redis是一个非常优秀的候选者，由于它强大的数据结构。</p>
 
+<!--more-->
+
 <h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
 
 <p>Redis 理念上非常适合存储这类数据，以及跟踪某种特定的事件。具有原子性的，并且非常快的（O(1)时间复杂度）<code>HINCR</code>和<code>HINCRBY</code>命令，结合快速数据查找，使得它非常适合这类场景。</p>
@@ -9564,6 +9590,8 @@ notifiyNewValue只用于LoadingValueReference，它的存在是为了对LoadingV
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>最近看博客，发现一些有趣的算法，很久没接触，都不清楚了。这里，把上述的github中一些算法用java实现。</p>
+
+<!--more-->
 
 <h2 id="a-idrotatestringa"><a id="RotateString">旋转字符串</a></h2>
 
@@ -9988,6 +10016,8 @@ notifiyNewValue只用于LoadingValueReference，它的存在是为了对LoadingV
 
 <p>虽然java开发已经快两年了，但是对于java内部一些小的技巧和坑还是会有些不了解。这里记录下。</p>
 
+<!--more-->
+
 <h2 id="a-idintegerjava-integera"><a id="Integer">java Integer并发问题</a></h2>
 
 <p>前段时间看书，顺带提到说<code>Integer.valueOf( )会导致死锁问题</code>很是惊讶。于是，查看了JDK源码，果然如此。</p>
@@ -10266,6 +10296,8 @@ notifiyNewValue只用于LoadingValueReference，它的存在是为了对LoadingV
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>最近线上遇到一个很奇怪的现象，就是一个dubbo 服务被注册到了好几个<code>group</code>下面，并且这些<code>group</code>都是我们应用中，通过<code>dubbo:registry</code>来配置的。但是，显然这不是我们应用所期待的结果，因此，首先，我们需要修复这个问题；其次，我们需要找出原因。</p>
+
+<!--more-->
 
 <h3 id="section-1">1.1 问题定位</h3>
 
@@ -11517,6 +11549,8 @@ notifiyNewValue只用于LoadingValueReference，它的存在是为了对LoadingV
 
 <p>今天项目发布，上线上跟日志的时候，发现一些死锁信息的出现，查询了一下，发现日志里面虽然死锁出现很少，但是都是同一个代码<code>sql</code>语句产生的，如下图所示：</p>
 
+<!--more-->
+
 <p><img src="http://kxcoder.github.io/images/2014/10/deadlock-log.png" /></p>
 
 <p>并且，一天产生死锁<code>31</code>次。</p>
@@ -11821,6 +11855,8 @@ notifiyNewValue只用于LoadingValueReference，它的存在是为了对LoadingV
 <p>不过，JSON 和 XML两者纠结谁优谁劣，这里不做讨论，可以参见知乎上<a href="http://www.zhihu.com/question/20738607">为什么XML这么笨重的数据结构仍在广泛应用？</a>。</p>
 
 <p>最近在项目中，会有各种解析JSON文本的需求，使用第三方<code>Jackson</code>工具来解析时，又担心当增加会减少字段，会不会出现非预期的情况，因此，研究下<code>jackson</code>解析json数据格式的代码，很有需要。</p>
+
+<!--more-->
 
 <h2 id="a-idjsonutilsjacksona"><a id="JsonUtils">Jackson使用工具类</a></h2>
 

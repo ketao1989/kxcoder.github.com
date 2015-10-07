@@ -23,6 +23,8 @@ comments: true
 
 点击`chrome`图标不管用，并且看不到任何出错信息，无法定位问题出在哪里。只好，从`终端`使用`google-chrome`命令来启动`chrome`浏览器客户端了。于是，出现以下错误信息：
 
+<!--more-->
+
 {% codeblock lang:bash Linux install chrome %}
 
 ketao@ketao-Latitude:~$ google-chrome

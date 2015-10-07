@@ -21,6 +21,8 @@ comments: true
 
 一般，如果对`subversion`的版本不限制，那些直接使用`sudo apt-get install subversion`命令就可以安装来，但是如果对版本有要求，比如由于`svn`的1.8版本在很多`svn`服务器端不被支持，所以需要安装低于1.8的svn客户端。这就需要我们在本地编译完了之后再安装。
 
+<!--more-->
+
 ### 2.1 subversion源码下载
 
 点击进入下载页面：<http://subversion.apache.org/download/#supported-releases> , 选择当前最新的`1.7`的子版本下载；

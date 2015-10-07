@@ -16,6 +16,8 @@ comments: true
 
 最近对于线上一些数据需要进行过滤导到本地来，或者对一些运营人员给的文本数据，需要在线上数据库跑出对应的结果出来，因此，需要通过一个脚本来执行。因为，现在服务器基本上会默认安装python，所以这里存一份脚本备用。
 
+<!--more-->
+
 ## <a id="Script">Python脚本</a>
 
 {% codeblock lang:python Python脚本 %}

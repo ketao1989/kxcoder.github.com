@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Log | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/log/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -36,6 +36,8 @@
 <p>关于 <code>Slf4j</code> 的介绍，请参考本博客<a href="http://ketao1989.github.io/posts/Java-slf4j-Introduce.html">http://ketao1989.github.io/posts/Java-slf4j-Introduce.html</a></p>
 
 <p>有了日志之后，我们就可以追踪各种线上问题。但是，在分布式系统中，各种无关日志穿行其中，导致我们可能无法直接定位整个操作流程。因此，我们可能需要对一个用户的操作流程进行归类标记，比如使用<code>线程+时间戳</code>，或者用户身份标识等；如此，我们可以从大量日志信息中grep出某个用户的操作流程，或者某个时间的流转记录。</p>
+
+<!--more-->
 
 <p>因此，这就有了 <code>Slf4j MDC</code> 方法。</p>
 
@@ -1708,7 +1710,7 @@
   </blockquote>
 </blockquote>
 
-<h2 id="a-idenda">&lt;a id=End”&gt;后记&lt;/a&gt;</h2>
+<h2 id="a-idenda"><a id="End">后记</a></h2>
 
 <p>其实，本身的 MDC 使用很简单，实现原理也很简单。但是，这里为了分析从将 key:value put 进MDC，然后怎么获取，怎么打印到后台的逻辑，对整个从 SLF4J 到 logback 的运行流程进场了大体解析。而对不影响理解的一些枝节，进行了删减。因此，如果需要完全弄清楚整个逻辑，还需要进行详细分析源码。</p>
 

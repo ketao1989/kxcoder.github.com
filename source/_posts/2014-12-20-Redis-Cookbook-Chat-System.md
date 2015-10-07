@@ -17,6 +17,8 @@ comments: true
 
 想要借助 `Redis`的`PUB/SUB`功能，使用node.js和Socket.io实现一个轻量级的实时聊天系统。
 
+<!--more-->
+
 ## 2. <a id="Solution">解决方法</a>
 
 由于Redis 天生就支持发布订阅(pub/sub)模式，所以我们可以很容易就使用`Node.js` 和 `Socket.IO`来快速创建一个实时的聊天系统。

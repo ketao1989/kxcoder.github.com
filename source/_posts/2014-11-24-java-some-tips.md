@@ -20,6 +20,8 @@ comments: true
 
 虽然java开发已经快两年了，但是对于java内部一些小的技巧和坑还是会有些不了解。这里记录下。
 
+<!--more-->
+
 ## <a id="Integer">java Integer并发问题</a>
 
 前段时间看书，顺带提到说`Integer.valueOf( )会导致死锁问题`很是惊讶。于是，查看了JDK源码，果然如此。

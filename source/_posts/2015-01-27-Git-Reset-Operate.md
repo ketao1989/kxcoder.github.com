@@ -19,6 +19,8 @@ comments: true
 
 操作步骤：
 
+<!--more-->
+
 {% codeblock lang:bash git命令 %}
 
 1. git checkout the_branch

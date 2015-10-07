@@ -18,6 +18,8 @@ comments: true
 
 Python 作为一个动态脚本语言，其很早就支持了函数式编程范式。
 
+<!--more-->
+
 ## <a id="FunctionalProgram">Python 函数式编程</a>
 
 Python 函数式编程，涉及太多的内容。简单介绍几个点。
