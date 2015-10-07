@@ -1,0 +1,1084 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Jackson 自定义序列化Java对象实现 - 柯小小西の小水滴</title>
+  <meta name="author" content="柯小小西">
+
+  
+  <meta name="description" content="目录 前言 Jackson自定义序列化方法 自定义序列化方法注册到Jackson Java对象序列化自定义示例 总结 前言 关于Jackson工具类的相关学习和研究，先前已经写过一篇博文；但是，后来由于工作事情就草草结尾。此外，虽然对Jackson序列化和反序列化的实现机制进行了初步学习， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://kxcoder.github.io/blog/2015/02/07/Jackson-Serialize-Java-Object-Implementation/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="柯小小西の小水滴" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+   <script src="http://ajax.useso.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!-- 使用360 CDN 代理 解决google字体 GFW问题 -->
+<link href="//fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.useso.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <div style="float:left; width: 500px">
+    <h1><a href="/">柯小小西の小水滴</a></h1>
+    
+      <h2>聚合各路水滴，方可成为大海.</h2>
+    
+  </div>
+  
+    <div style="float:right">
+      <p style="font-family:cursive;font-size:80%;color:yellow;font-style:oblique">
+         始终坚信，好记忆不如烂笔头。 
+      </p>
+<ul id="social-links">
+  <!-- Sina Weibo -->
+  <li>
+    <a href="http://weibo.com/2265041632" target="_blank">
+      <svg width="40" height="40" class="sina-weibo" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M9.641,17.231c-3.799,0.374-7.079-1.343-7.326-3.838c-0.246-2.494,2.634-4.82,6.434-5.196 c3.798-0.377,7.079,1.34,7.326,3.835C16.32,14.529,13.44,16.855,9.641,17.231 M17.24,8.952c-0.322-0.098-0.544-0.163-0.375-0.587 c0.365-0.921,0.403-1.718,0.007-2.286c-0.745-1.063-2.783-1.005-5.12-0.027c0-0.002-0.734,0.321-0.546-0.261 c0.359-1.156,0.305-2.123-0.254-2.682c-1.267-1.271-4.639,0.047-7.53,2.936C1.257,8.209,0,10.504,0,12.488 c0,3.796,4.866,6.104,9.628,6.104c6.241,0,10.393-3.627,10.393-6.506C20.021,10.347,18.557,9.358,17.24,8.952" />
+        <path fill="#000000" d="M21.384,2.005c-1.507-1.671-3.73-2.308-5.782-1.872l0,0c-0.475,0.102-0.778,0.569-0.676,1.043 c0.101,0.473,0.567,0.777,1.043,0.674c1.459-0.31,3.039,0.145,4.111,1.332c1.069,1.188,1.362,2.806,0.902,4.225v0.001 c-0.149,0.462,0.104,0.957,0.566,1.106c0.461,0.149,0.956-0.104,1.105-0.565c0,0,0-0.002,0-0.004 C23.299,5.95,22.894,3.674,21.384,2.005" />
+        <path fill="#000000" d="M19.07,4.094c-0.734-0.814-1.817-1.123-2.817-0.912c-0.409,0.088-0.671,0.49-0.581,0.899 c0.088,0.407,0.489,0.67,0.896,0.58v0.001c0.488-0.104,1.019,0.047,1.379,0.445c0.359,0.398,0.455,0.941,0.301,1.416l0,0 c-0.127,0.398,0.09,0.825,0.488,0.954c0.396,0.127,0.824-0.091,0.952-0.488C20,6.017,19.805,4.908,19.07,4.094" />
+        <path fill="#000000" d="M9.85,12.713c-0.132,0.229-0.426,0.338-0.656,0.242c-0.227-0.094-0.297-0.348-0.169-0.572 c0.132-0.221,0.416-0.328,0.64-0.239C9.895,12.227,9.978,12.483,9.85,12.713 M8.64,14.268c-0.367,0.586-1.154,0.843-1.747,0.57 c-0.584-0.265-0.756-0.945-0.389-1.518c0.362-0.568,1.124-0.824,1.712-0.574C8.811,12.998,9.001,13.675,8.64,14.268 M10.021,10.118 c-1.808-0.47-3.852,0.431-4.637,2.023c-0.8,1.624-0.026,3.428,1.801,4.017c1.892,0.612,4.122-0.324,4.898-2.078 C12.848,12.367,11.891,10.602,10.021,10.118" />
+      </svg>
+    </a>
+  </li>
+
+  <!-- GitHub -->
+  <li>
+    <a href="https://github.com/ketao1989" target="_blank">
+      <svg width="40" height="40" class="github" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#000000" d="M28.436,15.099C27.235,14.897,25.985,14.764,24.97,14.728L24.791,14.722C24.832,14.632,24.863,14.571,24.873,14.562C24.895,14.543999999999999,24.913,14.468,24.915000000000003,14.394C24.915000000000003,14.353,24.933000000000003,14.22,24.961000000000002,14.044C25.236,14.054,25.601000000000003,14.062000000000001,25.999000000000002,14.065000000000001C27.536,14.077000000000002,29.144000000000002,14.201,30.247000000000003,14.396C30.904000000000003,14.512,31.121000000000002,14.508000000000001,30.636000000000003,14.39C30.145000000000003,14.271,28.689000000000004,14.096,27.529000000000003,14.020000000000001C26.750000000000004,13.967,25.633000000000003,13.947000000000001,24.975000000000005,13.958000000000002C24.994000000000003,13.844000000000001,25.016000000000005,13.717000000000002,25.039000000000005,13.587000000000002C25.132000000000005,13.084000000000001,25.163000000000004,12.578000000000001,25.165000000000006,11.571000000000002C25.167000000000005,10.009000000000002,25.083000000000006,9.579,24.574000000000005,8.546000000000001C24.367000000000004,8.124,24.133000000000006,7.766000000000001,23.850000000000005,7.442000000000001C24.097000000000005,6.713000000000001,24.091000000000005,5.584000000000001,23.835000000000004,4.594000000000001C23.624000000000006,3.782000000000001,23.550000000000004,3.7300000000000013,22.814000000000004,3.886000000000001C22.19,4.019,21.69,4.2,21.049,4.523C20.746,4.675999999999999,20.328,4.914,20.025,5.101C19.235,4.823,18.418,4.639,17.546,4.54C16.662,4.44,14.495,4.496,13.725999999999999,4.638C12.973999999999998,4.777,12.296999999999999,4.947,11.684,5.149C11.378,4.96,10.934,4.705,10.616999999999999,4.545C9.973,4.221,9.473,4.041,8.847,3.908C8.113,3.751,8.036999999999999,3.804,7.827,4.616C7.567,5.619,7.5649999999999995,6.7669999999999995,7.822,7.494C7.852,7.577,7.87,7.636,7.877,7.682C6.835,8.994,6.495,10.462,6.721,12.511C6.78,13.045,6.871,13.535,6.998,13.984C6.333,13.98,5.3870000000000005,14.004,4.704000000000001,14.048C3.5420000000000007,14.125,2.0860000000000007,14.298,1.5950000000000006,14.417C1.1110000000000007,14.535,1.3260000000000005,14.539,1.9840000000000007,14.424C3.0870000000000006,14.229999999999999,4.696000000000001,14.104,6.232000000000001,14.093C6.522000000000001,14.092,6.793000000000001,14.086,7.026000000000002,14.08C7.096000000000002,14.317,7.176000000000002,14.543,7.267000000000001,14.758000000000001L7.26,14.759C6.245,14.794,4.996,14.927,3.795,15.129C2.894,15.28,1.564,15.581999999999999,1.4089999999999998,15.669C1.2459999999999998,15.76,1.3789999999999998,15.74,2.077,15.563C3.3499999999999996,15.241000000000001,5.005,14.994,7.055,14.822000000000001L7.284,14.802000000000001C7.724,15.824000000000002,8.402,16.604000000000003,9.36,17.212000000000003C9.946,17.585000000000004,10.885,17.968000000000004,11.357999999999999,18.028000000000002C11.488,18.044,11.866,18.122000000000003,12.197999999999999,18.200000000000003C12.530999999999999,18.278000000000002,13.181999999999999,18.395000000000003,13.643999999999998,18.462000000000003H13.654999999999998C13.645999999999997,18.468000000000004,13.637999999999998,18.472000000000005,13.629999999999997,18.478C13.069999999999997,18.769000000000002,12.705999999999998,19.222,12.460999999999997,19.935000000000002C12.350999999999997,19.968000000000004,12.213999999999997,20.013,12.065999999999997,20.064000000000004C11.536999999999997,20.244000000000003,11.330999999999998,20.281000000000002,10.794999999999998,20.285000000000004C10.238999999999997,20.289000000000005,10.106999999999998,20.265000000000004,9.774999999999999,20.109000000000005C9.291999999999998,19.884000000000004,8.841999999999999,19.470000000000006,8.541999999999998,18.976000000000006C8.040999999999999,18.150000000000006,7.174999999999998,17.566000000000006,6.452999999999998,17.566000000000006C5.835999999999998,17.566000000000006,5.718999999999998,17.816000000000006,6.164999999999997,18.181000000000004C6.836999999999997,18.730000000000004,7.338999999999997,19.290000000000006,7.544999999999997,19.718000000000004C7.660999999999997,19.958000000000002,7.838999999999997,20.329000000000004,7.9419999999999975,20.542000000000005C8.050999999999998,20.769000000000005,8.283999999999997,21.077000000000005,8.505999999999997,21.290000000000006C9.027999999999997,21.788000000000007,9.531999999999996,22.026000000000007,10.283999999999997,22.138000000000005C10.787999999999997,22.212000000000007,10.911999999999997,22.212000000000007,11.506999999999998,22.136000000000006C11.793999999999999,22.101000000000006,12.035999999999998,22.060000000000006,12.252999999999998,22.009000000000007C12.252999999999998,22.253000000000007,12.252999999999998,22.534000000000006,12.252999999999998,22.864000000000008C12.252999999999998,24.63000000000001,12.231999999999998,25.198000000000008,12.161999999999999,25.364000000000008C12.03,25.680000000000007,11.733999999999998,26.00500000000001,11.446,26.151000000000007C11.158999999999999,26.297000000000008,11.07,26.458000000000006,11.190999999999999,26.606000000000005C11.258,26.686000000000003,11.386999999999999,26.700000000000006,11.819999999999999,26.672000000000004C12.641999999999998,26.621000000000006,13.222999999999999,26.317000000000004,13.518999999999998,25.781000000000006C13.613999999999999,25.609000000000005,13.636,25.263000000000005,13.665999999999999,23.463000000000005C13.697999999999999,21.510000000000005,13.711999999999998,21.322000000000003,13.838999999999999,21.043000000000006C13.915999999999999,20.877000000000006,14.027,20.697000000000006,14.088999999999999,20.648000000000007C14.192999999999998,20.56200000000001,14.2,20.732000000000006,14.2,23.068000000000005C14.199,25.646000000000004,14.173,25.957000000000004,13.915,26.453000000000003C13.857,26.566000000000003,13.747,26.713000000000005,13.67,26.783C13.535,26.906000000000002,13.478,27.221,13.572,27.316000000000003C13.726999999999999,27.470000000000002,14.504,27.228,14.927999999999999,26.894000000000002C15.649999999999999,26.322000000000003,15.735999999999999,25.849000000000004,15.741999999999999,22.433L15.745,20.429L15.963999999999999,20.45L16.183,20.47L16.219,23.090999999999998C16.26,26.041999999999998,16.266000000000002,26.084999999999997,16.768,26.654999999999998C17.053,26.976999999999997,17.34,27.154999999999998,17.807000000000002,27.293999999999997C18.432000000000002,27.481999999999996,18.62,27.191999999999997,18.200000000000003,26.688999999999997C17.743000000000002,26.141999999999996,17.721000000000004,25.932999999999996,17.746000000000002,22.694999999999997C17.763,20.618999999999996,17.763,20.618999999999996,17.897000000000002,20.739999999999995C18.179000000000002,20.995999999999995,18.233,21.415999999999993,18.233,23.362999999999996C18.233,25.780999999999995,18.302,26.010999999999996,19.156,26.432999999999996C19.555,26.627999999999997,19.666999999999998,26.651999999999997,20.177999999999997,26.653999999999996C20.721999999999998,26.655999999999995,20.754999999999995,26.647999999999996,20.775,26.505999999999997C20.791999999999998,26.391,20.724999999999998,26.312999999999995,20.471,26.157999999999998C20.138,25.953,19.907,25.691,19.762,25.360999999999997C19.707,25.233999999999998,19.67,24.401999999999997,19.645,22.688999999999997C19.608999999999998,20.295999999999996,19.601,20.186999999999998,19.451999999999998,19.811999999999998C19.250999999999998,19.307999999999996,18.944,18.909999999999997,18.555,18.645999999999997C18.454,18.58,18.352999999999998,18.525,18.222,18.483999999999998C18.383000000000003,18.468,18.539,18.450999999999997,18.69,18.429C20.262,18.22,21.093,18.046,21.76,17.787999999999997C23.171000000000003,17.244999999999997,24.125,16.342999999999996,24.642000000000003,15.063999999999997C24.688000000000002,14.949999999999996,24.734,14.841999999999997,24.773000000000003,14.754999999999997L25.171000000000003,14.787999999999997C27.222,14.960999999999997,28.877000000000002,15.207999999999997,30.150000000000002,15.530999999999997C30.848000000000003,15.707999999999997,30.981,15.728999999999997,30.818,15.635999999999997C30.666,15.551,29.336,15.25,28.436,15.099ZM22.422,15.068C22.189,15.58,21.539,16.238,21.014,16.496C20.496,16.752,19.683999999999997,16.947,18.764,17.04C18.134999999999998,17.104,14.626999999999999,17.122999999999998,14.047999999999998,17.066C12.130999999999998,16.878,11.056999999999999,16.509,10.264999999999999,15.77C9.514999999999999,15.068,9.165,14.115,9.225999999999999,12.942C9.264999999999999,12.208,9.441999999999998,11.747,9.905,11.187000000000001C10.325999999999999,10.677000000000001,10.769,10.362000000000002,11.290999999999999,10.202000000000002C11.727999999999998,10.068000000000001,13.068999999999999,10.056000000000001,14.871999999999998,10.172000000000002C15.668999999999999,10.223000000000003,16.328,10.223000000000003,17.124,10.172000000000002C19.009999999999998,10.053000000000003,20.269,10.066000000000003,20.733999999999998,10.210000000000003C21.465,10.436000000000003,22.130999999999997,11.044000000000002,22.531,11.854000000000003C22.711,12.216000000000003,22.746,12.370000000000003,22.772,12.929000000000002C22.808,13.699,22.675,14.517,22.422,15.068ZM12.912,11.762C11.839,11.574,11.226,13.411000000000001,12.049000000000001,14.349C12.440000000000001,14.794,12.787,14.867,13.221000000000002,14.597C13.623000000000001,14.346,13.841000000000001,13.876999999999999,13.841000000000001,13.269C13.841,12.458,13.472,11.862,12.912,11.762ZM19.425,11.872C18.352,11.684,17.738,13.519,18.561,14.458C18.953,14.903,19.299,14.977,19.734,14.705C20.135,14.455,20.354000000000003,13.985,20.354000000000003,13.377C20.354,12.569,19.985,11.971,19.425,11.872ZM16.539,15.484C16.516000000000002,15.558,16.404,15.668,16.291,15.727C16.005,15.874,15.799,15.823,15.497,15.548C15.31,15.379,15.225,15.29,15.168,15.467C15.114999999999998,15.631,15.447999999999999,15.96,15.705,16.061C15.941,16.155,16.11,16.158,16.366,16.051C16.62,15.944999999999999,16.842,15.659999999999998,16.842,15.474999999999998C16.842,15.303,16.595,15.311,16.539,15.484ZM16.222,14.909C16.385,14.765,16.422,14.469000000000001,16.266000000000002,14.312000000000001S15.793000000000001,14.179000000000002,15.669000000000002,14.355C15.525000000000002,14.561,15.602000000000002,14.718,15.705000000000002,14.885C15.865,15.009,16.08,15.034,16.222,14.909Z" />
+      </svg>
+    </a>
+  </li>
+  
+</ul>
+    </div>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="kxcoder.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">归档</a></li>
+  <li><a href="/about">关于我</a></li>
+  <li><a href="/todo">TODO</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Jackson 自定义序列化Java对象实现</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-02-07T22:21:35+08:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#CustomizeSerialize">Jackson自定义序列化方法</a></li>
+  <li><a href="#RegisterSerializer">自定义序列化方法注册到Jackson</a></li>
+  <li><a href="#JacksonCustomizeSample">Java对象序列化自定义示例</a></li>
+  <li><a href="#End">总结</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>关于Jackson工具类的相关学习和研究，先前已经写过一篇博文；但是，后来由于工作事情就草草结尾。此外，虽然对Jackson序列化和反序列化的实现机制进行了初步学习，但是现在看看，那时候的博客经验和技术水平决定了整篇博文结构并不是清晰明了，并且反序列化的整个简单的解析，对日常开发并没有直接帮助。对于Jackson这种模块化设计，轻巧灵活的扩展方法，多维度的性能效率优化，导致了最后博文的质量非常不好。因此，接下来几篇博文，将会以日常开发使用的一些API为入口，来分别介绍其使用方式和内部实现，然后在此基础上，对此博文进行分拆。</p>
+
+<p>在开发中，前后端交互的项目，现在一般都是基于JSON文本格式给出API接口，因此对于java对象的序列化就是十分重要的了。基于Spring MVC的配置中，我们配置<code>org.springframework.http.converter.json.MappingJacksonHttpMessageConverter</code> bean时，就是需要配置<code>messageConverters</code>转换器。而针对json的转换器，就可以使用Jackson的<code>objectMapper</code>对象了。</p>
+
+<p>返回给前端的<code>Response Body</code>一般需要良好的可读性，不能因为后端处理方便，就直接破坏前端展示。比如，我们后端使用枚举处理一些情况，但是如果把枚举英文或者数字返回给前端页面，对用户来说是非常不友好的。因此，这里就是涉及到了java对象自定义序列化的问题了。Jackson工具为我们提供了非常多的常见默认的序列化方法，以及一些扩展的接口；参考系统的序列化方法，我们就可以实现自定义的了。</p>
+
+<h2 id="a-idcustomizeserializejacksona"><a id="CustomizeSerialize">Jackson自定义序列化方法</a></h2>
+
+<p>在Jackson中，提供了多种方式去实现自定义的序列化方法。例如，<code>org.codehaus.jackson.map.JsonSerializableWithType</code>接口以及<code>org.codehaus.jackson.map.JsonSerializer</code>接口。</p>
+
+<h3 id="jsonserializablewithtype-">JsonSerializableWithType 接口</h3>
+
+<p>JsonSerializableWithType 接口主要提供了两个方法。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>JsonSerializableWithType 接口 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="cm">/**</span>
+</span><span class="line"><span class="cm"> * Interface that is to replace {@link JsonSerializable} to</span>
+</span><span class="line"><span class="cm"> * allow for dynamic type information embedding.</span>
+</span><span class="line"><span class="cm"> * </span>
+</span><span class="line"><span class="cm"> * @since 1.5</span>
+</span><span class="line"><span class="cm"> * @author tatu</span>
+</span><span class="line"><span class="cm"> */</span>
+</span><span class="line"><span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">&quot;deprecation&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">JsonSerializableWithType</span>
+</span><span class="line">    <span class="kd">extends</span> <span class="n">JsonSerializable</span>
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serializeWithType</span><span class="o">(</span><span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">,</span>
+</span><span class="line">            <span class="n">TypeSerializer</span> <span class="n">typeSer</span><span class="o">)</span>
+</span><span class="line">        <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span><span class="o">;</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nd">@Deprecated</span>
+</span><span class="line"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">JsonSerializable</span>
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span>
+</span><span class="line">        <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span><span class="o">;</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在早期还没有<code>JsonSerializableWithType</code>接口的时候，官方推荐使用<code>JsonSerializable</code>接口。但是，从version 1.5之后，Jackson提供了JsonSerializableWithType来替换JsonSerializable，因为JsonSerializable接口不支持处理某些额外的类型信息。</p>
+
+<p>但是，由于实现JsonSerializableWithType接口的方法比较麻烦，所以，Jackson对外提供了其他可以自定义序列化的抽象类<code>SerializerBase</code>和<code>ScalarSerializerBase</code>。其中ScalarSerializerBase是对SerializerBase的再次封装，它只针对输出了JSON 字符串，boolean或者数字类型才有用。</p>
+
+<p>继承<code>SerializerBase</code>抽象类，主要实现<code>serialize(TypeB value, JsonGenerator jgen, SerializerProvider provider)</code>方法即可，实现起来非常简单。此外,Jackson还提供了另一种简单易用的自定义序列化方法，给开发者使用，这就是<code>JsonSerializer</code>接口。</p>
+
+<h3 id="jsonserializer-">JsonSerializer 接口</h3>
+
+<p>JsonSerializer类就是一个抽象类，我们只需要简单实现其中的抽象方法就可以完成自定义的序列化工作。</p>
+
+<p>先来看看<code>JsonSerializer</code>抽象类的主要方法实现：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>JsonSerializer 接口 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="cm">/**</span>
+</span><span class="line"><span class="cm"> * ObjectMapper类定义的抽象API类来给JsonGenerator类完成序列化任意对象到JSON功能。</span>
+</span><span class="line"><span class="cm"> *&lt;p&gt;</span>
+</span><span class="line"><span class="cm"> * 需要说明的是，官方推荐使用继承SerializerBase类完成自定义序列化工作，替代使用本类。</span>
+</span><span class="line"><span class="cm"> * 主要是因为，SerializerBase类提供了更多的可选择的方法给开发者去定制会。</span>
+</span><span class="line"><span class="cm"> * 当然，如果你只需要简单的序列化功能，则继承这个类足够了。</span>
+</span><span class="line"><span class="cm"> */</span>
+</span><span class="line"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">JsonSerializer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span>
+</span><span class="line">        <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="cm">/**</span>
+</span><span class="line"><span class="cm">     * Method that can be called to ask implementation to serialize</span>
+</span><span class="line"><span class="cm">     * values of type this serializer handles, using specified type serializer</span>
+</span><span class="line"><span class="cm">     * for embedding necessary type information.</span>
+</span><span class="line"><span class="cm">     *&lt;p&gt;</span>
+</span><span class="line"><span class="cm">     * Default implementation will ignore serialization of type information,</span>
+</span><span class="line"><span class="cm">     * and just calls {@link #serialize}: serializers that can embed</span>
+</span><span class="line"><span class="cm">     * type information should override this to implement actual handling.</span>
+</span><span class="line"><span class="cm">     * Most common such handling is done by something like:</span>
+</span><span class="line"><span class="cm">     *&lt;pre&gt;</span>
+</span><span class="line"><span class="cm">     *  // note: method to call depends on whether this type is serialized as JSON scalar, object or Array!</span>
+</span><span class="line"><span class="cm">     *  typeSer.writeTypePrefixForScalar(value, jgen);</span>
+</span><span class="line"><span class="cm">     *  serialize(value, jgen, provider);</span>
+</span><span class="line"><span class="cm">     *  typeSer.writeTypeSuffixForScalar(value, jgen);</span>
+</span><span class="line"><span class="cm">     *&lt;/pre&gt;</span>
+</span><span class="line"><span class="cm">     */</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serializeWithType</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">,</span>
+</span><span class="line">            <span class="n">TypeSerializer</span> <span class="n">typeSer</span><span class="o">)</span>
+</span><span class="line">        <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span>
+</span><span class="line">    <span class="o">{</span>
+</span><span class="line">        <span class="n">serialize</span><span class="o">(</span><span class="n">value</span><span class="o">,</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">provider</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>同样，继承<code>JsonSerializer</code>类，实现serialize方法，就可以完成自定义序列化工作了。其实，和第一种方法相比，其本质上都是一样的，就是实现serialize序列化方法。</p>
+
+<h2 id="a-idregisterserializerjacksona"><a id="RegisterSerializer">自定义序列化方法注册到Jackson</a></h2>
+
+<p>Jackson提供了多种方式注册自定义序列化类，虽然官方指出第一种继承JsonSerializableWithType的方式不需要注册，但是测试了下，发现貌似不起作用。</p>
+
+<p>虽然注册的方式很多，但是主要是三种，并且最后一种在1.8版本以后已经标记为过时状态：</p>
+
+<ul>
+  <li>
+    <p>继承 <code>Module interface</code>接口，官方推荐使用模块接口来完成注册功能；</p>
+  </li>
+  <li>
+    <p>使用注解方式<code>@JsonSerialize</code>在方法或field上标记；</p>
+  </li>
+  <li>
+    <p>继承<code>CustomSerializerFactory</code>接口，通过addXxxMapping来自定义SerializerFactory。</p>
+  </li>
+</ul>
+
+<h3 id="module-interface">Module interface接口</h3>
+
+<p>模块接口，是Jackson在1.7以后的版本中给出的。Module接口，是Jackson专门提供了自定义序列化方法类注册到ObjectMapper实例上的接口，比如我们新增了一个数据类型。</p>
+
+<p>在开发过程中，我们只需要直接使用<code>SimpleModule</code>类就可以完成注册了，一般没有必要去实现<code>Module</code>抽象类。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Tips：其实Module也提供了反序列化来完成自定义类的注册工作，其他博文会再介绍。</p>
+  </blockquote>
+</blockquote>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Module interface接口 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="cm">/**</span>
+</span><span class="line"><span class="cm"> * Simple {@link Module} implementation that allows registration</span>
+</span><span class="line"><span class="cm"> * of serializers and deserializers, and bean serializer</span>
+</span><span class="line"><span class="cm"> * and deserializer modifiers.</span>
+</span><span class="line"><span class="cm"> * </span>
+</span><span class="line"><span class="cm"> * @since 1.7</span>
+</span><span class="line"><span class="cm"> */</span>
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleModule</span> <span class="kd">extends</span> <span class="n">Module</span>
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">_name</span><span class="o">;</span>
+</span><span class="line">    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">Version</span> <span class="n">_version</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// ........</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="nf">SimpleModule</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">Version</span> <span class="n">version</span><span class="o">)</span>
+</span><span class="line">    <span class="o">{</span>
+</span><span class="line">        <span class="n">_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+</span><span class="line">        <span class="n">_version</span> <span class="o">=</span> <span class="n">version</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// .......</span>
+</span><span class="line">
+</span><span class="line">        <span class="kd">public</span> <span class="n">SimpleModule</span> <span class="nf">addSerializer</span><span class="o">(</span><span class="n">JsonSerializer</span><span class="o">&lt;?&gt;</span> <span class="n">ser</span><span class="o">)</span>
+</span><span class="line">    <span class="o">{</span>
+</span><span class="line">        <span class="k">if</span> <span class="o">(</span><span class="n">_serializers</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">_serializers</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">SimpleSerializers</span><span class="o">();</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">        <span class="n">_serializers</span><span class="o">.</span><span class="na">addSerializer</span><span class="o">(</span><span class="n">ser</span><span class="o">);</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="c1">// .......</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="jsonserialize-">@JsonSerialize 注解</h3>
+
+<p>通过注解的方式注册序列化方法，对使用体验来说非常友好。但是会存在两个问题：首先，提供的序列化类的功能比较简单，然后，就是提供的粒度比较小，然后你想在全局的某个类型上都是有自定义序列化，则需要对每个对象类型上都需要标记注解。</p>
+
+<p><code>@JsonSerialize</code> 注解的配置参数有很多种，但是我们只需要using这种来指明具体的自定义序列化类就可以了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>@JsonSerialize 注解 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="cm">/**</span>
+</span><span class="line"><span class="cm"> * Annotation used for configuring serialization aspects, by attaching</span>
+</span><span class="line"><span class="cm"> * to &quot;getter&quot; methods or fields, or to value classes.</span>
+</span><span class="line"><span class="cm"> * When annotating value classes, configuration is used for instances</span>
+</span><span class="line"><span class="cm"> * of the value class but can be overridden by more specific annotations</span>
+</span><span class="line"><span class="cm"> * (ones that attach to methods or fields).</span>
+</span><span class="line"><span class="cm"> *&lt;p&gt;</span>
+</span><span class="line"><span class="cm"> * An example annotation would be:</span>
+</span><span class="line"><span class="cm"> *&lt;pre&gt;</span>
+</span><span class="line"><span class="cm"> *  &amp;#64;JsonSerialize(using=MySerializer.class,</span>
+</span><span class="line"><span class="cm"> *    as=MySubClass.class,</span>
+</span><span class="line"><span class="cm"> *    include=JsonSerialize.Inclusion.NON_NULL,</span>
+</span><span class="line"><span class="cm"> *    typing=JsonSerialize.Typing.STATIC</span>
+</span><span class="line"><span class="cm"> *  )</span>
+</span><span class="line"><span class="cm"> *&lt;/pre&gt;</span>
+</span><span class="line"><span class="cm"> * (which would be redundant, since some properties block others:</span>
+</span><span class="line"><span class="cm"> * specifically, &#39;using&#39; has precedence over &#39;as&#39;, which has precedence</span>
+</span><span class="line"><span class="cm"> * over &#39;typing&#39; setting)</span>
+</span><span class="line"><span class="cm"> *&lt;p&gt;</span>
+</span><span class="line"><span class="cm"> * NOTE: since version 1.2, annotation has also been applicable</span>
+</span><span class="line"><span class="cm"> * to (constructor) parameters</span>
+</span><span class="line"><span class="cm"> *</span>
+</span><span class="line"><span class="cm"> * @since 1.1</span>
+</span><span class="line"><span class="cm"> */</span>
+</span><span class="line"><span class="nd">@Target</span><span class="o">({</span><span class="n">ElementType</span><span class="o">.</span><span class="na">METHOD</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">FIELD</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">PARAMETER</span><span class="o">})</span>
+</span><span class="line"><span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+</span><span class="line"><span class="nd">@JacksonAnnotation</span>
+</span><span class="line"><span class="kd">public</span> <span class="nd">@interface</span> <span class="n">JsonSerialize</span>
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">    <span class="c1">// // // Annotations for explicitly specifying deserializer</span>
+</span><span class="line">
+</span><span class="line">    <span class="cm">/**</span>
+</span><span class="line"><span class="cm">     * Serializer class to use for</span>
+</span><span class="line"><span class="cm">     * serializing associated value. Depending on what is annotated,</span>
+</span><span class="line"><span class="cm">     * value is either an instance of annotated class (used globablly</span>
+</span><span class="line"><span class="cm">     * anywhere where class serializer is needed); or only used for</span>
+</span><span class="line"><span class="cm">     * serializing property access via a getter method.</span>
+</span><span class="line"><span class="cm">     */</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">JsonSerializer</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">using</span><span class="o">()</span> <span class="k">default</span> <span class="n">JsonSerializer</span><span class="o">.</span><span class="na">None</span><span class="o">.</span><span class="na">class</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// .......</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="customserializerfactory">CustomSerializerFactory接口</h3>
+
+<p>最后一种注册自定义序列化类的方法就是通过使用自定义序列化factory工厂，也就是继承SerializerFactory类。</p>
+
+<p>首先，我们使用或者扩展已经存在的<code>CustomSerializerFactory</code>。然后调用实例对象实现的<code>addSpecificMapping</code>或者<code>addGenericMapping</code>方法增加mapping关系，把自定义的序列化方法add到序列化列表中。最后，我们可以把这个工厂set到ObjectMapper实例对象上。</p>
+
+<h2 id="a-idjacksoncustomizesamplejavaa"><a id="JacksonCustomizeSample">Java对象序列化自定义示例</a></h2>
+
+<p>下面给出使用自定义序列化类来完成Java对象到JSON的转换工作。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Java对象序列化自定义示例 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JsonUtils</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">JsonUtils</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">ObjectMapper</span> <span class="n">objectMapper</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ObjectMapper</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">static</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">ALLOW_COMMENTS</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">ALLOW_UNQUOTED_FIELD_NAMES</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">ALLOW_SINGLE_QUOTES</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">ALLOW_UNQUOTED_CONTROL_CHARS</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">INTERN_FIELD_NAMES</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">JsonParser</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">CANONICALIZE_FIELD_NAMES</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">DeserializationConfig</span><span class="o">.</span><span class="na">Feature</span><span class="o">.</span><span class="na">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span><span class="line">        <span class="n">objectMapper</span><span class="o">.</span><span class="na">setSerializationInclusion</span><span class="o">(</span><span class="n">JsonSerialize</span><span class="o">.</span><span class="na">Inclusion</span><span class="o">.</span><span class="na">NON_NULL</span><span class="o">);</span><span class="c1">// JSON节点不包含属性值为NULL</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">encode</span><span class="o">(</span><span class="n">Object</span> <span class="n">obj</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">try</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">//            SimpleModule SerializeModule = new SimpleModule(&quot;SerializeModule&quot;, new Version(1, 0, 0, null));</span>
+</span><span class="line"><span class="c1">//            SerializeModule.addSerializer(new CustomizeJsonSerializerBaser(TypeB.class)); // assuming serializer declares correct class to bind to</span>
+</span><span class="line"><span class="c1">//            objectMapper.registerModule(SerializeModule);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">//            CustomSerializerFactory customSerializerFactory = new CustomSerializerFactory();</span>
+</span><span class="line"><span class="c1">//            customSerializerFactory.addSpecificMapping(TypeB.class,new CustomizeJsonSerializerBaser(TypeB.class));</span>
+</span><span class="line"><span class="c1">//            objectMapper.setSerializerFactory(customSerializerFactory);</span>
+</span><span class="line">
+</span><span class="line">            <span class="k">return</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">obj</span><span class="o">);</span>
+</span><span class="line">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">JsonGenerationException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;encode(Object)&quot;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span> <span class="c1">//$NON-NLS-1$</span>
+</span><span class="line">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">JsonMappingException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;encode(Object)&quot;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span> <span class="c1">//$NON-NLS-1$</span>
+</span><span class="line">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;encode(Object)&quot;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span> <span class="c1">//$NON-NLS-1$</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：JsonUtils类封装了Jackson序列化操作。代码中，提供了通过Module接口方式和创建<code>CustomSerializerFactory</code>对象来完成注册加载。</p>
+
+  </blockquote>
+</blockquote>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Java对象序列化自定义示例 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomizeJsonSerializer</span> <span class="kd">extends</span> <span class="n">JsonSerializer</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@Override</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">List</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonProcessingException</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">jgen</span><span class="o">.</span><span class="na">writeStartArray</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">va</span> <span class="o">:</span><span class="n">value</span><span class="o">){</span>
+</span><span class="line">            <span class="n">jgen</span><span class="o">.</span><span class="na">writeString</span><span class="o">(</span><span class="n">va</span><span class="o">.</span><span class="na">toString</span><span class="o">()+</span><span class="s">&quot;TestSerialize&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="c1">//jgen.writeString(Joiner.on(&quot;;&quot;).join(value));</span>
+</span><span class="line">        <span class="n">jgen</span><span class="o">.</span><span class="na">writeEndArray</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomizeJsonSerializerBaser</span> <span class="kd">extends</span> <span class="n">SerializerBase</span><span class="o">&lt;</span><span class="n">TypeB</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// 注解必须有默认构造韩式</span>
+</span><span class="line">    <span class="kd">public</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(){</span>
+</span><span class="line">        <span class="kd">super</span><span class="o">(</span><span class="n">TypeB</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">protected</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">TypeB</span><span class="o">&gt;</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">        <span class="kd">super</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">protected</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(</span><span class="n">JavaType</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="kd">super</span><span class="o">(</span><span class="n">type</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">protected</span> <span class="nf">CustomizeJsonSerializerBaser</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">t</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">dummy</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="kd">super</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">dummy</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@Override</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serialize</span><span class="o">(</span><span class="n">TypeB</span> <span class="n">value</span><span class="o">,</span> <span class="n">JsonGenerator</span> <span class="n">jgen</span><span class="o">,</span> <span class="n">SerializerProvider</span> <span class="n">provider</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">JsonGenerationException</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">jgen</span><span class="o">.</span><span class="na">writeString</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span><span class="line">       <span class="c1">// System.out.println(&quot;======================&quot;);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：这里提供了两种不同的方式开发自定义序列化方法。目前，从1.8开始，官方推荐使用第二种方式实现自定义序列化类，但是如果只需要简单的序列化功能，使用第一种完全可以满足需求。</p>
+
+  </blockquote>
+</blockquote>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Java对象序列化自定义示例 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+<span class="line-number">76</span>
+<span class="line-number">77</span>
+<span class="line-number">78</span>
+<span class="line-number">79</span>
+<span class="line-number">80</span>
+<span class="line-number">81</span>
+<span class="line-number">82</span>
+<span class="line-number">83</span>
+<span class="line-number">84</span>
+<span class="line-number">85</span>
+<span class="line-number">86</span>
+<span class="line-number">87</span>
+<span class="line-number">88</span>
+<span class="line-number">89</span>
+<span class="line-number">90</span>
+<span class="line-number">91</span>
+<span class="line-number">92</span>
+<span class="line-number">93</span>
+<span class="line-number">94</span>
+<span class="line-number">95</span>
+<span class="line-number">96</span>
+<span class="line-number">97</span>
+<span class="line-number">98</span>
+<span class="line-number">99</span>
+<span class="line-number">100</span>
+<span class="line-number">101</span>
+<span class="line-number">102</span>
+<span class="line-number">103</span>
+<span class="line-number">104</span>
+<span class="line-number">105</span>
+<span class="line-number">106</span>
+<span class="line-number">107</span>
+<span class="line-number">108</span>
+<span class="line-number">109</span>
+<span class="line-number">110</span>
+<span class="line-number">111</span>
+<span class="line-number">112</span>
+<span class="line-number">113</span>
+<span class="line-number">114</span>
+<span class="line-number">115</span>
+<span class="line-number">116</span>
+<span class="line-number">117</span>
+<span class="line-number">118</span>
+<span class="line-number">119</span>
+<span class="line-number">120</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ClassA</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">hobby</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">TypeB</span> <span class="n">b</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">age</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@JsonSerialize</span><span class="o">(</span><span class="n">using</span> <span class="o">=</span> <span class="n">CustomizeJsonSerializerBaser</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">TypeB</span> <span class="nf">getB</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">b</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setB</span><span class="o">(</span><span class="n">TypeB</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@JsonSerialize</span><span class="o">(</span><span class="n">using</span> <span class="o">=</span> <span class="n">CustomizeJsonSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">getHobby</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">hobby</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setHobby</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">hobby</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">hobby</span> <span class="o">=</span> <span class="n">hobby</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@Override</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&quot;ClassA{&quot;</span> <span class="o">+</span>
+</span><span class="line">                <span class="s">&quot;name=&#39;&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="sc">&#39;\&#39;&#39;</span> <span class="o">+</span>
+</span><span class="line">                <span class="s">&quot;, age=&quot;</span> <span class="o">+</span> <span class="n">age</span> <span class="o">+</span>
+</span><span class="line">                <span class="s">&quot;, hobby=&quot;</span> <span class="o">+</span> <span class="n">hobby</span> <span class="o">+</span>
+</span><span class="line">                <span class="sc">&#39;}&#39;</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TypeB</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">String</span> <span class="n">address</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kt">int</span> <span class="n">code</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="nf">TypeB</span><span class="o">(</span><span class="n">String</span> <span class="n">address</span><span class="o">,</span> <span class="kt">int</span> <span class="n">code</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">address</span> <span class="o">=</span> <span class="n">address</span><span class="o">;</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getAddress</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">address</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAddress</span><span class="o">(</span><span class="n">String</span> <span class="n">address</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">address</span> <span class="o">=</span> <span class="n">address</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getCode</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">code</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setCode</span><span class="o">(</span><span class="kt">int</span> <span class="n">code</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="nd">@Override</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="s">&quot;TypeB{&quot;</span> <span class="o">+</span>
+</span><span class="line">                <span class="s">&quot;address=&#39;&quot;</span> <span class="o">+</span> <span class="n">address</span> <span class="o">+</span> <span class="sc">&#39;\&#39;&#39;</span> <span class="o">+</span>
+</span><span class="line">                <span class="s">&quot;, code=&quot;</span> <span class="o">+</span> <span class="n">code</span> <span class="o">+</span>
+</span><span class="line">                <span class="sc">&#39;}&#39;</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JsonSerializeTest</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">ClassA</span> <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ClassA</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">a</span><span class="o">.</span><span class="na">setAge</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+</span><span class="line">        <span class="n">a</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">&quot;ketao1989&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">a</span><span class="o">.</span><span class="na">setHobby</span><span class="o">(</span><span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">(</span><span class="s">&quot;dinner&quot;</span><span class="o">,</span><span class="s">&quot;swimming&quot;</span><span class="o">,</span><span class="s">&quot;music&quot;</span><span class="o">,</span><span class="s">&quot;programming&quot;</span><span class="o">));</span>
+</span><span class="line">        <span class="n">a</span><span class="o">.</span><span class="na">setB</span><span class="o">(</span><span class="k">new</span> <span class="nf">TypeB</span><span class="o">(</span><span class="s">&quot;jiangxi&quot;</span><span class="o">,</span><span class="mi">320000</span><span class="o">));</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">String</span> <span class="n">aJsonStr</span> <span class="o">=</span> <span class="n">JsonUtils</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+</span><span class="line">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">aJsonStr</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">ClassA</span> <span class="n">aa</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">ClassA</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">aa</span><span class="o">.</span><span class="na">setAge</span><span class="o">(</span><span class="mi">19</span><span class="o">);</span>
+</span><span class="line">        <span class="n">aa</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">&quot;kexiaoxiaoxi&quot;</span><span class="o">);</span>
+</span><span class="line">        <span class="n">aa</span><span class="o">.</span><span class="na">setHobby</span><span class="o">(</span><span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">(</span><span class="s">&quot;MacOs&quot;</span><span class="o">,</span> <span class="s">&quot;Linux&quot;</span><span class="o">,</span> <span class="s">&quot;Windows&quot;</span><span class="o">,</span> <span class="s">&quot;Unknown&quot;</span><span class="o">));</span>
+</span><span class="line">        <span class="n">aa</span><span class="o">.</span><span class="na">setB</span><span class="o">(</span><span class="k">new</span> <span class="nf">TypeB</span><span class="o">(</span><span class="s">&quot;beijing&quot;</span><span class="o">,</span> <span class="mi">100000</span><span class="o">));</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">String</span> <span class="n">aaJsonStr</span> <span class="o">=</span> <span class="n">JsonUtils</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="n">aa</span><span class="o">);</span>
+</span><span class="line">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">aaJsonStr</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">        <span class="n">String</span> <span class="n">bb</span> <span class="o">=</span> <span class="n">JsonUtils</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="k">new</span> <span class="nf">TypeB</span><span class="o">(</span><span class="s">&quot;beijing&quot;</span><span class="o">,</span><span class="mi">100000</span><span class="o">));</span>
+</span><span class="line">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">bb</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：测试相关类。目前都是通过注解的方式，可以把相关的注释取消，测试其他实现方式完成自定义序列化功能。</p>
+  </blockquote>
+</blockquote>
+
+<h2 id="a-idenda"><a id="End">总结</a></h2>
+
+<ul>
+  <li>
+    <p>官方序列化简要介绍：<a href="http://wiki.fasterxml.com/JacksonHowToCustomSerializers">http://wiki.fasterxml.com/JacksonHowToCustomSerializers</a></p>
+  </li>
+  <li>
+    <p>测试代码svn地址:<a href="http://code.taobao.org/svn/dubbocli/trunk">http://code.taobao.org/svn/dubbocli/trunk</a></p>
+  </li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">柯小小西</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-02-07T22:21:35+08:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:21 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>java</a>, <a class='category' href='/blog/categories/json/'>json</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_fb">Facebook</a>
+	<a class="jiathis_button_twitter">Twitter</a>
+	<a class="jiathis_button_digg">Digg</a>
+	<a class="jiathis_button_fav">收藏夹</a>
+	<a href="http://www.jiathis.com/share?uid=1933358" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1395248101949397" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<!-- <div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script> -->
+<!-- UY END -->
+ 
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/27/Git-Reset-Operate/" title="Previous Post: Git工具回滚线上错误提交">&laquo; Git工具回滚线上错误提交</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/02/10/Jackson-Deserialize-Java-Object-Implementation/" title="Next Post: Jackson 自定义反序列化Java对象实现">Jackson 自定义反序列化Java对象实现 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>评论</h1>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END --> 
+ </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>本人</h1>
+  <p>技术还处于半吊子的开发攻城狮。爱好各种技术，崇拜各种技术大牛达人。始终觉得，好记忆不如烂笔头。<a href="/about/">更多介绍...</a></p>
+  <p>声明：本站使用的图片等，甚至部分文章都来自网络，原作者享有对著作的一切权利。</p>
+  <p>欢迎在新浪微博上关注我：<wb:follow-button uid="2265041632" type="gray_3" width="100%" height="24" ></wb:follow-button></p>
+</section><section>
+  <h1>最新文章</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/09/05/zookeeper-programmer-guide/">Zookeeper 编程指南</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/30/nginx-proxy-configure-and-sduty/">Nginx 反向代理配置和工作原理</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/04/29/LogBack-Implemention-And-Slf4j-Mdc/">Slf4j MDC 使用和 基于 Logback 的实现分析</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/26/Python-Tutoril-Python-Object-Oriented-Programming/">Python 教程学习之 Python 面向对象编程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/17/Python-Tutoril-Python-Functional-Programing/">Python 教程学习之 Python 函数式编程</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section> 
+  <h1>文章分类</h1> 
+  <ul id="categories"> 
+    <li class='category'><a href='/blog/categories/gc/'>gc (1)</a></li>
+<li class='category'><a href='/blog/categories/git/'>git (1)</a></li>
+<li class='category'><a href='/blog/categories/ide/'>ide (2)</a></li>
+<li class='category'><a href='/blog/categories/java/'>java (15)</a></li>
+<li class='category'><a href='/blog/categories/json/'>json (3)</a></li>
+<li class='category'><a href='/blog/categories/linux/'>linux (5)</a></li>
+<li class='category'><a href='/blog/categories/log/'>log (2)</a></li>
+<li class='category'><a href='/blog/categories/mysql/'>mysql (3)</a></li>
+<li class='category'><a href='/blog/categories/nginx/'>nginx (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>python (5)</a></li>
+<li class='category'><a href='/blog/categories/redis/'>redis (6)</a></li>
+<li class='category'><a href='/blog/categories/redis-cookbook/'>redis cookbook (6)</a></li>
+<li class='category'><a href='/blog/categories/script/'>script (3)</a></li>
+<li class='category'><a href='/blog/categories/spring/'>spring (2)</a></li>
+<li class='category'><a href='/blog/categories/thread/'>thread (2)</a></li>
+<li class='category'><a href='/blog/categories/tools/'>tools (2)</a></li>
+<li class='category'><a href='/blog/categories/translation/'>translation (1)</a></li>
+<li class='category'><a href='/blog/categories/zookeeper/'>zookeeper (1)</a></li>
+ 
+  </ul> 
+</section><section id="tag-clouds" style="text-decoration:none">
+<h1>最新评论</h1>
+  <!-- UYAN NEW COMMENT BEGIN -->
+<div id="uyan_newcmt_unit"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=1933358"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+<!-- UYAN NEW COMMENT END -->
+</section>
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 柯小小西 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>-感谢<a href="https://github.com"> Github </a> 提供Page功能</span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+</body>
+</html>

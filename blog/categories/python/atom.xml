@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:19:26+08:00</updated>
+  <updated>2015-10-07T12:48:59+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -12,6 +12,1641 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python 教程学习之 Python 面向对象编程]]></title>
+    <link href="http://kxcoder.github.io/blog/2015/02/26/Python-Tutoril-Python-Object-Oriented-Programming/"/>
+    <updated>2015-02-26T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2015/02/26/Python-Tutoril-Python-Object-Oriented-Programming</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#BasicGuide">Python 面向对象编程介绍</a></li>
+  <li><a href="#AdvancedTech">Python 面向对象编程技巧</a></li>
+  <li><a href="#SourceCode">Python 面向对象编程代码示例</a></li>
+</ol>
+
+<p><br />
+## <a id="Intro">前言</a></p>
+
+<p>在之前的学习中，基本上都是使用类似于面对过程的方式来写代码，学习各种 Python 的基础知识，接下来，我们需要继续学习面向对象的Python，也就是类对象继承等概念。</p>
+
+<p>对象和属性，这些概念在任务编程语言中，其定义都是一致的。我们通过一个对象来表示一个物体，而这个物体的一些特征，就是对象中的属性。比如，一个人，作为一个对象 Person，则会有<code>姓名，身高，体重，性别，出生日期</code>等属性，这些属性就是这个人的对外特性了。</p>
+
+<h2 id="a-idbasicguidepython-a"><a id="BasicGuide">Python 面向对象编程介绍</a></h2>
+
+<p>类，就是对一类物体进行抽象的表示，比如上面的 Person；而实例，则是具体化了每一个类的属性值，其可以决定某一个物体特征的对象。</p>
+
+<p>在 Python 中，可以如下来定义一个类：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">&quot;&quot;&quot;docstring for Person&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">super</span><span class="p">(</span><span class="n">Person</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><code>class</code> 用来表示这是一个类，<code>object</code> 表示该类继承的父类，默认是 object，但是推荐是写上父类，即使其继承 <code>object</code>类。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Tips：Python 中，默认规定，类下面的第一行注释，是该类的 doc 说明。</p>
+
+    <p>此外，<code>__xx__</code>形式的属性和方法，在Python中都是有特殊用途的，比如 <strong>len</strong> 方法返回长度，再比如 <strong>init</strong> 方法是类对象初始化时调用的，<strong>new</strong> 方法则是构造对象的时候调用的，即在 <code>__init__</code> 之前调用。</p>
+
+  </blockquote>
+</blockquote>
+
+<p>接下来，需要说明的是，Python 的权限控制。</p>
+
+<p>和 Java 完全不一样，Python 没有关键字来说明该变量属性或者方法是 私有的 还是受保护的，亦或者是公共的。</p>
+
+<p>Python 使用一种约定的方式来，声明访问限制的粒度。</p>
+
+<ul>
+  <li>
+    <p>xx ：这种方式命名的变量或者方法，都是 <code>public</code>粒度的；</p>
+  </li>
+  <li>
+    <p>_xx ：这种方式命名的变量或者方法，都是 <code>protected</code>粒度的；</p>
+  </li>
+  <li>
+    <p>__xx ：私有属性的变量或者方法，外部调用会报错的。</p>
+  </li>
+</ul>
+
+<p>Python 中拥有的一些特殊功能的方法：</p>
+
+<ul>
+  <li>
+    <p>type() ：获取对象的类型，比如，type(‘abc’)会返回 <code>&lt;type 'str'&gt;</code> .</p>
+  </li>
+  <li>
+    <p>isinstance()：type 方法不能很好的判断拥有继承关系的对象，而 <code>isinstance</code> 则可以。例如：<code>isinstance(person,object) #person是Person的实例</code>.</p>
+  </li>
+  <li>
+    <p>dir()：想要获取一个类下面所有的方法吗？使用 dir 就可以了，比如<code>dir('abc')</code></p>
+  </li>
+  <li>
+    <p>hasattr/getattr/setattr()：依次是判断一个对象是否有指定属性，获取该属性，设置某个属性</p>
+  </li>
+</ul>
+
+<h2 id="a-idadvancedtechpython-a"><a id="AdvancedTech">Python 面向对象编程技巧</a></h2>
+
+<p>Python 中还有一些比较高大上的技巧。</p>
+
+<p><em><code>@property</code>装饰器</em></p>
+
+<p>装饰器概念，在 <code>Python 函数式编程</code> 中已经介绍了。我们在类的代码 coding 中，有一些可能想要把方法使用如同属性使用般方便，则可以使用<code>@property</code>装饰器。</p>
+
+<p>注解方式，如下所示：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nd">@property</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__age</span>
+</span><span class='line'>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@age.setter</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__age</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><em>metaclass 元类</em></p>
+
+<p>Python 中，元类是一个很神奇的东西，由于其涉及到了底层的类结构构造，所以全部深入理解起来，可能会比较复杂。</p>
+
+<p>关于元类的资料，可以参考<a href="http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python</a>，第一个 answer 回答的特别棒。</p>
+
+<p>当我们定义了类以后，就可以根据这个类创建出实例，所以：先定义类，然后创建实例。</p>
+
+<p>但是如果我们想创建出类呢？那就必须根据metaclass创建出类，所以：先定义metaclass，然后创建类。</p>
+
+<p>连接起来就是：先定义metaclass，就可以创建类，最后创建实例。</p>
+
+<p>所以，metaclass允许你创建类或者修改类。换句话说，你可以把类看成是metaclass创建出来的“实例”。</p>
+
+<p>现在，一个简单的示例，就是，对于该类所有的自定义属性，其name都大写。</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Female</span><span class="p">(</span><span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">&quot;&quot;&quot;docstring for Female&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">log_construct</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">class_parent</span><span class="p">,</span> <span class="n">class_attr</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;==----==---contruct---===---&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">upper_attr</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">class_attr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">):</span>  <span class="c"># 不能改变class自带的属性</span>
+</span><span class='line'>            <span class="n">upper_attr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">upper_attr</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">class_parent</span><span class="p">,</span> <span class="n">upper_attr</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">married</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__married</span> <span class="o">=</span> <span class="n">married</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">log_construct</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span> <span class="o">==</span> <span class="err">‘</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">main</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">’</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">felame</span> <span class="o">=</span> <span class="n">Female</span><span class="p">(</span><span class="err">‘</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">felame</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">felame</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Female</span><span class="p">,</span> <span class="s">&#39;MARRIED&#39;</span><span class="p">)</span> <span class="c"># 返回Ture</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2 id="a-idsourcecodepython-a"><a id="SourceCode">Python 面向对象编程代码示例</a></h2>
+
+<p>这里主要是两个类，涉及到继承，和一些面向对象的使用方法。</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;usrbinenv-python&quot;</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># -&lt;em&gt;- coding: utf-8 -&lt;/em&gt;-</span>
+</span><span class='line'><span class="c"># @Date    : 2015-02-22 19:49:20</span>
+</span><span class='line'><span class="c"># @Author  : ketao1989</span>
+</span><span class='line'><span class="c"># @Version : $Id$&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">json</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="err">‘</span><span class="n">utf8</span><span class="err">’</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">&quot;&quot;&quot;docstring for Person&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">super</span><span class="p">(</span><span class="n">Person</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@property</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__name</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@name.setter</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tranform_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__tranform_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;_test&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@property</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__age</span>
+</span><span class='line'>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@age.setter</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__age</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> &#39;s age is : </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span> <span class="o">==</span> <span class="err">‘</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">main</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">’</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="err">‘</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">person</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">person</span><span class="o">.</span><span class="n">name</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">person</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">os</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="err">‘</span><span class="n">PATH</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">print</span> <span class="nb">dir</span><span class="p">(</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;usrbinenv-python-1&quot;</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># -&lt;em&gt;- coding: utf-8 -&lt;/em&gt;-</span>
+</span><span class='line'><span class="c"># @Date    : 2015-02-22 20:34:46</span>
+</span><span class='line'><span class="c"># @Author  : ketao1989</span>
+</span><span class='line'><span class="c"># @Version : $Id$&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">Person</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">logging</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">json</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="err">‘</span><span class="n">utf8</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Female</span><span class="p">(</span><span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">&quot;&quot;&quot;docstring for Female&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">log_construct</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">class_parent</span><span class="p">,</span> <span class="n">class_attr</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;==----==---contruct---===---&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">upper_attr</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">class_attr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">):</span>  <span class="c"># 不能改变class自带的属性</span>
+</span><span class='line'>            <span class="n">upper_attr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">upper_attr</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">class_parent</span><span class="p">,</span> <span class="n">upper_attr</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">married</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__married</span> <span class="o">=</span> <span class="n">married</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">log_construct</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@property</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">married</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__married</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@married.setter</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">married</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">__married</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot;_Female____&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">prefix</span> <span class="o">=</span> <span class="n">Person</span><span class="o">.</span><span class="n">Person</span><span class="o">.</span><span class="n">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;,married is : </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MARRIED</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span> <span class="o">==</span> <span class="err">‘</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">main</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">’</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">felame</span> <span class="o">=</span> <span class="n">Female</span><span class="p">(</span><span class="err">‘</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">felame</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">felame</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Female</span><span class="p">,</span> <span class="s">&#39;MARRIED&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="n">Female</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Female</span><span class="p">,</span> <span class="s">&#39;job&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">felame</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="s">&#39;dev&#39;</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">felame</span><span class="p">,</span> <span class="s">&#39;job&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">felame</span><span class="o">.</span><span class="n">name</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">felame1</span> <span class="o">=</span> <span class="n">Female</span><span class="p">(</span><span class="s">&#39;ketao&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Female</span><span class="p">,</span> <span class="s">&#39;job&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">felame1</span><span class="p">,</span> <span class="s">&#39;job&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">felame</span><span class="p">,</span> <span class="s">&#39;job&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">felame</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__class__</span>
+</span><span class='line'><span class="k">print</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">felame</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+</span><span class='line'><span class="n">json_str</span> <span class="o">=</span> <span class="s">&#39;{&quot;_Person__name&quot;: &quot;ketao1989&quot;, &quot;_Person__age&quot;: 100, &quot;job&quot;: &quot;dev&quot;, &quot;_Female__married&quot;: false}&#39;</span>
+</span><span class='line'><span class="n">felame2</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">felame2</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes : 在Female类中，继承需要写成<code>Person.Person</code>的形式，前面的<code>Person</code>是module,后面的 <code>Person</code>才是类。</p>
+
+    <p>此外，使用metaClass方式更改属性时，只会修改该类自己的属性，而不会更改其继承的父类的属性名。</p>
+  </blockquote>
+</blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python 教程学习之 Python 函数式编程]]></title>
+    <link href="http://kxcoder.github.io/blog/2015/02/17/Python-Tutoril-Python-Functional-Programing/"/>
+    <updated>2015-02-17T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2015/02/17/Python-Tutoril-Python-Functional-Programing</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#FunctionalProgram">Python 函数式编程</a></li>
+  <li><a href="#Decorator">Python 装饰器</a></li>
+</ol>
+
+<p><br />
+## <a id="Intro">前言</a></p>
+
+<p>函数式编程是一种比较抽象的编程范式，其将各种指令计算运行作为数学中函数计算一样，尽量避免状态和变量的概念，因此函数式编程，一大特点就是无副作用，这对于并发编程大行其道的今天，是非常优良的特点。</p>
+
+<p>Python 作为一个动态脚本语言，其很早就支持了函数式编程范式。</p>
+
+<h2 id="a-idfunctionalprogrampython-a"><a id="FunctionalProgram">Python 函数式编程</a></h2>
+
+<p>Python 函数式编程，涉及太多的内容。简单介绍几个点。</p>
+
+<h3 id="section-1">高阶函数</h3>
+
+<p>所谓高阶函数，和数学上的高阶函数定义基本一样，就是对函数进行计算处理的函数。其处理对象是另一个函数。</p>
+
+<p><em>Map 和 Reduce 函数</em></p>
+
+<p>云计算中，关于 MapReduce 的并行计算框架，在其他很多编程语言中，都会提供 API 方法。即使在Java这种笨重的语言中，也已经提供了相关的方法给开发者使用。</p>
+
+<p>Python 的 map 方法，表示分别对列表中的元素独立处理；Reduce 方法，则表示对map处理完的结果，按照指定的方式进行聚合处理。</p>
+
+<p>看看示例代码：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">lowerLetter</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">c</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">=</span> <span class="err">‘</span><span class="n">a</span><span class="err">’</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="err">‘</span><span class="n">z</span><span class="err">’</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">True</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">False</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">firstUpper</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">ss</span> <span class="o">=</span> <span class="err">‘’</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">lowerLetter</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+</span><span class='line'>                <span class="n">ss</span> <span class="o">=</span> <span class="n">ss</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="err">‘</span><span class="n">A</span><span class="err">’</span><span class="p">)</span> <span class="o">-</span> <span class="nb">ord</span><span class="p">(</span><span class="err">‘</span><span class="n">a</span><span class="err">’</span><span class="p">))</span>
+</span><span class='line'>            <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">ss</span> <span class="o">=</span> <span class="n">ss</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">lowerLetter</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+</span><span class='line'>            <span class="n">ss</span> <span class="o">=</span> <span class="n">ss</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">ss</span> <span class="o">=</span> <span class="n">ss</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="nb">ord</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">))</span>
+</span><span class='line'><span class="k">return</span> <span class="n">ss</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">mergeWords</span><span class="p">(</span><span class="n">strA</span><span class="p">,</span> <span class="n">strB</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">strA</span> <span class="o">+</span> <span class="err">‘</span><span class="o">-</span><span class="err">‘</span> <span class="o">+</span> <span class="n">strB</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">mm</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">firstUpper</span><span class="p">,</span> <span class="p">[</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">mm</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">rr</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">mergeWords</span><span class="p">,</span> <span class="n">mm</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">rr</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes ：<br />
+- map 方法，对每个列表的元素处理，开头字符大写，其他字母都小写。代码中使用了最简单的原始字符处理方式处理，主要是学习下python的字节操作方法。</p>
+
+    <ul>
+      <li>Reduce方法，则把所有的单词都聚合在一起，使用<code>-</code>相连。reduce 方法会自动依次取出上一次的reduce结果和接下来的元素，再调用reduce处理。</li>
+    </ul>
+
+  </blockquote>
+</blockquote>
+
+<p><em>filter 函数</em></p>
+
+<p>filter 函数用来按照我们的要求，过滤队列。我们首先，给出一个过滤条件来依次判断列表的元素是否满足，根据返回的<code>True</code>或则<code>False</code>来决定去留。</p>
+
+<p>看看示例代码：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">subStr</span><span class="o">=</span><span class="err">’</span><span class="n">z</span><span class="err">’</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">ss</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">subStr</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'><span class="c"># [‘zfc’, ‘Azc’]</span>
+</span><span class='line'><span class="n">ff</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">contains</span><span class="p">,</span> <span class="p">[</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">ff</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><em>sorted 函数</em></p>
+
+<p>排序方法，对列表按照比较函数的返回结果，进行排序，返回排序完之后的列表。</p>
+
+<p>看看示例代码：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;azc-abc-zfc&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">sl</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">sl</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">revertSortCmp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">x</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">y</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">1</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;zfc-abc-azc&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">rsl</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">],</span> <span class="n">revertSortCmp</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">rsl</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3 id="section-2">返回函数</h3>
+
+<p>所谓返回函数，其实这也是函数式编程的核心之一。因为有了返回函数，我们可以确保函数式编程方法在获取结果的时候，才会执行；而不是，赋值函数的时候，立即执行。</p>
+
+<p>这种延迟计算的特性，使得很多时候，可以获得更好的计算性能。</p>
+
+<p>看看示例代码：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">lazy_tranform</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">resTotal</span> <span class="o">=</span> <span class="p">[]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">tranform</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">xf</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="s">&#39;-tranform&#39;</span>
+</span><span class='line'>        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">resTotal</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">resTotal</span>
+</span><span class='line'><span class="k">return</span> <span class="n">tranform</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">lf</span> <span class="o">=</span> <span class="n">lazy_tranform</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="c">#&amp;lt;function tranform at 0x1006309b0&amp;gt;</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lf</span>
+</span><span class='line'><span class="c">#([‘abc-tranform’, ‘zfc-tranform’, ‘Azc-tranform’], [‘abc-tranform’, ‘zfc-tranform’, ‘Azc-tranform’])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lf</span><span class="p">()</span>
+</span><span class='line'><span class="c">#([‘abc-tranform’, ‘zfc-tranform’, ‘Azc-tranform’], [‘abc-tranform’, ‘zfc-tranform’, ‘Azc-tranform’, ‘abc-tranform’, ‘zfc-tranform’, ‘Azc-tranform’])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lf</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes ：可以看到上面，对于<code>resTotal</code>变量，当函数多次运行，结果会重复 append 到列表中。 也就是说，对于返回函数，这种变量<code>resTotal</code>定义相对于是全局的，所有使用该函数的地方，都会这个变量进行变更。</p>
+
+    <p>上面的代码，如果不了解，是很难定位到错误的。下面的代码，告诉你，如果你非要这样子写，应该如何处理这种涉及到<code>闭包</code>的问题。</p>
+
+  </blockquote>
+</blockquote>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">closure_tranform</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">tranform</span><span class="p">():</span>
+</span><span class='line'>            <span class="n">xf</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="err">‘</span><span class="o">-</span><span class="n">tranform</span><span class="err">’</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">xf</span>
+</span><span class='line'>        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tranform</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">res</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;function-tranform-at-0x100630aa0-function-tranform-at-0x100630b18-function-tranform-at-0x100630b90&quot;</span><span class="o">&gt;&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">function</span> <span class="n">tranform</span> <span class="n">at</span> <span class="mh">0x100630aa0</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">function</span> <span class="n">tranform</span> <span class="n">at</span> <span class="mh">0x100630b18</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">function</span> <span class="n">tranform</span> <span class="n">at</span> <span class="mh">0x100630b90</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># Azc-tranform Azc-tranform Azc-tranform</span>
+</span><span class='line'><span class="n">lf1</span><span class="p">,</span> <span class="n">lf2</span><span class="p">,</span> <span class="n">lf3</span> <span class="o">=</span> <span class="n">closure_tranform</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lf1</span><span class="p">,</span> <span class="n">lf2</span><span class="p">,</span> <span class="n">lf3</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lf1</span><span class="p">(),</span> <span class="n">lf2</span><span class="p">(),</span> <span class="n">lf3</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">closure_tranform_opz</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">tranform</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">def</span> <span class="nf">tranform_closure</span><span class="p">():</span>
+</span><span class='line'>                <span class="n">xf</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="err">‘</span><span class="o">-</span><span class="n">tranform</span><span class="err">’</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">xf</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">tranform_closure</span>
+</span><span class='line'>        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tranform</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">res</span>
+</span><span class='line'><span class="c"># &amp;lt;function tranform_closure at 0x100630cf8&amp;gt; &amp;lt;function tranform_closure at 0x100630c80&amp;gt; &amp;lt;function tranform_closure at 0x100630d70&amp;gt;</span>
+</span><span class='line'><span class="c"># abc-tranform zfc-tranform Azc-tranform</span>
+</span><span class='line'><span class="n">lfo1</span><span class="p">,</span> <span class="n">lfo2</span><span class="p">,</span> <span class="n">lfo3</span> <span class="o">=</span> <span class="n">closure_tranform_opz</span><span class="p">([</span><span class="err">‘</span><span class="n">abc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zfc</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">Azc</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lfo1</span><span class="p">,</span> <span class="n">lfo2</span><span class="p">,</span> <span class="n">lfo3</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lfo1</span><span class="p">(),</span> <span class="n">lfo2</span><span class="p">(),</span> <span class="n">lfo3</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes ：出现这种现象，就是因为我们的方法都是延迟加载，也就是说，最后的变量已经变更了，上面的代码中<code>i</code>就像<code>resTotal</code> 一样，是个全局变量，所以会在多次调用函数中彼此影响。</p>
+
+  </blockquote>
+</blockquote>
+
+<h2 id="a-iddecoratorpython-a"><a id="Decorator">Python 装饰器</a></h2>
+
+<p>熟悉 AOP 面向方面编程的同学，都了解切点，切面等概念。重要的是，使用 AOP 编程，可以让核心的业务代码和运维调试等代码切分开，也可以让老代码在一定程度上更容易升级。比如最通用的场景：日志记录，事务管理，权限拦截，自定义数据管理等。</p>
+
+<p>在 Python 中，完成 AOP 编码范式的就是<code>Python 装饰器</code>。使用 <code>@</code>标记，就可以完成 AOP 简单功能了。</p>
+
+<p>看看示例代码：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="n">user_name</span><span class="o">=</span><span class="err">’</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class='line'>        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">print</span> <span class="err">‘</span><span class="n">Welcome</span><span class="p">,</span><span class="err">’</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">func</span><span class="o">.&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span>
+</span><span class='line'>            <span class="n">func</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">print</span> <span class="err">‘</span><span class="n">Goodbye</span><span class="p">,</span><span class="err">’</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">func</span><span class="o">.&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">wrapper</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">log</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">logger</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&#39;Welcome,&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+</span><span class='line'>    <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kv</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&#39;Goodbye,&#39;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+</span><span class='line'><span class="k">return</span> <span class="n">wrapper</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;logketao1989&quot;</span><span class="o">&gt;</span><span class="nd">@log</span><span class="p">(</span><span class="err">‘</span><span class="n">ketao1989</span><span class="err">’</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@log</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">logger_test</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">print</span> <span class="err">‘</span><span class="n">execute</span> <span class="n">core</span> <span class="n">function</span> <span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">)</span> <span class="err">……’</span> <span class="o">%</span> <span class="n">params</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">logger_test</span><span class="p">([</span><span class="err">‘</span><span class="n">test_param1</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">test_param2</span><span class="err">’</span><span class="p">])</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：代码示例中，标记<code>@functools.wraps(func)</code>，是因为在装饰器中可能原始的函数的<code>__name__</code>等被覆盖，而该标注，可以保证原始携带的func的内置属性依然保持。</p>
+
+    <p>此外，在代码的开始，需要<code>import functools</code>引入模块。</p>
+
+  </blockquote>
+</blockquote>
+
+<p>关于 Python 装饰器参考：<a href="http://www.cnblogs.com/huxi/archive/2011/03/01/1967600.html">http://www.cnblogs.com/huxi/archive/2011/03/01/1967600.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python 教程学习之 Python 函数和高级特性]]></title>
+    <link href="http://kxcoder.github.io/blog/2015/02/15/Python-Tutoril-Python-Function-And-Advances/"/>
+    <updated>2015-02-15T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2015/02/15/Python-Tutoril-Python-Function-And-Advances</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Function">Python 函数</a></li>
+  <li><a href="#Advanced">Python 高级特性</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>上一篇博客简单介绍了 Python 基本的概念和操作方法。但是，和其他编程语言一样，是缺少不了函数的。有了函数，代码才会被多次复用，程序才会简洁和易读。</p>
+
+<p>同样，也是为了开发的简洁，Python 还为提供了 Slice切片等高级特性。切片可让我们更方便的操作列表数据结构，也使得代码更易开发和阅读。</p>
+
+<h2 id="a-idfunctionpython-a"><a id="Function">Python 函数</a></h2>
+
+<p>Python 函数和数学中函数的概念是一致的，都是对逻辑的一种抽象表示。在 Python 中，我们通过def来定义一个函数方法。</p>
+
+<p>Python 的一些函数方法使用，如下所示：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;usrbinenv-python&quot;</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># -&lt;em&gt;- coding: utf-8 -&lt;/em&gt;-</span>
+</span><span class='line'><span class="c"># @Date    : 2015-02-14 11:08:03</span>
+</span><span class='line'><span class="c"># @Author  : ketao1989</span>
+</span><span class='line'><span class="c"># @Version : $Id$&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="err">‘</span><span class="n">utf8</span><span class="err">’</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">funTypeCheck</span><span class="p">(</span><span class="n">x</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;类型不一致&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&#39;x is my number&#39;</span>
+</span><span class='line'><span class="k">else</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&#39;x is not my number&#39;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">moreReturns</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">x</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">y</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">y</span> <span class="o">=</span> <span class="mi">101</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">x</span> <span class="o">=</span> <span class="mi">101</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">defaultParams</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">multiply</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="k">while</span> <span class="n">n</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="n">multiply</span> <span class="o">=</span> <span class="n">multiply</span> <span class="o">*</span> <span class="n">x</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">multiply</span> <span class="o">+</span> <span class="n">extra</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">variableParams</span><span class="p">(</span><span class="o">*</span><span class="n">numbers</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">sum1</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">sum1</span> <span class="o">+=</span> <span class="n">num</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">sum1</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">variableDictParams</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">print</span> <span class="err">‘—</span><span class="o">-</span><span class="err">‘</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="err">‘—</span><span class="o">-</span><span class="err">‘</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">kw</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;tailcalloptimized&quot;</span><span class="o">&gt;</span><span class="nd">@tail_call_optimized</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">factFunction</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="n">n</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">s</span>
+</span><span class='line'><span class="k">return</span> <span class="n">factFunction</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">name</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span> <span class="o">==</span> <span class="err">‘</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">main</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">’</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">funTypeCheck</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">moreReturns</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">multiply</span> <span class="o">=</span> <span class="n">defaultParams</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">multiply</span>
+</span><span class='line'><span class="n">multiply</span> <span class="o">=</span> <span class="n">defaultParams</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">multiply</span>
+</span><span class='line'><span class="n">multiply</span> <span class="o">=</span> <span class="n">defaultParams</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">multiply</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">sum1</span> <span class="o">=</span> <span class="n">variableParams</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">sum1</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">variableDictParams</span><span class="p">(</span><span class="s">&#39;ketao1989&#39;</span><span class="p">,</span> <span class="n">web</span><span class="o">=</span><span class="s">&#39;ketao1989.github.com&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="n">factFunction</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;-------------&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">funTypeCheck</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：<code>isinstance</code> 方法判断是否是指定类型。</p>
+
+    <ul>
+      <li>
+        <p><code>moreReturns(x, y)</code> 函数，返回多个结果。其本质上，就是返回一个tuple.</p>
+      </li>
+      <li>
+        <p><code>defaultParams(x, n=2, extra=0)</code> 函数，设置默认的参数值。在调用的时候，我们可以替换任意一个默认的参数，比如extra，可以：<code>defaultParams(5, extra=2)</code></p>
+      </li>
+      <li>
+        <p><code>variableParams(*numbers)</code> 函数，设置可变个值。</p>
+      </li>
+      <li>
+        <p><code>variableDictParams(name, **kv)</code>函数，设置可变你的参数。其实，其类似Map来根据调用方确定参数。</p>
+      </li>
+    </ul>
+
+  </blockquote>
+</blockquote>
+
+<h2 id="a-idadvancedpython-a"><a id="Advanced">Python 高级特性</a></h2>
+
+<h3 id="section-1">切片</h3>
+
+<p>切片，很简单。就是我们日常对列表进行sub操作的时候，一般需要<code>for</code>循环操作，而 Python 提供了一个更简单的方法来处理这些问题，就是切片。其，表示形式为:<code>[i:j:k]</code>，其中，i表示列表的开始位置索引，j表示列表的结束位置索引（不包含该文章）,k表示循环步长。</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">ll</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-2&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span><span class="err">开始</span><span class="p">:</span><span class="err">结束</span><span class="p">:</span><span class="err">步长</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">print</span> <span class="n">ll</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-3&quot;</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">print</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,)[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3 id="section-4">迭代</h3>
+
+<p>Python 的迭代，相对于 C 语言的迭代语法，有了很大的进步。使用 <code>for ... in</code> 方式来遍历一个集合或者 Map 数据，方便快捷。</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">ll</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">56</span><span class="p">]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">x</span>
+</span><span class='line'><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ll</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">lt</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">lt</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">dd</span> <span class="o">=</span> <span class="p">{</span><span class="err">‘</span><span class="n">a</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">A</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">b</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">B</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">c</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">C</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">d</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">D</span><span class="err">’</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dd</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">key</span>
+</span><span class='line'><span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dd</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">value</span>
+</span><span class='line'><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dd</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3 id="section-5">列表生成器</h3>
+
+<p>迭代对于列表的优化还不够，Python 还提供了更牛逼的特性：让我们一行代码生成一个列表。</p>
+
+<p>比如，生成一个 1 到 10 数字的平方数，组成一个列表，使用列表生成器，可以如下：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">lg</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lg</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-6&quot;</span><span class="o">&gt;</span><span class="err">产生偶数的平方数</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">lo</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lo</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes ：由于列表生成器，是一次生成所有的列表元素，对于很大的列表，如果一次生成完成，然后全部放在内存里，肯定是不好的，因此，Python 还提供了 <code>生成器</code>。</p>
+
+  </blockquote>
+</blockquote>
+
+<p>生成器，可以根据生成规则，在使用的时候，才会构造元素。构造简单的生成器，和列表生成器一样，只需要把<code>[ ]</code> 替换成<code>( )</code>即可。例如：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;generator-object-genexpr-at-0x107de44b0&quot;</span><span class="o">&gt;&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">generator</span> <span class="nb">object</span> <span class="o">&lt;</span><span class="n">genexpr</span><span class="o">&gt;</span> <span class="n">at</span> <span class="mh">0x107de44b0</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">genexpr</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">lg</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+</span><span class='line'><span class="k">print</span> <span class="n">lg</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Tips：如果需要打印，可以使用for，单个使用.next()方法依次调用，直到出现异常。</p>
+  </blockquote>
+</blockquote>
+
+<p>对于复杂一点的生成器，则需要使用 <code>yield</code> 关键字来完成。比如，在我们的一些函数中，某一个变量连续产生的数组，可以使用<code>yield x</code>来完成生成器设置。</p>
+
+<p>例如，构造一个通俗的生成器，如下：</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">generateFun</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">yield</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</span><span class='line'><span class="c"># &amp;lt;generator object generateFun at 0x102f5a5a0&amp;gt;</span>
+</span><span class='line'><span class="n">gf</span> <span class="o">=</span> <span class="n">generateFun</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span> <span class="n">gf</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gf</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">x</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python 教程学习之Python基础知识]]></title>
+    <link href="http://kxcoder.github.io/blog/2015/02/13/Python-Tutoril-Python-Basic-Knowledge/"/>
+    <updated>2015-02-13T22:21:35+08:00</updated>
+    <id>http://kxcoder.github.io/blog/2015/02/13/Python-Tutoril-Python-Basic-Knowledge</id>
+    <content type="html"><![CDATA[<h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Sublime">Sublime Python 插件安装</a></li>
+  <li><a href="#BasicKnowledge">Python 基础知识</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>2015年春节临近，提前请假回家，闲下来的功夫，系统学习下 python 语言，倒是也好。</p>
+
+<p>Python 在日常工作中，主要是脚本语言的开发，由于开发快捷容易，并且在所有 Linux 版本都会安装 Python 的语言环境，不需要额外的配置工作。</p>
+
+<h2 id="a-idsublimesublime-python-a"><a id="Sublime">Sublime Python 插件安装</a></h2>
+
+<p>对于 Python 的基础知识的学习，已经工作中脚本语言的开发，使用 Sublime 编辑器可以非常好的满足我们的需求，并且 Sublime 提供了丰富的插件供使用，非常便捷。</p>
+
+<p>开发 Python(Django) 语言，一般推荐安装 :</p>
+
+<ul>
+  <li>
+    <p><code>SublimeCodeIntel</code> 插件：一款代码自动提示的插件。</p>
+  </li>
+  <li>
+    <p><code>Python PEP8 Autoformat</code> 插件：一款针对 Python 的代码格式化插件，快捷键为<code>Ctrl + Shift + R</code>。</p>
+  </li>
+  <li>
+    <p><code>SublimeTmpl</code> 插件：一款自定义文件模板的插件，可以跟进我们的配置在创建文件时，跟进模板完成初始化填充。关于 Python 的代码模板如下所示：</p>
+  </li>
+</ul>
+
+<p><figure class='code'><figcaption><span>sublime模板 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;usrbinenv-python&quot;</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># -&lt;em&gt;- coding: utf-8 -&lt;/em&gt;-</span>
+</span><span class='line'><span class="c"># @Date    : ${date}</span>
+</span><span class='line'><span class="c"># @Author  : ${author}</span>
+</span><span class='line'><span class="c"># @Version : $Id$&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="err">$</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="kn">import</span> <span class="nn">os</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="err">‘</span><span class="n">utf8</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="err">$</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes：打开 <code>preferences --&gt; pachages</code>，在打开的目录下依次找到<code>sublimeTmpl --&gt; templates --&gt; python.tmpl</code>，直接修改就好了。</p>
+
+  </blockquote>
+</blockquote>
+
+<h2 id="a-idbasicknowledgepython-a"><a id="BasicKnowledge">Python 基础知识</a></h2>
+
+<p>基础知识都非常简单，这里贴一下学习的测试代码，就好了。</p>
+
+<p><figure class='code'><figcaption><span>测试代码 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;usrbinenv-python-1&quot;</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c"># -&lt;em&gt;- coding: utf-8 -&lt;/em&gt;-&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">sys</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="err">‘</span><span class="n">utf8</span><span class="err">’</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-1&quot;</span><span class="o">&gt;</span><span class="mi">100</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+</span><span class='line'><span class="k">if</span> <span class="n">a</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">a</span>
+</span><span class='line'><span class="k">elif</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="mi">0</span>
+</span><span class='line'><span class="k">else</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="o">-</span><span class="n">a</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-2&quot;</span><span class="o">&gt;</span><span class="err">中文</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">print</span> <span class="n">u</span><span class="err">’中文’</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-3&quot;</span><span class="o">&gt;</span><span class="mi">4</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">]</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;section-4&quot;</span><span class="o">&gt;</span><span class="mi">5</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;zhang-li-wang-zi-er-ma&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">names</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;zhang-li-wang-zi-er&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span> <span class="n">names</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;ma-li-wang-zi-er&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="err">‘</span><span class="n">ma</span><span class="err">’</span>
+</span><span class='line'><span class="k">print</span> <span class="n">names</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;ma-li-wang-zi-er-subzhang-subwang&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">,</span> <span class="p">[</span><span class="err">‘</span><span class="n">subzhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">subwang</span><span class="err">’</span><span class="p">]]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="err">‘</span><span class="n">subzhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">subwang</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">names</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;ma-li-wang-zi-er-subzhang-subwang-1&quot;</span><span class="o">&gt;</span><span class="p">(</span><span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">,</span> <span class="p">[</span><span class="err">‘</span><span class="n">subzhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">subwang</span><span class="err">’</span><span class="p">])</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">tumples</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">tumples</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;ma-li-wang-zi-er-subzhang-subwang-2&quot;</span><span class="o">&gt;</span><span class="p">[</span><span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zi</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">er</span><span class="err">’</span><span class="p">,</span> <span class="p">[</span><span class="err">‘</span><span class="n">subzhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">subwang</span><span class="err">’</span><span class="p">]]</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tumples</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">names</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;subzhang-subwang&quot;</span><span class="o">&gt;</span><span class="err">分别打印元素，</span><span class="p">[</span><span class="err">‘</span><span class="n">subzhang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">subwang</span><span class="err">’</span><span class="p">]</span><span class="err">是一体的</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tumples</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">x</span>
+</span><span class='line'><span class="c"># dict字典，ketao</span>
+</span><span class='line'><span class="n">maps</span> <span class="o">=</span> <span class="p">{</span><span class="err">‘</span><span class="n">name</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">ketao</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">age</span><span class="err">’</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="err">‘</span><span class="n">job</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">dev</span><span class="err">’</span><span class="p">}</span>
+</span><span class='line'><span class="k">print</span> <span class="n">maps</span><span class="p">[</span><span class="err">‘</span><span class="n">name</span><span class="err">’</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;job-dev-age-25-program-python-name-ketao&quot;</span><span class="o">&gt;</span><span class="p">{</span><span class="err">‘</span><span class="n">job</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">dev</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">age</span><span class="err">’</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="err">‘</span><span class="n">program</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">python</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">name</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">ketao</span><span class="err">’</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">maps</span><span class="p">[</span><span class="err">‘</span><span class="n">program</span><span class="err">’</span><span class="p">]</span> <span class="o">=</span> <span class="err">‘</span><span class="n">python</span><span class="err">’</span>
+</span><span class='line'><span class="k">print</span> <span class="n">maps</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;job-dev-gender-male-age-25-program-python-name-ketao&quot;</span><span class="o">&gt;</span><span class="p">{</span><span class="err">‘</span><span class="n">job</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">dev</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">gender</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">male</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">age</span><span class="err">’</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="err">‘</span><span class="n">program</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">python</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">name</span><span class="err">’</span><span class="p">:</span> <span class="err">‘</span><span class="n">ketao</span><span class="err">’</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="err">‘</span><span class="n">gender</span><span class="err">’</span> <span class="ow">in</span> <span class="n">maps</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span><span class='line'><span class="k">else</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">maps</span><span class="p">[</span><span class="err">‘</span><span class="n">gender</span><span class="err">’</span><span class="p">]</span> <span class="o">=</span> <span class="err">‘</span><span class="n">male</span><span class="err">’</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="n">maps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="err">‘</span><span class="n">gender</span><span class="err">’</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">maps</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;setwang-14-zhang&quot;</span><span class="o">&gt;</span><span class="nb">set</span><span class="p">([</span><span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">])</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">sets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">,</span> <span class="err">“</span><span class="n">wang</span><span class="err">”</span><span class="p">,</span> <span class="mi">14</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">sets</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;setli-wang-14-zhang&quot;</span><span class="o">&gt;</span><span class="nb">set</span><span class="p">([</span><span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">])</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">sets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="n">sets</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s">&quot;set14-zhang-setma-wang-zhang-14-li&quot;</span><span class="o">&gt;</span><span class="nb">set</span><span class="p">([</span><span class="mi">14</span><span class="p">,</span> <span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">]);</span> <span class="nb">set</span><span class="p">([</span><span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">wang</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="err">‘</span><span class="n">li</span><span class="err">’</span><span class="p">])</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">setss</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="err">‘</span><span class="n">zhang</span><span class="err">’</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="err">‘</span><span class="n">ma</span><span class="err">’</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">setss</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">sets</span>
+</span><span class='line'><span class="k">print</span> <span class="n">setss</span> <span class="o">|</span> <span class="n">sets</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<blockquote>
+  <blockquote>
+    <p>Notes : 需要说明的是，必须在python 脚本中，注入 utf-8 相关配置，不然会出现下面的编码问题。如果使用模板，请参考上一节。</p>
+
+  </blockquote>
+</blockquote>
+
+<p><figure class='code'><figcaption><span>测试代码结果 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+</span><span class='line'>  File “/Users/ketao/python/test.py”, line 20, in &lt;module&gt;
+</span><span class='line'>    print u<span class="s1">&#39;中文&#39;</span>
+</span><span class='line'>UnicodeEncodeError: <span class="s1">&#39;ascii&#39;</span> codec can<span class="err">&#39;</span>t encode characters in position 0-1: ordinal not in range<span class="o">(</span>128<span class="o">)</span>
+</span><span class='line'><span class="o">[</span>Finished in 0.0s with <span class="nb">exit </span>code 1<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>shell_cmd: python -u <span class="s2">&quot;/Users/ketao/python/test.py&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span>dir: /Users/ketao/python<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>path: /usr/bin:/bin:/usr/sbin:/sbin<span class="o">]</span>&lt;/module&gt;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用Python操作线上数据库脚本]]></title>

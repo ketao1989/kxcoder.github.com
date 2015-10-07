@@ -108,6 +108,461 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2014/05/30/Linux-Awk-Study-Note/">Linux Awk 使用学习笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-30T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Console">Awk命令行</a></li>
+  <li><a href="#Script">Awk脚本程序</a></li>
+  <li><a href="#Recommend">推荐教程</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p><code>linux Awk</code> 脚本语言，算来也有很长的一段历史了。在如今各种更全更简单的脚本语言遍地生成的年代，关注<code>Awk</code>的新人越来越少了。最近，在项目组同事的影响下，去学习了下<code>Awk</code>的基本使用方法。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Note：本文只是学习笔记，很多示例和描述都来自最后推荐的文章里面。</p>
+  </blockquote>
+</blockquote>
+
+<p>起意写关于<code>Awk</code>学习笔记的主要原因是，学习皓哥的<a href="http://coolshell.cn/articles/9070.html">AWK 简明教程</a> 完了之后，完全还是云里雾里的，不知所以然。所以，找了个<a href="http://www.aslibra.com/doc/awk.htm">AWK 手册</a>好好学习。但是，对于前者介绍太多浅，初学者对于<code>Awk</code>使用没有任何概念；后者又过于长，不方便我去查资料，所以合计起来，就写一个学习总结罢了。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/30/Linux-Awk-Study-Note/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/28/Online-Mysql-Deadlock-Analyse/">线上Mysql死锁问题分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-28T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Problem">死锁问题定位</a></li>
+  <li><a href="#Reproduce">问题重现</a></li>
+  <li><a href="#Solution">解决方法</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>前段时间，查看线上<code>Tomcat</code>日志，发现多台服务器出现<code>Mysql</code>死锁情况，虽然死锁问题没有影响到正常业务，但是毕竟数据库死锁还是得需要好好分析原因去修复和开发过程中极力需要避免的。服务器上<code>Mysql死锁</code>日志如下：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/28/Online-Mysql-Deadlock-Analyse/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/27/Jstat-GC-Guide-Introduce/">Java 查看系统GC命令介绍</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-27T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Jstat">Jstat 查看系统 GC 命令介绍</a></li>
+  <li><a href="#Jmap">Jmap 查看系统 GC 命令介绍</a></li>
+  <li><a href="#Finally">小结</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>使用	<code>JVM</code>的人都或多或少的了解<code>垃圾回收</code>机制，当系统的服务出现性能问题时，都会去服务器上查看下系统<code>GC</code>的情况。此外，如果有新的服务上线，也需要去服务器上查看下新服务的整体<code>GC</code>水平，这就可以使用<code>jstat</code>命令来查看了，当然你也可以使用其他方式。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/27/Jstat-GC-Guide-Introduce/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/26/Spring-MVC-Project-Introduction/">Spring MVC 项目构建入门指南</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-26T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Framework">SimpleSpringProject 结构介绍</a></li>
+  <li><a href="#Configure">SimpleSpringProject 配置介绍</a></li>
+  <li><a href="#DataOp">SimpleSpringProject 数据操作实现介绍</a></li>
+  <li><a href="#Finally">小结</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>走入社会工作接近一年了，感慨颇多。一年前的现在，自己对java知之甚少，更不知道怎么去创建一个满足<code>spring mvc</code>架构思想的web项目。最近，为了学习<code>Spring MVC</code>框架的实现原理，首先新建了一个web项目，该项目包含 <code>Spring + Mybatis</code>，涉及数据库，DAO，service，API，业务，controller多个模块。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Note：这个项目代码完成的功能只是为了演示一个大项目应该具备的结构，而显然在实际工程中，这么简单地功能，是不需要如此繁杂的结构模块的。</p>
+  </blockquote>
+</blockquote>
+
+<p>此外，关于<code>Spring MVC</code>演示项目的代码，可以从<code>github</code>上<code>clone</code>一份到本地，项目为：<a href="https://github.com/ketao1989/simpleSpringProject">SimpleSpringProject</a>。<code>git clone</code> 地址为：<code>https://github.com/ketao1989/simpleSpringProject.git</code></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/26/Spring-MVC-Project-Introduction/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/24/Java-Fork-Join-Task-Framework-API-Introduce/">Java Fork&Join框架使用和实现分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-24T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#ForkJoin">ForkJoin框架介绍</a></li>
+  <li><a href="#API">ForkJoin API介绍</a></li>
+  <li><a href="#Example">ForkJoin 使用示例</a></li>
+  <li><a href="#Analyze">ForkJoin 实现剖析</a></li>
+  <li><a href="#Finally">小结</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>在并发编程网上，关于ForkJoin框架介绍得很好，推荐去看：<a href="http://ifeve.com/fork-join-1/">Fork/Join框架</a>.本篇博文只是对一些地方进行补充说明（为了文章连续性，会借鉴一些介绍文字）。</p>
+
+<p>在上一篇博文：<a href="http://ketao1989.github.io/posts/Java-MultiThread-ThreadPool-Introduce.html">Java 多线程线程池介绍</a> 中最后说明了，对于一个任务可以切割成多个小任务分别执行，然后把各个小任务的结果，组合成最终的结论。熟悉<code>MapReduce</code>的同学，肯定对此再熟悉不过了。</p>
+
+<p>首先贴出一个很简单的代码demo，这段代码是对上篇博文中代码，用<code>ForkJoin</code> API方式来实现（实际上，这并不是一个好的介绍<code>ForkJoin</code>功能的例子，但是我们先用它来入门了）</p>
+
+<blockquote>
+  <blockquote>
+    <p><code>ForkJoin</code>任务，继承自<code>RecursiveAction</code>，因为我们不需要任务返回什么计算结果：</p>
+  </blockquote>
+</blockquote>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/24/Java-Fork-Join-Task-Framework-API-Introduce/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/03/Java-MultiThread-ThreadPool-Introduce/">Java 多线程线程池分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-03T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Thread">Java线程API</a></li>
+  <li><a href="#ThreadPool">Java线程池API</a></li>
+  <li><a href="#Executors">Java Executors类介绍</a></li>
+  <li><a href="#CountDownLatch">Java CountDownLatch类介绍</a></li>
+  <li><a href="#Finally">总结</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>关于Java多线程的知识，看了很多博客书籍，对理论还是比较了解的。但是，最近写一个很简单的使用线程池对列表中任务进行处理，然后返回结果列表的功能，发现理论和实际操作还是有相当大的差距。</p>
+
+<p>首先贴出一个很简单的代码demo：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/03/Java-MultiThread-ThreadPool-Introduce/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/02/Java-slf4j-Introduce/">Java日志框架slf4j API介绍及异常接口实现分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-05-02T22:21:35+08:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Facade">Facade设计模式简介</a></li>
+  <li><a href="#Bind">slf4j绑定日志</a></li>
+  <li><a href="#API">slf4j API使用</a></li>
+  <li><a href="#End">后记</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>slf4j: 简洁的java日志统一接口（Simple Logging Facade for Java），顾名思义，就是一个使用Facade设计模式实现的面向java Logging框架的接口开源包。
+其和java数据库连接工具包JDBC很像，在JDBC框架中，各个不同数据库连接器分别针对不同数据库系统来实现对应的连接操作，而普通程序员只需要使用统一的JDBC接口而不需要关注具体底层使用的数据库类型，或者针对不同的数据库系统写各种兼容代码。</p>
+
+<blockquote>
+  <blockquote>
+    <p>Note: slf4j其实类似于适配器，但是这里不称呼适配器，是因为当底层log日志系统不支持slf4j扩展时，比如log4j，就需要在两者中间增加一个适配器层来完成slf4j调用相关日志系统的操作接口动作。例如，slf4j为log4j提高的slf4j-log412.jar类库，但是logback支持slf4J扩展，所以其不需适配层转换。</p>
+  </blockquote>
+</blockquote>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/02/Java-slf4j-Introduce/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/29/Intelij-IDEA-Remote-Debug-Tomcat-App/">Intelij IDEA 远程调试Tomcat服务</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-04-29T22:21:35+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Intro">前言</a></li>
+  <li><a href="#Server">线上服务配置</a></li>
+  <li><a href="#Client">IDE本地配置</a></li>
+</ol>
+
+<h2 id="a-idintroa"><a id="Intro">前言</a></h2>
+
+<p>在很多情况下，我们在本地启动调试一些服务；或者说外部调用开发测试环境某些服务时，需要直接调试定位问题代码点；
+这些问题都会让我们需要可以在本地IDE上面调试本地代码来查看线上情况。最近和其他业务部门联调的时候，
+了解到原来真的可以debug本地代码同步控制线上运行流程。下面，记录一下具体的操作配置步骤。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/04/29/Intelij-IDEA-Remote-Debug-Tomcat-App/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/19/Mysql-Master-Slave-Copy/">Mysql主从复制原理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-04-19T22:21:35+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>19</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:21 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2 id="section">目录</h2>
+
+<ol>
+  <li><a href="#Begin">Mysql复制介绍</a></li>
+  <li><a href="#Framework">复制常用框架</a></li>
+  <li><a href="#Master">Master服务器启动mysql</a></li>
+  <li><a href="#Slave">Slave服务器配置</a></li>
+</ol>
+
+<h2 id="a-idbeginmysqla"><a id="Begin">Mysql复制介绍</a></h2>
+<p>分为同步复制和异步复制，实际复制架构中大部分为异步复制。</p>
+
+<p>复制的基本过程如下：</p>
+
+<ol>
+  <li>Slave上面的IO进程连接上Master，并请求从指定日志文件的指定位置（或者从最开始的日志）之后的日志内容；</li>
+  <li>Master接收到来自Slave的IO进程的请求后，通过负责复制的IO进程根据请求信息读取制定日志指定位置之后的日志信息，返回给Slave 的IO进程。返回信息中除了日志所包含的信息之外，还包括本次返回的信息已经到Master端的bin-log文件的名称以及bin-log的位置；</li>
+  <li>Slave的IO进程接收到信息后，将接收到的日志内容依次添加到Slave端的relay-log文件的最末端，并将读取到的Master端的 bin-log的文件名和位置记录到master-info文件中，以便在下一次读取的时候能够清楚的告诉Master“我需要从某个bin-log的哪个位置开始往后的日志内容，请发给我”；</li>
+  <li>Slave的Sql进程检测到relay-log中新增加了内容后，会马上解析relay-log的内容成为在Master端真实执行时候的那些可执行的内容，并在自身执行。</li>
+</ol>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/04/19/Mysql-Master-Slave-Copy/">阅读全文 &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2014/04/16/google-java-style/">Google Java编程风格指南</a></h1>
     
     
@@ -187,15 +642,15 @@
       </li>
     
       <li class="post">
-        <a href="/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/">Redis Cookbook 之 使用Redis存储基于时间序列的数据和进行分析</a>
+        <a href="/blog/2015/04/29/LogBack-Implemention-And-Slf4j-Mdc/">Slf4j MDC 使用和 基于 Logback 的实现分析</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search/">Redis Cookbook 之 基于Redis 实现倒序索引全文搜索</a>
+        <a href="/blog/2015/02/26/Python-Tutoril-Python-Object-Oriented-Programming/">Python 教程学习之 Python 面向对象编程</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/12/20/Redis-Cookbook-Chat-System/">Redis Cookbook 之 基于Redis 实现一个聊天系统</a>
+        <a href="/blog/2015/02/17/Python-Tutoril-Python-Functional-Programing/">Python 教程学习之 Python 函数式编程</a>
       </li>
     
   </ul>
@@ -205,18 +660,19 @@
   <h1>文章分类</h1> 
   <ul id="categories"> 
     <li class='category'><a href='/blog/categories/gc/'>gc (1)</a></li>
+<li class='category'><a href='/blog/categories/git/'>git (1)</a></li>
 <li class='category'><a href='/blog/categories/ide/'>ide (2)</a></li>
-<li class='category'><a href='/blog/categories/java/'>java (11)</a></li>
-<li class='category'><a href='/blog/categories/json/'>json (1)</a></li>
+<li class='category'><a href='/blog/categories/java/'>java (15)</a></li>
+<li class='category'><a href='/blog/categories/json/'>json (3)</a></li>
 <li class='category'><a href='/blog/categories/linux/'>linux (5)</a></li>
-<li class='category'><a href='/blog/categories/log/'>log (1)</a></li>
+<li class='category'><a href='/blog/categories/log/'>log (2)</a></li>
 <li class='category'><a href='/blog/categories/mysql/'>mysql (3)</a></li>
 <li class='category'><a href='/blog/categories/nginx/'>nginx (1)</a></li>
-<li class='category'><a href='/blog/categories/python/'>python (1)</a></li>
+<li class='category'><a href='/blog/categories/python/'>python (5)</a></li>
 <li class='category'><a href='/blog/categories/redis/'>redis (6)</a></li>
 <li class='category'><a href='/blog/categories/redis-cookbook/'>redis cookbook (6)</a></li>
 <li class='category'><a href='/blog/categories/script/'>script (3)</a></li>
-<li class='category'><a href='/blog/categories/spring/'>spring (1)</a></li>
+<li class='category'><a href='/blog/categories/spring/'>spring (2)</a></li>
 <li class='category'><a href='/blog/categories/thread/'>thread (2)</a></li>
 <li class='category'><a href='/blog/categories/tools/'>tools (2)</a></li>
 <li class='category'><a href='/blog/categories/translation/'>translation (1)</a></li>

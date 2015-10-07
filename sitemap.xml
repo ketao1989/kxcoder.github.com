@@ -9,8 +9,40 @@
     <lastmod>2015-08-30T18:52:03+08:00</lastmod>
   </url>
   <url>
-    <loc>http://kxcoder.github.io/blog/2014/12/29/Redis-Cookbook-Analytics-Time-Based-Data/</loc>
-    <lastmod>2014-12-29T00:00:00+08:00</lastmod>
+    <loc>http://kxcoder.github.io/blog/2015/04/29/LogBack-Implemention-And-Slf4j-Mdc/</loc>
+    <lastmod>2015-04-29T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/02/26/Python-Tutoril-Python-Object-Oriented-Programming/</loc>
+    <lastmod>2015-02-26T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/02/17/Python-Tutoril-Python-Functional-Programing/</loc>
+    <lastmod>2015-02-17T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/02/15/Python-Tutoril-Python-Function-And-Advances/</loc>
+    <lastmod>2015-02-15T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/02/13/Python-Tutoril-Python-Basic-Knowledge/</loc>
+    <lastmod>2015-02-13T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/02/10/Jackson-Deserialize-Java-Object-Implementation/</loc>
+    <lastmod>2015-02-10T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/02/07/Jackson-Serialize-Java-Object-Implementation/</loc>
+    <lastmod>2015-02-07T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/01/27/Git-Reset-Operate/</loc>
+    <lastmod>2015-01-27T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2015/01/12/Spring-Dynamic-Data-Source-Guide/</loc>
+    <lastmod>2015-01-12T22:21:35+08:00</lastmod>
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/2014/12/28/Redis-Cookbook-Inverted-Index-Text-Search/</loc>
@@ -23,6 +55,10 @@
   <url>
     <loc>http://kxcoder.github.io/blog/2014/12/19/Guava-Cache-Guide-And-Implement-Analyse/</loc>
     <lastmod>2014-12-19T22:21:35+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/2014/11/29/Redis-Cookbook-Analytics-Time-Based-Data/</loc>
+    <lastmod>2014-11-29T22:21:35+08:00</lastmod>
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/2014/11/26/Java-Implement-One-Algorithm-by-Day/</loc>
@@ -177,6 +213,9 @@
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/categories/json/</loc>
+  </url>
+  <url>
+    <loc>http://kxcoder.github.io/blog/categories/git/</loc>
   </url>
   <url>
     <loc>http://kxcoder.github.io/blog/categories/nginx/</loc>
