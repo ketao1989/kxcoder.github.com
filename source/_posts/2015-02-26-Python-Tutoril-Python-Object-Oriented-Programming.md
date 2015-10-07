@@ -12,7 +12,6 @@ comments: true
 1. [Python 面向对象编程技巧](#AdvancedTech)
 1. [Python 面向对象编程代码示例](#SourceCode)
 
-<br/>
 ## <a id="Intro">前言</a>
 
 在之前的学习中，基本上都是使用类似于面对过程的方式来写代码，学习各种 Python 的基础知识，接下来，我们需要继续学习面向对象的Python，也就是类对象继承等概念。
