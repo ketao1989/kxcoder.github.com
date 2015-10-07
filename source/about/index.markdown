@@ -18,11 +18,10 @@ title: "关于我..."
 
 ### 联系方式
 
-    > Email: kexiaoxiaoxi@126.com
-    > Program: Java,Python
-    > Interest: Movie,Music & Reading
-    > City: Beijing
-    > Position: xiaojukeji.com#java Dev 
-                (qunar.com # java Dev ) 
+>> Email: kexiaoxiaoxi@126.com
+>> Program: Java,Python
+>> Interest: Movie,Music & Reading
+>> City: Beijing
+>> Position: didichuxing.com#java Dev (qunar.com # java Dev ) 
 
 
