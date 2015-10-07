@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Json | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/json/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -33,6 +33,8 @@
 <p>上一篇博客，介绍了关于<a href="http://ketao1989.github.io/posts/Jackson-Serialize-Java-Object-Implementation.html">Jackson 自定义序列化</a>，本文将介绍关于 Jackson 自定义反序列化。</p>
 
 <p>反序列化，Jackson 工具包中已经支持了开发中常用的 Java 类型的解析功能；但是还是会遇到一些我们需要自定义的解析转换工作。比如外部的一些非主流时间格式转换，再比如说对于一些类型转换，做一些额外数据校验和默认容错处理工作，再比如说前端的某种格式的字符串，我们想直接使用自定义反序列化类来完成到 Java Object 的转换工作等等，都需要我们去自己实现 Jackson 反序列化类。</p>
+
+<!--more-->
 
 <p>和<code>Jackson 自定义序列化</code>相似，Jackson 为自定义的反序列化扩展，也提供了简单易用的接口。</p>
 
@@ -420,6 +422,8 @@
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>关于Jackson工具类的相关学习和研究，先前已经写过一篇博文；但是，后来由于工作事情就草草结尾。此外，虽然对Jackson序列化和反序列化的实现机制进行了初步学习，但是现在看看，那时候的博客经验和技术水平决定了整篇博文结构并不是清晰明了，并且反序列化的整个简单的解析，对日常开发并没有直接帮助。对于Jackson这种模块化设计，轻巧灵活的扩展方法，多维度的性能效率优化，导致了最后博文的质量非常不好。因此，接下来几篇博文，将会以日常开发使用的一些API为入口，来分别介绍其使用方式和内部实现，然后在此基础上，对此博文进行分拆。</p>
+
+<!--more-->
 
 <p>在开发中，前后端交互的项目，现在一般都是基于JSON文本格式给出API接口，因此对于java对象的序列化就是十分重要的了。基于Spring MVC的配置中，我们配置<code>org.springframework.http.converter.json.MappingJacksonHttpMessageConverter</code> bean时，就是需要配置<code>messageConverters</code>转换器。而针对json的转换器，就可以使用Jackson的<code>objectMapper</code>对象了。</p>
 
@@ -1300,6 +1304,8 @@
 <p>不过，JSON 和 XML两者纠结谁优谁劣，这里不做讨论，可以参见知乎上<a href="http://www.zhihu.com/question/20738607">为什么XML这么笨重的数据结构仍在广泛应用？</a>。</p>
 
 <p>最近在项目中，会有各种解析JSON文本的需求，使用第三方<code>Jackson</code>工具来解析时，又担心当增加会减少字段，会不会出现非预期的情况，因此，研究下<code>jackson</code>解析json数据格式的代码，很有需要。</p>
+
+<!--more-->
 
 <h2 id="a-idjsonutilsjacksona"><a id="JsonUtils">Jackson使用工具类</a></h2>
 

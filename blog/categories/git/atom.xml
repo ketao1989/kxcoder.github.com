@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Git | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/git/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -31,6 +31,8 @@
 <p>原理：先将本地分支退回到某个commit，删除远程分支，再重新push本地分支</p>
 
 <p>操作步骤：</p>
+
+<!--more-->
 
 <p><figure class='code'><figcaption><span>git命令 </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -33,6 +33,8 @@
 <p>在之前的学习中，基本上都是使用类似于面对过程的方式来写代码，学习各种 Python 的基础知识，接下来，我们需要继续学习面向对象的Python，也就是类对象继承等概念。</p>
 
 <p>对象和属性，这些概念在任务编程语言中，其定义都是一致的。我们通过一个对象来表示一个物体，而这个物体的一些特征，就是对象中的属性。比如，一个人，作为一个对象 Person，则会有<code>姓名，身高，体重，性别，出生日期</code>等属性，这些属性就是这个人的对外特性了。</p>
+
+<!--more-->
 
 <h2 id="a-idbasicguidepython-a"><a id="BasicGuide">Python 面向对象编程介绍</a></h2>
 
@@ -554,6 +556,8 @@
 
 <p>Python 作为一个动态脚本语言，其很早就支持了函数式编程范式。</p>
 
+<!--more-->
+
 <h2 id="a-idfunctionalprogrampython-a"><a id="FunctionalProgram">Python 函数式编程</a></h2>
 
 <p>Python 函数式编程，涉及太多的内容。简单介绍几个点。</p>
@@ -978,6 +982,8 @@
 
 <p>同样，也是为了开发的简洁，Python 还为提供了 Slice切片等高级特性。切片可让我们更方便的操作列表数据结构，也使得代码更易开发和阅读。</p>
 
+<!--more-->
+
 <h2 id="a-idfunctionpython-a"><a id="Function">Python 函数</a></h2>
 
 <p>Python 函数和数学中函数的概念是一致的，都是对逻辑的一种抽象表示。在 Python 中，我们通过def来定义一个函数方法。</p>
@@ -1368,6 +1374,8 @@
 
 <p>Python 在日常工作中，主要是脚本语言的开发，由于开发快捷容易，并且在所有 Linux 版本都会安装 Python 的语言环境，不需要额外的配置工作。</p>
 
+<!--more-->
+
 <h2 id="a-idsublimesublime-python-a"><a id="Sublime">Sublime Python 插件安装</a></h2>
 
 <p>对于 Python 的基础知识的学习，已经工作中脚本语言的开发，使用 Sublime 编辑器可以非常好的满足我们的需求，并且 Sublime 提供了丰富的插件供使用，非常便捷。</p>
@@ -1663,6 +1671,8 @@
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>最近对于线上一些数据需要进行过滤导到本地来，或者对一些运营人员给的文本数据，需要在线上数据库跑出对应的结果出来，因此，需要通过一个脚本来执行。因为，现在服务器基本上会默认安装python，所以这里存一份脚本备用。</p>
+
+<!--more-->
 
 <h2 id="a-idscriptpythona"><a id="Script">Python脚本</a></h2>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Redis Cookbook | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/redis-cookbook/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -32,6 +32,8 @@
 <p>倒序索引是一种索引数据结构，该索引存储单词（或者其他内容）到它们位于文件，档案或者数据库等位置之间的映射关系。这个通常被用来实现全文搜素服务，但是这要求在搜索之前这些文档的相关倒序索引就必须建立好。</p>
 
 <p>因此，我们想要事业Redis来作为背后的存储系统来实现全文搜索服务。</p>
+
+<!--more-->
 
 <h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
 
@@ -306,6 +308,8 @@
 <h2 id="a-idproblema">1. <a id="Problem">问题</a></h2>
 
 <p>想要借助 <code>Redis</code>的<code>PUB/SUB</code>功能，使用node.js和Socket.io实现一个轻量级的实时聊天系统。</p>
+
+<!--more-->
 
 <h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
 
@@ -583,6 +587,8 @@
 <p>存储分析或者其他基于时间序列的数据，对于传统的存储系统（比如RDBMS）来说，是有一点挑战的。可能你想要对输入流量的速率进行限制（要求快速和高并发更新）或者简单地追踪网站访问者（或者其他更复杂的度量指标），然后以图表的形式画出来。</p>
 
 <p>虽然当前在其他系统中，有很多的方式存储这类数据；但是，Redis是一个非常优秀的候选者，由于它强大的数据结构。</p>
+
+<!--more-->
 
 <h2 id="a-idsolutiona">2. <a id="Solution">解决方法</a></h2>
 
@@ -892,6 +898,8 @@
 
 <p>在我们案例里，我们将实现一个数据模型和交互来支持Oauth v1.0a API。一般常常是基于MySQL或者其他的RDBMS实现，但是我们可以利用Redis的数据结构更高效的实现Oauth协议。</p>
 
+<!--more-->
+
 <h2 id="a-idsolutiona"><a id="Solution">解决方法</a></h2>
 
 <p>我们不会去实现Oauth的API或者交互。这里我们仅仅感兴趣的是这种类型场景里所需要的数据。我们将在Redis里面存储五种类型的数据：</p>
@@ -962,6 +970,8 @@ HMSET hash-name key1 value1 [key2 value2 ...]
 
 <p>许多的应用服务都需要存储关于使用，配置或者其他相关的信息的临时数据，这些数据结构并不适合存储在关系数据库中。
 通常情况下，开发者会是MySQL或者其他RDBMS来存储这种数据。在这里，我们将使用Redis和它内建的数据结构，以一种更轻量级、更快速、更宽松的方式完成存储应用临时数据的功能。</p>
+
+<!--more-->
 
 <h2 id="a-idsolutiona"><a id="Solution">解决方法</a></h2>
 

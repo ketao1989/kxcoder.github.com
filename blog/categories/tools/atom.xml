@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tools | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -32,6 +32,8 @@
 <p>vim工具，对于一个程序猿来讲，是使用非常普遍的。以前在Ubuntu上安装<code>ma6174</code>大神提供的安装脚本，一键安装一些非常好用的插件，但是对于Mac来说，一直不能很好地执行一件安装。</p>
 
 <p>这里，记录一下，使用大神提供的安装脚本出现问题的解决方法。</p>
+
+<!--more-->
 
 <h2 id="a-idshellvima"><a id="Shell">Vim一键安装脚本</a></h2>
 
@@ -198,6 +200,8 @@
 <p>最近貌似ZF开始发力了，<code>google</code>是基本上瘫痪了，最坑爹的是，我的<code>goagent</code>也不好使了，话说有时间得升级下了。当然，除去某些需翻墙网站，在加hosts文件里面，加一些佐料，然后用用<code>google</code>还是没有问题的。</p>
 
 <p>从网上搜罗了一些 IP表，发现有用的真心不多，最后终于发现访问google正常的IP List了，赶紧贴在这里，留着以后其他电脑备用。</p>
+
+<!--more-->
 
 <h2 id="a-idipshosts-ipa"><a id="Ips">Hosts IP列表</a></h2>
 

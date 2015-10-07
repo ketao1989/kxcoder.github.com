@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Java | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -36,6 +36,8 @@
 <p>关于 <code>Slf4j</code> 的介绍，请参考本博客<a href="http://ketao1989.github.io/posts/Java-slf4j-Introduce.html">http://ketao1989.github.io/posts/Java-slf4j-Introduce.html</a></p>
 
 <p>有了日志之后，我们就可以追踪各种线上问题。但是，在分布式系统中，各种无关日志穿行其中，导致我们可能无法直接定位整个操作流程。因此，我们可能需要对一个用户的操作流程进行归类标记，比如使用<code>线程+时间戳</code>，或者用户身份标识等；如此，我们可以从大量日志信息中grep出某个用户的操作流程，或者某个时间的流转记录。</p>
+
+<!--more-->
 
 <p>因此，这就有了 <code>Slf4j MDC</code> 方法。</p>
 
@@ -1708,7 +1710,7 @@
   </blockquote>
 </blockquote>
 
-<h2 id="a-idenda">&lt;a id=End”&gt;后记&lt;/a&gt;</h2>
+<h2 id="a-idenda"><a id="End">后记</a></h2>
 
 <p>其实，本身的 MDC 使用很简单，实现原理也很简单。但是，这里为了分析从将 key:value put 进MDC，然后怎么获取，怎么打印到后台的逻辑，对整个从 SLF4J 到 logback 的运行流程进场了大体解析。而对不影响理解的一些枝节，进行了删减。因此，如果需要完全弄清楚整个逻辑，还需要进行详细分析源码。</p>
 
@@ -1738,6 +1740,8 @@
 <p>上一篇博客，介绍了关于<a href="http://ketao1989.github.io/posts/Jackson-Serialize-Java-Object-Implementation.html">Jackson 自定义序列化</a>，本文将介绍关于 Jackson 自定义反序列化。</p>
 
 <p>反序列化，Jackson 工具包中已经支持了开发中常用的 Java 类型的解析功能；但是还是会遇到一些我们需要自定义的解析转换工作。比如外部的一些非主流时间格式转换，再比如说对于一些类型转换，做一些额外数据校验和默认容错处理工作，再比如说前端的某种格式的字符串，我们想直接使用自定义反序列化类来完成到 Java Object 的转换工作等等，都需要我们去自己实现 Jackson 反序列化类。</p>
+
+<!--more-->
 
 <p>和<code>Jackson 自定义序列化</code>相似，Jackson 为自定义的反序列化扩展，也提供了简单易用的接口。</p>
 
@@ -2125,6 +2129,8 @@
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>关于Jackson工具类的相关学习和研究，先前已经写过一篇博文；但是，后来由于工作事情就草草结尾。此外，虽然对Jackson序列化和反序列化的实现机制进行了初步学习，但是现在看看，那时候的博客经验和技术水平决定了整篇博文结构并不是清晰明了，并且反序列化的整个简单的解析，对日常开发并没有直接帮助。对于Jackson这种模块化设计，轻巧灵活的扩展方法，多维度的性能效率优化，导致了最后博文的质量非常不好。因此，接下来几篇博文，将会以日常开发使用的一些API为入口，来分别介绍其使用方式和内部实现，然后在此基础上，对此博文进行分拆。</p>
+
+<!--more-->
 
 <p>在开发中，前后端交互的项目，现在一般都是基于JSON文本格式给出API接口，因此对于java对象的序列化就是十分重要的了。基于Spring MVC的配置中，我们配置<code>org.springframework.http.converter.json.MappingJacksonHttpMessageConverter</code> bean时，就是需要配置<code>messageConverters</code>转换器。而针对json的转换器，就可以使用Jackson的<code>objectMapper</code>对象了。</p>
 
@@ -2999,6 +3005,8 @@
 
 <p>动态数据源，其实就是根据我们的代码实现和配置来选择不同的数据源进行sql操作。一般地，我们会把读操作移到从库中，从而减轻主库的压力，也就是所谓的读写分离。</p>
 
+<!--more-->
+
 <p>当然，对于一些使用数据库中间件来完成读写分离，而不需要业务层来做。这种方式，在大互联网公司中大量使用，比如360基于mysql-proxy的Atlas，阿里的DRDS(基于淘宝之前开源的TDDL）以及网易的分布式数据库中间件DDB等等。</p>
 
 <p>对于一些未使用部署数据库中间件的公司，简单的方法就是在代码里面使用AOP方式通过对每个DAO层sql请求进行配置，来完成自定义的动态数据源。</p>
@@ -3602,6 +3610,8 @@
 <p>在平常开发过程中，很多情况需要使用缓存来避免频繁SQL查询或者其他耗时操作，会采取缓存这些操作结果给下一次请求使用。如果我们的操作结果是一直不改变的，其实我们可以使用<code>ConcurrentHashMap</code>来存储这些数据；但是如果这些结果在随后时间内会改变或者我们希望存放的数据所占用的内存空间可控，这样就需要自己来实现这种数据结构了。</p>
 
 <p>显然，对于这种十分常见的需求，<code>Guava</code>提供了自己的工具类实现。<code>Guava Cache</code>提供了一般我们使用缓存所需要的几乎所有的功能，主要有：</p>
+
+<!--more-->
 
 <pre><code>* 自动将entry节点加载进缓存结构中；
     

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | 柯小小西の小水滴]]></title>
   <link href="http://kxcoder.github.io/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://kxcoder.github.io/"/>
-  <updated>2015-10-07T12:48:59+08:00</updated>
+  <updated>2015-10-07T14:43:56+08:00</updated>
   <id>http://kxcoder.github.io/</id>
   <author>
     <name><![CDATA[柯小小西]]></name>
@@ -440,6 +440,8 @@
 <h2 id="a-idintroa"><a id="Intro">前言</a></h2>
 
 <p>从源代码安装过软件的朋友一定对 <code>./configure &amp;&amp; make &amp;&amp; make install</code> 安装三步曲非常熟悉了。然而究竟这个过程中的每一步幕后都发生了些什么呢？本文将带领你一探究竟。深入理解这个过程将有助于你在LFS的基础上玩出自己的花样来。不过需要说明的是本文对 <code>Makefile</code> 和 <code>make</code> 的讲解是相当近视和粗浅的，但是对于理解安装过程来说足够了。</p>
+
+<!--more-->
 
 <h2 id="a-idabouta"><a id="About">概述</a></h2>
 
@@ -1245,6 +1247,8 @@
 
 <p>点击<code>chrome</code>图标不管用，并且看不到任何出错信息，无法定位问题出在哪里。只好，从<code>终端</code>使用<code>google-chrome</code>命令来启动<code>chrome</code>浏览器客户端了。于是，出现以下错误信息：</p>
 
+<!--more-->
+
 <p><figure class='code'><figcaption><span>Linux install chrome </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1335,6 +1339,8 @@
 <h2 id="a-idsubversionsubversiona"><a id="Subversion">subversion安装和配置</a></h2>
 
 <p>一般，如果对<code>subversion</code>的版本不限制，那些直接使用<code>sudo apt-get install subversion</code>命令就可以安装来，但是如果对版本有要求，比如由于<code>svn</code>的1.8版本在很多<code>svn</code>服务器端不被支持，所以需要安装低于1.8的svn客户端。这就需要我们在本地编译完了之后再安装。</p>
+
+<!--more-->
 
 <h3 id="subversion">2.1 subversion源码下载</h3>
 
