@@ -1,4 +1,5 @@
 User-agent: *
 Disallow: 
 
-Sitemap: https://kxcoder.github.io/sitemap.xml 
+Sitemap: http://kxcoder.github.io/sitemap.xml 
+Sitemap: http://kxcoder.github.io/atom.xml
